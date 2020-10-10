@@ -1,0 +1,11 @@
+seed
+DBに初期データを入れる
+
+SEEDファイル生成
+bin/cake bake seed Users
+
+SEEDファイルのすべてを実行
+bin/cake migrations seed
+
+ターゲットを絞って実行
+bin/cake migrations seed --seed ファイル名

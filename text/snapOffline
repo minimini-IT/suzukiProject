@@ -1,0 +1,13 @@
+snapコマンド
+-> linux共通のパッケージ(Snappy)
+   ubuntuでいうapt
+   centでいうyum
+
+デフォルトで入ってなければsnapdで入れれる
+sudo apt install snapd
+sudo yum install snapd(centの場合は依存関係のツール多数)
+
+オフライン環境用には、installではなくdownloadで、.assert、.snapをダウンロードする。
+それをオフライン環境に持っていって
+  sudo snap ack ~~.assert
+  sudo snap install ~~.snap

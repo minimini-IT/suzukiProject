@@ -1,0 +1,5370 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link      https://cakephp.org CakePHP(tm) Project
+ * @since     0.2.9
+ * @license   https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace App\Controller;
+
+use Cake\Controller\Controller;
+use Cake\Event\Event;
+
+/**
+ * Application Controller
+ *
+ * Add your application-wide methods in the class below, your controllers
+ * will inherit them.
+ *
+ * @link https://book.cakephp.org/3.0/en/controllers.html#the-app-controller
+ */
+class AppController extends Controller
+{
+
+    /**
+     * Initialization hook method.
+     *
+     * Use this method to add common initialization code like loading components.
+     *
+     * e.g. `$this->loadComponent('Security');`
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->loadComponent('RequestHandler', [
+            'enableBeforeRedirect' => false,
+        ]);
+        $this->loadComponent('Flash');
+
+        //認証機能
+        $this->loadComponent("Auth", [
+            //"authorize" => "Controller",
+            "authenticate" => [
+                "Form" => [
+                    "fields" => ["username" => "username", "password" => "password"]
+                ]
+            ],
+            "loginAction" => [
+                "controller" => "Users",
+                "action" => "login"
+            ],
+            "loginRedirect" => [
+                "controller" => "Dairy",
+                "action" => "index",
+            ],
+            "logoutRedirect" => [
+                "controller" => "Users",
+                "action" => "login"
+            ],
+            //未認証の場合は直前のページへ
+            //"unauthorizedRedirect" => $this->refere()
+        ]);
+        /*
+         * Enable the following component for recommended CakePHP security settings.
+         * see https://book.cakephp.org/3.0/en/controllers/components/security.html
+         */
+        //$this->loadComponent('Security');
+    }
+
+    public function loadModels($models=[]){
+        foreach($models as $model){
+            $this->loadModel($model);
+      }
+    }
+
+    /*
+    public function isAuthorized($user)
+    {
+        //デフォルトでアクセス拒否
+        return false;
+    }
+     */
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Belongs Controller
+ *
+ * @property \App\Model\Table\BelongsTable $Belongs
+ *
+ * @method \App\Model\Entity\Belong[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class BelongsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $belongs = $this->paginate($this->Belongs);
+
+        $this->set(compact('belongs'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Belong id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $belong = $this->Belongs->get($id, [
+            'contain' => ['Users']
+        ]);
+
+        $this->set('belong', $belong);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $belong = $this->Belongs->newEntity();
+        if ($this->request->is('post')) {
+            $belong = $this->Belongs->patchEntity($belong, $this->request->getData());
+            if ($this->Belongs->save($belong)) {
+                $this->Flash->success(__('The belong has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The belong could not be saved. Please, try again.'));
+        }
+        $this->set(compact('belong'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Belong id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $belong = $this->Belongs->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $belong = $this->Belongs->patchEntity($belong, $this->request->getData());
+            if ($this->Belongs->save($belong)) {
+                $this->Flash->success(__('The belong has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The belong could not be saved. Please, try again.'));
+        }
+        $this->set(compact('belong'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Belong id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $belong = $this->Belongs->get($id);
+        if ($this->Belongs->delete($belong)) {
+            $this->Flash->success(__('The belong has been deleted.'));
+        } else {
+            $this->Flash->error(__('The belong could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Categories Controller
+ *
+ * @property \App\Model\Table\CategoriesTable $Categories
+ *
+ * @method \App\Model\Entity\Category[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class CategoriesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+      $this->paginate = [
+          "limit" => 10,
+          "order" => ["category_sort_number" => "asc"]
+      ];
+        $categories = $this->paginate($this->Categories);
+
+        $this->set(compact('categories'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Category id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $category = $this->Categories->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('category', $category);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+      $this->paginate = [
+          "order" => ["category_sort_number" => "asc"]
+      ];
+        $categories = $this->paginate($this->Categories);
+        $category = $this->Categories->newEntity();
+        if ($this->request->is('post')) {
+            $category = $this->Categories->patchEntity($category, $this->request->getData());
+            if ($this->Categories->save($category)) {
+                $this->Flash->success(__('The category has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The category could not be saved. Please, try again.'));
+        }
+        $this->set(compact('category'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Category id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $category = $this->Categories->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $category = $this->Categories->patchEntity($category, $this->request->getData());
+            if ($this->Categories->save($category)) {
+                $this->Flash->success(__('The category has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The category could not be saved. Please, try again.'));
+        }
+        $this->set(compact('category'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Category id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $category = $this->Categories->get($id);
+        if ($this->Categories->delete($category)) {
+            $this->Flash->success(__('The category has been deleted.'));
+        } else {
+            $this->Flash->error(__('The category could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Classes Controller
+ *
+ * @property \App\Model\Table\ClassesTable $Classes
+ *
+ * @method \App\Model\Entity\Class[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class ClassesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $classes = $this->paginate($this->Classes);
+
+        $this->set(compact('classes'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Class id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $class = $this->Classes->get($id, [
+            'contain' => ['Users']
+        ]);
+
+        $this->set('class', $class);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $class = $this->Classes->newEntity();
+        if ($this->request->is('post')) {
+            $class = $this->Classes->patchEntity($class, $this->request->getData());
+            if ($this->Classes->save($class)) {
+                $this->Flash->success(__('The class has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The class could not be saved. Please, try again.'));
+        }
+        $this->set(compact('class'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Class id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $class = $this->Classes->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $class = $this->Classes->patchEntity($class, $this->request->getData());
+            if ($this->Classes->save($class)) {
+                $this->Flash->success(__('The class has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The class could not be saved. Please, try again.'));
+        }
+        $this->set(compact('class'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Class id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $class = $this->Classes->get($id);
+        if ($this->Classes->delete($class)) {
+            $this->Flash->success(__('The class has been deleted.'));
+        } else {
+            $this->Flash->error(__('The class could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+//deleteのみ使用
+
+/**
+ * CommentFiles Controller
+ *
+ * @property \App\Model\Table\CommentFilesTable $CommentFiles
+ *
+ * @method \App\Model\Entity\CommentFile[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class CommentFilesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['CrewSendComments']
+        ];
+        $commentFiles = $this->paginate($this->CommentFiles);
+
+        $this->set(compact('commentFiles'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Comment File id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $commentFile = $this->CommentFiles->get($id, [
+            'contain' => ['CrewSendComments']
+        ]);
+
+        $this->set('commentFile', $commentFile);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $commentFile = $this->CommentFiles->newEntity();
+        if ($this->request->is('post')) {
+            $commentFile = $this->CommentFiles->patchEntity($commentFile, $this->request->getData());
+            if ($this->CommentFiles->save($commentFile)) {
+                $this->Flash->success(__('The comment file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The comment file could not be saved. Please, try again.'));
+        }
+        $crewSendComments = $this->CommentFiles->CrewSendComments->find('list', ['limit' => 200]);
+        $this->set(compact('commentFile', 'crewSendComments'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Comment File id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $commentFile = $this->CommentFiles->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $commentFile = $this->CommentFiles->patchEntity($commentFile, $this->request->getData());
+            if ($this->CommentFiles->save($commentFile)) {
+                $this->Flash->success(__('The comment file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The comment file could not be saved. Please, try again.'));
+        }
+        $crewSendComments = $this->CommentFiles->CrewSendComments->find('list', ['limit' => 200]);
+        $this->set(compact('commentFile', 'crewSendComments'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Comment File id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->log("---start comment files delete---", LOG_DEBUG);
+        $this->request->allowMethod(['post', 'delete']);
+        $commentFile = $this->CommentFiles->get($id);
+        //ディレクトリ内のファイルを削除
+        $this->FileDelete = $this->loadComponent("FileDelete");
+
+        $this->log("---unique file name---", LOG_DEBUG);
+        $this->log($commentFile->unique_file_name, LOG_DEBUG);
+
+        if($this->FileDelete->deleteFiles($commentFile->unique_file_name)){
+          if ($this->CommentFiles->delete($commentFile)) {
+              $this->Flash->success(__('The comment file has been deleted.'));
+          } else {
+              $this->Flash->error(__('添付ファイル自体は削除できたが、DBのデータでは削除できなかった。管理者に報告してください'));
+              $this->log("---comment_files delete error---", LOG_DEBUG);
+              $this->log($commentFile, LOG_DEBUG);
+          }
+        }else{
+          $this->Flash->error(__('添付ファイルの削除失敗。以降の動作は行いません'));
+        }
+        $this->log("---comment fileの削除動作完了---", LOG_DEBUG);
+        return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\FileDeleteComponent;
+use Cake\ORM\TableRegistry;
+
+/**
+ * CrewSendComments Controller
+ *
+ * @property \App\Model\Table\CrewSendCommentsTable $CrewSendComments
+ *
+ * @method \App\Model\Entity\CrewSendComment[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class CrewSendCommentsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['CrewSends', 'Users']
+        ];
+        $crewSendComments = $this->paginate($this->CrewSendComments);
+
+        $this->set(compact('crewSendComments'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Crew Send Comment id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $crewSendComment = $this->CrewSendComments->get($id, [
+            'contain' => ['CrewSends', 'Users']
+        ]);
+
+        $this->set('crewSendComment', $crewSendComment);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        if ($this->request->is(['post', "put"])) {
+            $crewSendComment = $this->CrewSendComments->newEntity();
+            $data = $this->request->getData();
+            $crewSendComment = $this->CrewSendComments->patchEntity($crewSendComment, $data);
+            if ($this->CrewSendComments->save($crewSendComment)) {
+                $this->Flash->success(__('The crew send comment has been saved.'));
+
+                //ファイルあればアップロード処理
+                if(!empty($data["file"][0]["tmp_name"])){
+                    $commentId = $crewSendComment->crew_send_comments_id;
+                    $this->Fileupload = $this->loadComponent("Fileupload");
+                    $this->loadModels(["CommentFiles"]);
+
+                    //ファイルアップロード
+                    $entity = $this->Fileupload->default_upload($data["file"], $commentId, "crew_send_comments");
+                    $file = $this->CommentFiles->newEntities($entity);
+                    if($this->CommentFiles->saveMany($file)) {
+                        $this->Flash->success(__('The file has been saved.'));
+                    }else{
+                        $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                    }
+                }
+                return $this->redirect(["controller" => "CrewSends", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The crew send comment could not be saved. Please, try again.'));
+        }
+        return $this->redirect(["controller" => "CrewSends", 'action' => 'index']);
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Crew Send Comment id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+
+        $crewSendComment = $this->CrewSendComments->get($id, [
+            'contain' => ["CrewSends", "Users"]
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $this->log("---start comment edit---", LOG_DEBUG);
+            $data = $this->request->getData();
+            $crewSendComment = $this->CrewSendComments->patchEntity($crewSendComment, $data);
+            if ($this->CrewSendComments->save($crewSendComment)) {
+                $this->Flash->success(__('The crew send comment has been saved.'));
+                if(!empty($data["file"][0]["tmp_name"])){
+                  $this->log("---ファイル有り---", LOG_DEBUG);
+                  $comments_id = $crewSendComment->crew_send_comments_id;
+                  $this->Fileupload = $this->loadComponent("Fileupload");
+                  $entity = $this->Fileupload->default_upload($data["file"], $comments_id, "crew_send_comments");
+                  $this->loadModels(["CommentFiles"]);
+                  try{
+                    $file = $this->CommentFiles->newEntities($entity);
+                    if($this->CommentFiles->saveMany($file)) {
+                      $this->log("---ファイルアップロード成功---", LOG_DEBUG);
+                      $this->Flash->success(__('The file has been saved.'));
+                    }else{
+                      $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                    }
+                  }catch(RuntimeException $e){
+                    $this->Flash->error(__("ファイルのアップロードができませんでした"));
+                    $this->Flash->error(__($e->getMessage()));
+                  }
+                }else{
+                  $this->log("---ファイル無し---", LOG_DEBUG);
+                }
+                $this->log("---end comment edit---", LOG_DEBUG);
+                return $this->redirect(["controller" => "CrewSends", 'action' => 'index']);
+            }else{
+              $this->Flash->error(__('The crew send comment could not be saved. Please, try again.'));
+            }
+        }
+        $crewSends = $this->CrewSendComments->CrewSends->find('list', ['limit' => 200]);
+        $users = $this->CrewSendComments->Users->find('list', ['limit' => 200]);
+        $this->set(compact('crewSendComment', 'crewSends', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Crew Send Comment id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+      $this->log("---start comment delete---", LOG_DEBUG);
+      $this->loadModels(["CommentFiles"]);
+      $this->request->allowMethod(['post', 'delete']);
+      $crewSendComment = $this->CrewSendComments->get($id,[
+        "contain" => ["CommentFiles"]
+      ]);
+      //ディレクトリ内のファイルを削除
+      $this->FileDelete = $this->loadComponent("FileDelete");
+      //コメントに関連するファイルがあれば、そのunique_file_nameを求める
+      if(!empty($crewSendComment->comment_files)){
+        $this->log("---comment file 有り 削除開始---", LOG_DEBUG);
+        $commentFiles = $crewSendComment->comment_files;
+        $uniqueFileNames = array();
+        foreach($commentFiles as $commentFile){
+          array_push($uniqueFileNames, $commentFile->unique_file_name);
+        }
+        //if($this->FileDelete->deleteFile($commentFile->unique_file_name)){
+        $this->log("---uniqueFileNames---", LOG_DEBUG);
+        $this->log($uniqueFileNames, LOG_DEBUG);
+        $this->FileDelete->deleteFiles($uniqueFileNames);
+        /*
+        if ($this->CommentFiles->delete($commentFile)) {
+            $this->log("---ファイル削除完了---", LOG_DEBUG);
+            $this->Flash->success(__('The comment file has been deleted.'));
+        } else {
+            $this->log("---ファイル削除失敗---", LOG_DEBUG);
+            $this->Flash->error(__('The crew send comment could not be deleted. Please, try again.'));
+        }
+         */
+      }else{
+        $this->log("---comment file 無し---", LOG_DEBUG);
+      }
+      if ($this->CrewSendComments->delete($crewSendComment)) {
+          $this->log("---削除完了---", LOG_DEBUG);
+          $this->Flash->success(__('The crew send comment has been deleted.'));
+      } else {
+          $this->log("---削除失敗---", LOG_DEBUG);
+          $this->Flash->error(__('The crew send comment could not be deleted. Please, try again.'));
+      }
+      $this->log("---end comment delete---", LOG_DEBUG);
+      return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
+use RuntimeException;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\FileuploadComponent;
+use Cake\ORM\TableRegistry;
+
+/**
+ * CrewSends Controller
+ *
+ * @property \App\Model\Table\CrewSendsTable $CrewSends
+ *
+ * @method \App\Model\Entity\CrewSend[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class CrewSendsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    
+    public function index()
+    {
+        $close = $this->request->session()->read("CrewSend.close");
+        $this->paginate = [
+            "contain" => [
+                "Categories", 
+                "Statuses", 
+                "Users",
+                "Files", 
+                "IncidentManagements.ManagementPrefixes",
+                "CrewSendComments" => [
+                    "sort" => [
+                        "crew_send_comments_id" => "desc"
+                    ]
+                ],
+                "CrewSendComments.Users", 
+                "CrewSendComments.CommentFiles",
+            ],
+            "limit" => 5,
+            "order" => ["crew_sends_id" => "desc"]
+        ];
+        $this->loadModels(["CrewSendComments"]);
+        $crewSendComment = $this->CrewSendComments->newEntity();
+        if($close == "close")
+        {
+            $crewSends = $this->CrewSends->find("all")
+                ->where(["CrewSends.statuses_id !=" => 5]);
+            $crewSends = $this->paginate($crewSends);
+        }
+        else if($close == null)
+        {
+            $crewSends = $this->paginate($this->CrewSends);
+        }
+
+        $users = $this->CrewSends->Users->find('list', ['limit' => 200])
+            ->where(["delete_flag" => 0]);
+        
+        $loginUser = $this->request->session()->read("Auth.User.users_id");
+
+        $this->set(compact('crewSends', "users", "crewSendComment", "close", "loginUser"));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Crew Send id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+      $crewSend = $this->CrewSends->get($id, [
+        'contain' => ['Categories', 'Statuses', 'Users']
+      ]);
+
+      $this->set('crewSend', $crewSend);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $crewSend = $this->CrewSends->newEntity();
+        if ($this->request->is('post', "patch", "put")) {
+            $this->Fileupload = $this->loadComponent("Fileupload");
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            $data = $this->request->getData();
+
+            //crewSend save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(4)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $crewSend = $this->CrewSends->patchEntity($crewSend, $data);
+
+
+                if ($this->CrewSends->save($crewSend)) {
+                    $this->Flash->success(__('The crew send has been saved.'));
+                    $id = $crewSend->crew_sends_id;
+                    //ファイル有無
+                    //crew_sends_idが必要なので、saveしてから
+                    if(!empty($data["file"][0]["tmp_name"])){
+                        $this->loadModels(["Files"]);
+
+                        //ファイルアップロード
+                        //default_upload >> entityが返される
+                        $entity = $this->Fileupload->default_upload($data["file"], $id, "crew_sends");
+                        try{
+                            $file = $this->Files->newEntities($entity);
+                            if($this->Files->saveMany($file)) {
+                                $this->Flash->success(__('ファイルのアップロードに成功しました。'));
+                            }else{
+                                $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                            }
+                        }catch(RuntimeException $e){
+                            $this->Flash->error(__("ファイルのアップロードができませんでした"));
+                            $this->Flash->error(__($e->getMessage()));
+                        }
+                    }
+                    return $this->redirect(['action' => 'index']);
+                }
+
+            }
+            $this->Flash->error(__('The crew send could not be saved. Please, try again.'));
+        }
+        $categories = $this->CrewSends->Categories->find('list', ['limit' => 200])
+            ->order(["category_sort_number" => "asc"]);
+        $statuses = $this->CrewSends->Statuses->find('list', ['limit' => 200])
+            ->order(["status_sort_number" => "asc"]);
+        $users = $this->CrewSends->Users->find('list', ['limit' => 200])
+            ->where(["users_id !=" => 7])
+            //->where(["users_id !=" => 45])
+            ->where(["delete_flag" => 0]);
+        $this->set(compact('crewSend', 'categories', 'statuses', 'users', "loginUser"));
+    }
+    
+    /**
+     * Edit method
+     *
+     * @param string|null $id Crew Send id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $crewSend = $this->CrewSends->get($id, [
+            'contain' => ["Users"]
+        ]);
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($crewSend)){
+            $this->log("---認証　許可---", LOG_DEBUG);
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $this->log("---post---", LOG_DEBUG);
+                $data = $this->request->getData();
+                $crewSend = $this->CrewSends->patchEntity($crewSend, $data);
+                if ($this->CrewSends->save($crewSend)) {
+                    $this->log("---crewSend save---", LOG_DEBUG);
+                    $this->Flash->success(__('The crew send has been saved.'));
+                    if(!empty($data["file"][0]["tmp_name"])){
+                        $this->log("---file upload---", LOG_DEBUG);
+                        //ファイルアップロード
+                        $crewSendsId = $crewSend->crew_sends_id;
+                        $this->Fileupload = $this->loadComponent("Fileupload");
+                        $entity = $this->Fileupload->default_upload($data["file"], $crewSendsId, "crew_sends");
+                        $this->loadModels(["Files"]);
+                        try{
+                            $file = $this->Files->newEntities($entity);
+                            if($this->Files->saveMany($file)) {
+                                $this->log("---file saveMany---", LOG_DEBUG);
+                                $this->Flash->success(__('The file has been saved.'));
+                            }else{
+                                $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                            }
+                        }catch(RuntimeException $e){
+                          $this->Flash->error(__("ファイルのアップロードができませんでした"));
+                          $this->Flash->error(__($e->getMessage()));
+                        }
+                    }
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The crew send could not be saved. Please, try again.'));
+            }
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+        $categories = $this->CrewSends->Categories->find('list', ['limit' => 200]);
+        $statuses = $this->CrewSends->Statuses->find('list', ['limit' => 200]);
+        $users = $this->CrewSends->Users->find('list', ['limit' => 200])
+            ->where(["delete_flag" => 0]);
+        $this->set(compact('crewSend', 'categories', 'statuses', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Crew Send id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $crewSend = $this->CrewSends->get($id,[
+          "contain" => ["CrewSendComments", "Files", "Users"]
+        ]);
+
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($crewSend)){
+
+            $this->FileDelete = $this->loadComponent("FileDelete");
+            //コメントのアップロードファイルを削除するために,
+            //関連するコメントがあれば、そのcrew_send_comments_idを求める
+            if(!empty($crewSend->crew_send_comments)){
+                $crewSendComments = $crewSend->crew_send_comments;
+                $crewSendCommentsId = array();
+                foreach($crewSendComments as $crewSendComment){
+                    array_push($crewSendCommentsId, $crewSendComment->crew_send_comments_id);
+                }
+
+                //コメントにファイルが添付されているかどうか
+                //コメントに添付されているファイルのunique_file_nameを求める
+                $this->loadModels(["CommentFiles"]);
+                $uniqueFileNames = array();
+                foreach($crewSendCommentsId as $id){
+                    $commentFiles = $this->CommentFiles->find("all")
+                        ->select(["unique_file_name"])
+                        ->where(["crew_send_comments_id" => $id]);
+
+                    //$commentFilesがからの場合の条件分岐方法がわからないので、ファイルなくても処置するようにする
+                    foreach($commentFiles as $commentFile){
+                        array_push($uniqueFileNames, $commentFile->unique_file_name);
+                    }
+                }
+                //ディレクトリ内のファイルを削除
+                $this->FileDelete->deleteFiles($uniqueFileNames);
+            }
+            //ファイルがアップロードされていれば、ディレクトリから削除する
+            if(!empty($crewSend->files)){
+                //削除するcrewSendsのIDを保持するfilesのunique_file_nameを求める
+                $id = $crewSend->crew_sends_id;
+                $files = $crewSend->files;
+                $uniqueFileNames = array();
+                foreach($files as $file){
+                  array_push($uniqueFileNames, $file->unique_file_name);
+                }
+                $this->FileDelete->deleteFiles($uniqueFileNames);
+            }
+            if($this->CrewSends->delete($crewSend)){
+                $this->Flash->success(__('The crew send has been deleted.'));
+            }else{
+                $this->Flash->error(__('The crew send could not be deleted. Please, try again.'));
+            }
+            return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+    }
+
+    public function closeHidden()
+    {
+        $session = $this->request->session();
+        $session->write("CrewSend.close", "close");
+        return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+    }
+
+    public function closeOpen()
+    {
+        $session = $this->request->session();
+        $session->write("CrewSend.close", null);
+        return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * CyberAttacks Controller
+ *
+ * ただの一覧表示用
+ *
+ */
+class CyberAttacksController extends AppController
+{
+    /**
+     * Index method
+     *
+     */
+    public function index()
+    {
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\I18n\Time;
+use Cake\datasource\ConnectionManager;
+
+class DairyController extends AppController{
+
+    public function index()
+    {
+
+        //今んとこworkers用
+        $this->paginate = [
+            'contain' => [
+                'Users', 
+                'Positions', 
+                'Shifts', 
+                'Duties', 
+            ]
+        ];
+
+        //明日から６日分の日付取得
+        $days = array();
+        for($i = 1; $i < 7; $i++){
+            $today = date("Y-m-d", strtotime("{$i} day"));
+            $days[] = $today;
+        } 
+        //今日の日付を取得
+        $today = date("Y-m-d");
+
+        //機能の日付を取得
+        $yesterday = date("Y-m-d", strtotime("-1 day"));
+        
+        $this->loadModels(["OrderNews", "Workers", "Statuses", "RiskDetections"]);
+
+        //scheduleを今日の日付で取得
+        $sql = "select schedules_id, schedule_start_date, schedule_end_date, schedule_start_time, schedule from schedules where '" . $today . "' between schedule_start_date and schedule_end_date";
+        $connection = ConnectionManager::get("default");
+        $today_schedules = $connection->execute($sql)->fetchAll("assoc");
+
+        //scheduleを今日から1週間分取得
+        $sql = "select schedules_id, schedule_start_date, schedule_end_date, schedule from schedules where 
+            ('" . $days[0] . "' between schedule_start_date and schedule_end_date) or
+            ('" . $days[1] . "' between schedule_start_date and schedule_end_date) or
+            ('" . $days[2] . "' between schedule_start_date and schedule_end_date) or
+            ('" . $days[3] . "' between schedule_start_date and schedule_end_date) or
+            ('" . $days[4] . "' between schedule_start_date and schedule_end_date) or
+            ('" . $days[5] . "' between schedule_start_date and schedule_end_date)";
+        $weekry_schedules = $connection->execute($sql)->fetchAll("assoc");
+ 
+        //weekry_schedulesからtoday_schedulesを引く
+        foreach($today_schedules as $today_schedule){
+            $i = 0;
+            foreach($weekry_schedules as $weekry_schedule){
+                if($today_schedule["schedules_id"] == $weekry_schedule["schedules_id"]){
+                    unset($weekry_schedules[$i]);
+                    $weekry_schedules = array_values($weekry_schedules);
+                    break;
+                }
+                $i++;
+            }
+        }
+
+        //order_newsを今日の分取得
+        /*        
+        $sql = "select * from schedules where '" . $today . "' between schedule_start_date and schedule_end_date";
+        $connection = ConnectionManager::get("default");
+        $schedules = $connection->execute($sql)->fetchAll("assoc");
+        */
+        //$orderNews = $this->OrderNews->find("all");
+        
+        //昨日のorder_newsを取得
+        $orderNews = $this->OrderNews->find()
+            ->select(["title", "comment"])
+            ->where(["order_news_date" => $yesterday]);
+
+        //$between = ["conditions" => ["Workers.date between '" . $today . "' and '" . $today . "'"]];
+        //本日の勤務者
+        //$workers = $this->Workers->find("all", $between)
+        $workers = $this->Workers->find("all")
+            ->where(["date" => $today]);
+        $workers = $this->paginate($workers);
+        $statuses = $this->Statuses->find("all")
+        //$statuses = $this->Statuses->find("list")
+            ->select(["status"]);
+
+        //各ステータスそれぞれの件数を取得
+        //ステータスの数
+        $statusNumber = $statuses->count();
+        //ステータス数を保存
+        $nowStatus = [];
+        $i = 1;
+        foreach($statuses as $status)
+        {
+            $count = $this->RiskDetections->find("all")
+                ->where(["statuses_id" => $i]);
+            $count = $count->count();
+            //$nowStatus = array_merge($nowStatus, [$status => $count]);
+            //収束は表示しなくてよし
+            if($status->status != "収束")
+            {
+                $nowStatus[$status->status] = $count;
+            }
+            $i++;
+        }
+        /*
+        $statusA = $statuses->all();
+        for($i = 1; $i >= $statusNumber; $i++)
+        {
+            array_push($nowStatus, $statusA[$i]->status)
+            $nowStatus[$i] = $this->RiskDetections->find("all")
+                ->where(["statuses_id" => $i]);
+            $nowStatus[$i] = $nowStatus->count();
+        }
+         */
+
+        /*
+        $dayOfWeek = [
+            [
+                "mon" => 1
+            ],
+            [
+                "tue" => 1
+            ],
+            [
+                "web" => 1
+            ],
+            [
+                "thu" => 1
+            ],
+            [
+                "fry" => 1
+            ],
+            [
+                "sat" => 1
+            ],
+            [
+                "sun" => 1
+            ]
+        ];
+         */
+
+
+        $this->set(compact('today_schedules', "weekry_schedules", "orderNews", "today", "workers", "statuses", "nowStatus"));
+    
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\ORM\TableRegistry;
+
+class DownloadController extends AppController{
+
+  public function downloadFile($id = null, $table = null, $primary){
+
+      //idからファイル名を取得
+      $query = TableRegistry::get($table);
+      $query = $query->find()
+        ->select(["file_name", "unique_file_name"])
+        ->where(["{$primary}_id" => $id])
+        ->first();
+      $file_name = $query->file_name;
+      $unique_file_name = $query->unique_file_name;
+
+      //ダウンロード
+      $this->autoRender = false;
+      $file_name = mb_convert_encoding($file_name, "SJIS", "UTF-8");
+      $filePath = "upload_file/{$unique_file_name}";
+      $response = $this->response->withFile(
+          $filePath,
+          ["download" => true, "name" => $file_name]
+      );
+      return $response;
+  }
+
+  public function bordChronologyFileDownload($id = null){
+    if ($this->request->is(["get"])) {
+      return $this->downloadFile($id, "MessageChronologyFiles", "message_chronology_files");
+    }
+  }
+
+  public function bordFileDownload($id = null){
+    if ($this->request->is(["get"])) {
+      return $this->downloadFile($id, "MessageFiles", "message_files");
+    }
+  }
+
+  public function sendFileDownload($id = null){
+    if ($this->request->is(["get"])) {
+      return $this->downloadFile($id, "Files", "files");
+    }
+  }
+
+  public function commentFileDownload($id = null){
+    if ($this->request->is(["get"])) {
+      return $this->downloadFile($id, "CommentFiles", "comment_files");
+    }
+  }
+
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Duties Controller
+ *
+ * @property \App\Model\Table\DutiesTable $Duties
+ *
+ * @method \App\Model\Entity\Duty[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class DutiesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $duties = $this->paginate($this->Duties);
+
+        $this->set(compact('duties'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Duty id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $duty = $this->Duties->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('duty', $duty);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $duty = $this->Duties->newEntity();
+        if ($this->request->is('post')) {
+            $duty = $this->Duties->patchEntity($duty, $this->request->getData());
+            if ($this->Duties->save($duty)) {
+                $this->Flash->success(__('The duty has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The duty could not be saved. Please, try again.'));
+        }
+        $this->set(compact('duty'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Duty id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $duty = $this->Duties->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $duty = $this->Duties->patchEntity($duty, $this->request->getData());
+            if ($this->Duties->save($duty)) {
+                $this->Flash->success(__('The duty has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The duty could not be saved. Please, try again.'));
+        }
+        $this->set(compact('duty'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Duty id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $duty = $this->Duties->get($id);
+        if ($this->Duties->delete($duty)) {
+            $this->Flash->success(__('The duty has been deleted.'));
+        } else {
+            $this->Flash->error(__('The duty could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         3.3.4
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace App\Controller;
+
+use Cake\Event\Event;
+
+/**
+ * Error Handling Controller
+ *
+ * Controller used by ExceptionRenderer to render error responses.
+ */
+class ErrorController extends AppController
+{
+    /**
+     * Initialization hook method.
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        $this->loadComponent('RequestHandler', [
+            'enableBeforeRedirect' => false,
+        ]);
+    }
+
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\Event $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeFilter(Event $event)
+    {
+    }
+
+    /**
+     * beforeRender callback.
+     *
+     * @param \Cake\Event\Event $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function beforeRender(Event $event)
+    {
+        parent::beforeRender($event);
+
+        $this->viewBuilder()->setTemplatePath('Error');
+    }
+
+    /**
+     * afterFilter callback.
+     *
+     * @param \Cake\Event\Event $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
+    public function afterFilter(Event $event)
+    {
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
+use RuntimeException;
+use Cake\ORM\TableRegistry;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\FileDeleteComponent;
+
+/**
+ * Files Controller
+ *
+ * @property \App\Model\Table\FilesTable $Files
+ *
+ * @method \App\Model\Entity\File[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class FilesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['CrewSends']
+        ];
+        $files = $this->paginate($this->Files);
+
+        $this->set(compact('files'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id File id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $file = $this->Files->get($id, [
+            'contain' => ["CrewSends"]
+        ]);
+
+        $this->set('file', $file);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $file = $this->Files->newEntity();
+        if ($this->request->is(["patch", 'post', "put"])) {
+
+            //file_group取得
+            $file_group = $this->next_file_group();
+
+            //格納するディレクトリ 
+            $dir = realpath(WWW_ROOT . "/upload_file");
+
+            //容量200M
+            $limitFileSize = 1024 * 1024 * 200;
+
+            try {
+              //file_uploadメソッドのアウトプット用
+              $file_detail = array();
+              //$fileエンティティに一括でデータを埋め込む用
+              $file_entity = array();
+
+              foreach($this->request->data["file"] as $upload_file){
+                $file_detail = $this->file_upload($upload_file, $dir, $limitFileSize);
+                $file_entity[] = [
+                  "file_group" => $file_group, 
+                  "file_name" => $file_detail[0], 
+                  "file_size" => $file_detail[1], 
+                  "unique_file_name" => $file_detail[2]
+                ];
+              }
+              $file = $this->Files->newEntities($file_entity);
+              $file = $this->Files->patchEntities($file, $file_entity);
+
+            }catch(RuntimeException $e){
+              $this->Flash->error(__("ファイルのアップロードができませんでした"));
+              $this->Flash->error(__($e->getMessage()));
+            }
+
+            if ($this->Files->saveMany($file)) {
+                $this->Flash->success(__('The file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The file could not be saved. Please, try again.'));
+        }
+
+        $this->set(compact('file', "max_file_group"));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id File id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $file = $this->Files->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $file = $this->Files->patchEntity($file, $this->request->getData());
+            if ($this->Files->save($file)) {
+                $this->Flash->success(__('The file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The file could not be saved. Please, try again.'));
+        }
+        $this->set(compact('file'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id File id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+      $this->request->allowMethod(['post', 'delete']);
+      $File = $this->Files->get($id);
+      $deleteFiles[] = $File->unique_file_name;
+      //ディレクトリ内のファイルを削除
+      $this->FileDelete = $this->loadComponent("FileDelete");
+      //if($this->FileDelete->deleteFiles($File->unique_file_name)){
+      if($this->FileDelete->deleteFiles($deleteFiles)){
+        $this->Flash->success(__('添付ファイルの削除成功'));
+        if ($this->Files->delete($File)) {
+            $this->Flash->success(__('The comment file has been deleted.'));
+        } else {
+            $this->Flash->error(__('添付ファイル自体は削除できたが、DBのデータでは削除できなかった。管理者に報告してください'));
+            $this->log("---files delete error---", LOG_DEBUG);
+            $this->log($File, LOG_DEBUG);
+        }
+      }else{
+        $this->Flash->error(__('添付ファイルの削除失敗。DBの削除は行いません'));
+      }
+
+      return $this->redirect(["controller" => "crew_sends", 'action' => 'index']);
+      /*
+        $session = $this->request->session();
+        //redirectのdeleteからかどうか
+        if($session->check("delete.file")){
+            $this->log("---session check true---", LOG_DEBUG);
+            $ids = $session->consume("delete.file");
+            foreach($ids as $id){
+                $file = $this->Files->get($id);
+                if ($this->Files->delete($file)) {
+                    //ファイル削除
+                    $this->FileDelete = $this->loadComponent("FileDelete");
+                    if($this->FileDelete->deleteFile($file["unique_file_name"])){
+                        $this->log("---{$file['unique_file_name']} delete true---", LOG_DEBUG);
+                    }else{
+                        $this->log("---{$file['unique_file_name']} delete false---", LOG_DEBUG);
+                    }
+                    $this->Flash->success(__('The file has been deleted.'));
+                } else {
+                    $this->Flash->error(__('The file could not be deleted. Please, try again.'));
+                }
+            }
+            $controller = $session->consume("delete.controller");
+            $action = $session->consume("delete.action");
+            return $this->redirect(["controller" => $controller, "action" => $action]);
+
+        }else{
+            $this->log("---session check false---", LOG_DEBUG);
+            $this->request->allowMethod(['post', 'delete']);
+            $file = $this->Files->get($id);
+            if ($this->Files->delete($file)) {
+                //ファイル削除
+                $this->FileDelete = $this->loadComponent("FileDelete");
+                if($this->FileDelete->deleteFile($file["unique_file_name"])){
+                    $this->log("---{$file['unique_file_name']} delete true---", LOG_DEBUG);
+                }else{
+                    $this->log("---{$file['unique_file_name']} delete false---", LOG_DEBUG);
+                }
+                $this->Flash->success(__('The file has been deleted.'));
+            } else {
+                $this->Flash->error(__('The file could not be deleted. Please, try again.'));
+            }
+        }
+        return $this->redirect(["controller" => "CrewSends", 'action' => 'index']);
+      */
+    }
+
+//おそらくいらない↓
+    public function redirectDelete($ids = null)
+    {
+        $session = $this->request->session();
+        $ids = $session->read("delete_files.id");
+        //get()->主キーで検索してる？
+        foreach($ids as $id){
+            $file = $this->Files->get($id);
+            if ($this->Files->delete($file)) {
+                $this->Flash->success(__('The file has been deleted.'));
+                $this->log("---redirectDelete true---", LOG_DEBUG);
+            } else {
+                $this->Flash->error(__('The file could not be deleted. Please, try again.'));
+                $this->log("---redirectDelete false---", LOG_DEBUG);
+            }
+        }
+        $session->destroy();
+        return $this->redirect(["controller" => "CrewSends", 'action' => 'index']);
+    }
+
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * IncidentChronologies Controller
+ *
+ * @property \App\Model\Table\IncidentChronologiesTable $IncidentChronologies
+ *
+ * @method \App\Model\Entity\IncidentChronology[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class IncidentChronologiesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['RiskDetections', 'Users']
+        ];
+        $incidentChronologies = $this->paginate($this->IncidentChronologies);
+
+        $this->set(compact('incidentChronologies'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Incident Chronology id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $incidentChronology = $this->IncidentChronologies->get($id, [
+            'contain' => ['RiskDetections', 'Users']
+        ]);
+
+        $this->set('incidentChronology', $incidentChronology);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $incidentChronology = $this->IncidentChronologies->newEntity();
+        if ($this->request->is('post')) {
+            $incidentChronology = $this->IncidentChronologies->patchEntity($incidentChronology, $this->request->getData());
+            if ($this->IncidentChronologies->save($incidentChronology)) {
+                $this->Flash->success(__('The incident chronology has been saved.'));
+                //risk、malmail来た方へリダイレクト
+                $url = $this->referer(null, true);
+                preg_match('/detections\/(\w+)/', $url, $match);
+                return $this->redirect(["controller" => "riskDetections", 'action' => $match[1]]);
+                //return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The incident chronology could not be saved. Please, try again.'));
+            return $this->redirect(['action' => 'malmail']);
+        }
+        $riskDetections = $this->IncidentChronologies->RiskDetections->find('list', ['limit' => 200]);
+        $users = $this->IncidentChronologies->Users->find('list', ['limit' => 200]);
+        $this->set(compact('incidentChronology', 'riskDetections', 'users'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Incident Chronology id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $incidentChronology = $this->IncidentChronologies->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $incidentChronology = $this->IncidentChronologies->patchEntity($incidentChronology, $this->request->getData());
+            if ($this->IncidentChronologies->save($incidentChronology)) {
+                $this->Flash->success(__('The incident chronology has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The incident chronology could not be saved. Please, try again.'));
+        }
+        $riskDetections = $this->IncidentChronologies->RiskDetections->find('list', ['limit' => 200]);
+        $users = $this->IncidentChronologies->Users->find('list', ['limit' => 200]);
+        $this->set(compact('incidentChronology', 'riskDetections', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Incident Chronology id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $incidentChronology = $this->IncidentChronologies->get($id);
+        if ($this->IncidentChronologies->delete($incidentChronology)) {
+            $this->Flash->success(__('The incident chronology has been deleted.'));
+        } else {
+            $this->Flash->error(__('The incident chronology could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageAnswers Controller
+ *
+ * @property \App\Model\Table\MessageAnswersTable $MessageAnswers
+ *
+ * @method \App\Model\Entity\MessageAnswer[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageAnswersController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageChoices']
+        ];
+        $messageAnswers = $this->paginate($this->MessageAnswers);
+
+        $this->set(compact('messageAnswers'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Answer id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageAnswer = $this->MessageAnswers->get($id, [
+            'contain' => ['MessageChoices', 'MessageDestinations']
+        ]);
+
+        $this->set('messageAnswer', $messageAnswer);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        if ($this->request->is(['post', "put"])) {
+            $messageAnswer = $this->MessageAnswers->newEntity();
+            $this->log("---getData---", LOG_DEBUG);
+            $this->log($this->request->getData(), LOG_DEBUG);
+            $messageAnswer = $this->MessageAnswers->patchEntity($messageAnswer, $this->request->getData());
+            $this->log("---messageAnswer---", LOG_DEBUG);
+            $this->log($messageAnswer, LOG_DEBUG);
+            if ($this->MessageAnswers->save($messageAnswer)) {
+                $this->Flash->success(__('The message answer has been saved.'));
+
+                return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The message answer could not be saved. Please, try again.'));
+            return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+        }
+        $messageChoices = $this->MessageAnswers->MessageChoices->find('list', ['limit' => 200]);
+        $this->set(compact('messageAnswer', 'messageChoices'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message Answer id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageAnswer = $this->MessageAnswers->get($id, [
+          'contain' => [
+            "MessageDestinations.MessageBords.MessageChoices",
+            "MessageDestinations.Users"
+          ]
+        ]);
+        /*
+        $messageAnswer = $this->MessageAnswers->get($id, [
+          'contain' => [
+            "MessageDestinations.MessageBords.MessageDestinations.Users",
+            "MessageDestinations.MessageBords.MessageDestinations.MessageAnswers",
+            "MessageDestinations.MessageBords.MessageChoices"
+          ]
+        ]);
+         */
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageAnswer = $this->MessageAnswers->patchEntity($messageAnswer, $this->request->getData());
+            if ($this->MessageAnswers->save($messageAnswer)) {
+                $this->Flash->success(__('The message answer has been saved.'));
+
+                return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The message answer could not be saved. Please, try again.'));
+        }
+        foreach($messageAnswer->message_destination->message_bord->message_choices as $choice){
+            $choices[$choice->message_choices_id] = $choice->content;
+        }
+        $this->set(compact('messageAnswer', "choices"));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message Answer id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageAnswer = $this->MessageAnswers->get($id);
+        if ($this->MessageAnswers->delete($messageAnswer)) {
+            $this->Flash->success(__('The message answer has been deleted.'));
+        } else {
+            $this->Flash->error(__('The message answer could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageBordChronologies Controller
+ *
+ * @property \App\Model\Table\MessageBordChronologiesTable $MessageBordChronologies
+ *
+ * @method \App\Model\Entity\MessageBordChronology[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageBordChronologiesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageBords', 'Users']
+        ];
+        $messageBordChronologies = $this->paginate($this->MessageBordChronologies);
+
+        $this->set(compact('messageBordChronologies'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Bord Chronology id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageBordChronology = $this->MessageBordChronologies->get($id, [
+            'contain' => ['MessageBords', 'Users']
+        ]);
+
+        $this->set('messageBordChronology', $messageBordChronology);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $messageBordChronology = $this->MessageBordChronologies->newEntity();
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $messageBordChronology = $this->MessageBordChronologies->patchEntity($messageBordChronology, $data);
+            if ($this->MessageBordChronologies->save($messageBordChronology)) {
+                $this->Flash->success(__('The message bord chronology has been saved.'));
+
+                //ファイルあればアップロード処理
+                if(!empty($data["file"][0]["tmp_name"])){
+                    $id = $messageBordChronology->message_bord_chronologies_id;
+                    $this->Fileupload = $this->loadComponent("Fileupload");
+                    $this->loadModels(["MessageChronologyFiles"]);
+
+                    //ファイルアップロード
+                    $entity = $this->Fileupload->default_upload($data["file"], $id, "message_bord_chronologies");
+                    $file = $this->MessageChronologyFiles->newEntities($entity);
+                    if($this->MessageChronologyFiles->saveMany($file)) {
+                        $this->Flash->success(__('The file has been saved.'));
+                    }else{
+                        $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                    }
+                }
+
+                return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The message bord chronology could not be saved. Please, try again.'));
+            return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+        }
+        return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+        $messageBords = $this->MessageBordChronologies->MessageBords->find('list', ['limit' => 200]);
+        $this->set(compact('messageBordChronology', 'messageBords', 'users'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message Bord Chronology id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageBordChronology = $this->MessageBordChronologies->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageBordChronology = $this->MessageBordChronologies->patchEntity($messageBordChronology, $this->request->getData());
+            if ($this->MessageBordChronologies->save($messageBordChronology)) {
+                $this->Flash->success(__('The message bord chronology has been saved.'));
+
+                return $this->redirect(["controller" => "MessageBords", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The message bord chronology could not be saved. Please, try again.'));
+            return $this->redirect(["controller" => "MessageBords", 'action' => 'index']);
+        }
+        $messageBords = $this->MessageBordChronologies->MessageBords->find('list', ['limit' => 200]);
+        $users = $this->MessageBordChronologies->Users->find('list', ['limit' => 200]);
+        $this->set(compact('messageBordChronology', 'messageBords', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message Bord Chronology id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageBordChronology = $this->MessageBordChronologies->get($id);
+        if ($this->MessageBordChronologies->delete($messageBordChronology)) {
+            $this->Flash->success(__('The message bord chronology has been deleted.'));
+        } else {
+            $this->Flash->error(__('The message bord chronology could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(["controller" => "MessageBords", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageBords Controller
+ *
+ * @property \App\Model\Table\MessageBordsTable $MessageBords
+ *
+ * @method \App\Model\Entity\MessageBord[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageBordsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->loadModels(["MessageAnswers", "MessageBordChronologies", "Users", "PrivateMessages"]);
+        $messageAnswers = $this->MessageAnswers->newEntity();
+        $messageBordChronologies = $this->MessageBordChronologies->newEntity();
+
+        $this->paginate = [
+            'contain' => [
+              "MessageBords.Users",
+              "MessageBords.IncidentManagements.ManagementPrefixes",
+              'MessageBords.MessageStatuses', 
+              "MessageBords.MessageDestinations.Users", 
+              "MessageBords.MessageDestinations.MessageAnswers.MessageChoices", 
+              "MessageBords.MessageChoices", 
+              "MessageBords.MessageBordChronologies.Users",
+              "MessageBords.MessageBordChronologies.MessageChronologyFiles",
+              "MessageBords.PrivateMessages.Users", 
+              "MessageBords.MessageFiles"
+            ],
+            "order" => ["message_bords_id" => "desc"],
+            "maxLimit" => 5
+          ];
+
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $privateMessages = $this->PrivateMessages->find("all")
+            //->where(["OR" => [["PrivateMessages.users_id" => $loginUser], ["PrivateMessages.users_id" => 14]]]);
+            ->where(["OR" => [["PrivateMessages.users_id" => $loginUser], ["PrivateMessages.users_id" => 7]]]);
+        $messageBords = $this->paginate($privateMessages);
+        $normalUsers = $this->Users->find('list', ['limit' => 200])
+            ->where(["delete_flag" => 0])
+            ->order(["user_sort_number" => "asc"]);
+        $this->set(compact('messageBords', "messageAnswers", "messageBordChronologies", "normalUsers", "loginUser"));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Bord id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageBord = $this->MessageBords->get($id, [
+            'contain' => ['MessageStatuses']
+        ]);
+
+        $this->set('messageBord', $messageBord);
+    }
+
+    public function privateView($id = null)
+    {
+        $messageBords = $this->MessageBords->get($id, [
+            'contain' => ['PrivateMessages.Users']
+        ]);
+
+        $addUser = $this->MessageBords->get($id,[
+            "contain" => ["Users"]
+        ]);
+        $addUser = $addUser->user->users_id;
+
+        $this->set(compact('messageBords', "addUser"));
+    }
+
+    public function destinationView($id = null)
+    {
+        $messageBords = $this->MessageBords->get($id, [
+            'contain' => ['MessageDestinations.Users']
+        ]);
+
+        $this->set(compact('messageBords', "addUser"));
+    }
+
+    public function choiceView($id = null)
+    {
+        $messageBords = $this->MessageBords->get($id, [
+            'contain' => ['MessageChoices']
+        ]);
+
+        $this->set(compact('messageBords', "addUser"));
+    }
+
+    public function add()
+    {
+        //選択肢ないとエラーにする
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $messageBord = $this->MessageBords->newEntity();
+        $this->loadModels(["MessageChoices", "MessageDestinations", "Users", "PrivateMessages", "MessageFiles"]);
+        if ($this->request->is('post')) {
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            $data = $this->request->getdata();
+            $this->log("--- data ---", LOG_DEBUG);
+            $this->log($data, LOG_DEBUG);
+            $messageBord = $this->MessageBords->patchEntity($messageBord, $data);
+
+            //MessageBord save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(4)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $messageBord = $this->MessageBords->patchEntity($messageBord, $data);
+                if ($this->MessageBords->save($messageBord)) 
+                {
+                    $this->Flash->success(__('The message bord has been saved.'));
+                    $bordId = $messageBord->message_bords_id;
+
+                    //privateMessage保存
+                    if(!empty($data["allUser"][0]))
+                    {
+                        $this->privateAllUserSave($data["allUser"][0], $bordId);
+                    }
+                    else if(
+                        !empty($data["soukatuPrv"]) || 
+                        !empty($data["kenkyoPrv"]) || 
+                        !empty($data["systemPrv"]) || 
+                        !empty($data["systemPrv"]))
+                    {
+                        $this->userEntityEdit($data, "Prv", "private", $loginUser, true, $bordId);
+                    }
+                    else
+                    {
+                        //$this->log("作成者のみ閲覧可", LOG_DEBUG);
+                        $privateMessage = $this->PrivateMessages->newEntity();
+                        $privateEntity = [
+                            "message_bords_id" => $bordId,
+                            "users_id" => $loginUser
+                        ];
+                        //$this->log("---privateMessage---", LOG_DEBUG);
+                        //$this->log($privateMessage, LOG_DEBUG);
+                        //$this->log("---privateEntity---", LOG_DEBUG);
+                        //$this->log($privateEntity, LOG_DEBUG);
+                        $privateMessage = $this->PrivateMessages->patchEntity($privateMessage, $privateEntity);
+                        if ($this->PrivateMessages->save($privateMessage)) 
+                        {
+                            //$this->log("プライベートユーザにログイン中のユーザを登録", LOG_DEBUG);
+                        }
+                        else
+                        {
+                            //$this->log("プライベートユーザ登録失敗", LOG_DEBUG);
+                        }
+                    }
+
+                    //choiceを保存
+                    if(!empty($data["content"][0]))
+                    {
+                        //$this->log("choice save", LOG_DEBUG);
+                        $this->choiceSave($data["content"], $bordId);
+                    }
+
+                    //destination保存
+                    if(
+                        !empty($data["soukatuDest"]) || 
+                        !empty($data["kenkyoDest"]) || 
+                        !empty($data["systemDest"]) || 
+                        !empty($data["systemDest"]))
+                    {
+                        $group = [
+                            "soukatuDest",
+                            "kenkyoDest",
+                            "systemDest",
+                            "kintaiDest"
+                        ];
+                        foreach($group as $dest)
+                        {
+                            foreach($data[$dest] as $destUser)
+                            {
+                                $destinationUser[] = $destUser;
+                            }
+                        }
+                        if(!empty($destinationUser))
+                        {
+                            $this->destinationSave($destinationUser, $bordId);
+                        }
+                    }
+                    //$this->log("---destination User なし---", LOG_DEBUG);
+
+                    //file保存
+                    if(!empty($data["file"][0]["tmp_name"]))
+                    {
+                        //ファイルアップロード
+                        $this->Fileupload = $this->loadComponent("Fileupload");
+                        $entity = $this->Fileupload->default_upload($data["file"], $bordId, "message_bords");
+                        $file = $this->MessageFiles->newEntities($entity);
+                        if($this->MessageFiles->saveMany($file)) 
+                        {
+                          $this->Flash->success(__('ファイルのアップロードに成功しました。'));
+                        }
+                        else
+                        {
+                          $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                        }
+                        return $this->redirect(['action' => 'index']);
+                    }
+                    else
+                    {
+                        return $this->redirect(['action' => 'index']);
+                    }
+                }
+            }
+            $this->Flash->error(__('The message bord could not be saved. Please, try again.'));
+            return $this->redirect(['action' => 'index']);
+
+        }
+        $messageStatuses = $this->MessageBords->MessageStatuses->find('list', ['limit' => 200]);
+
+        //各班ごとでユーザ取得
+        $soukatu = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 1])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $kenkyo = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 2])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $system = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 3])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $kintai = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 4])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+
+        $allUser = $this->Users->find("list", ["limit" => 200])
+            //->where(["users_id" => 14]);
+            ->where(["users_id" => 7]);
+
+
+        $users = $this->Users->find('list', ['limit' => 200])
+            ->order(["user_sort_number" => "asc"])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["delete_flag" => 0]);
+
+        $createUser = $this->Users->find("list", ["limit" => 200])
+            ->where(["users_id" => $loginUser]);
+
+        //$this->set(compact('messageBord', 'messageStatuses', "users", "allUser", "soukatu", "kenkyo", "system", "kintai", "createUser"));
+        $this->set(compact('messageBord', 'messageStatuses', "allUser", "soukatu", "kenkyo", "system", "kintai", "createUser", "loginUser"));
+    }
+
+    public function chronoloAdd()
+    {
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $messageBord = $this->MessageBords->newEntity();
+        $this->loadModels(["MessageChoices", "MessageDestinations", "Users", "MessageFiles"]);
+        if ($this->request->is('post')) {
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            $data = $this->request->getdata();
+            $messageBord = $this->MessageBords->patchEntity($messageBord, $data);
+
+            //MessageBord save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(4)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $messageBord = $this->MessageBords->patchEntity($messageBord, $data);
+                if ($this->MessageBords->save($messageBord)) 
+                {
+                    $this->Flash->success(__('The message bord has been saved.'));
+                    $bordId = $messageBord->message_bords_id;
+
+                    //privateMessage保存
+                    if(!empty($data["allUser"][0]))
+                    {
+                        //$this->log("private allUser save", LOG_DEBUG);
+                        $this->privateAllUserSave($data["allUser"][0], $bordId);
+                    }
+                    else
+                    {
+                        $group = [
+                            "soukatuPrv",
+                            "kenkyoPrv",
+                            "systemPrv",
+                            "kintaiPrv"
+                        ];
+                        $privateUser = null;
+                        foreach($group as $private)
+                        {
+                            //$this->log("---foreach group as private---", LOG_DEBUG);
+                            //$this->log($private, LOG_DEBUG);
+                            if(!empty($data[$private][0]))
+                            {
+                                foreach($data[$private] as $prvUser)
+                                {
+                                    //$this->log("---foreach data[private] as destUser---", LOG_DEBUG);
+                                    //$this->log($prvUser, LOG_DEBUG);
+                                    $privateUser[] = $prvUser;
+                                }
+                            }
+                        }
+                        $this->privateSave($privateUser, $bordId, $loginUser, true);
+                    }
+
+                    //file保存
+                    if(!empty($data["file"][0]["tmp_name"]))
+                    {
+                        //ファイルアップロード
+                        $this->Fileupload = $this->loadComponent("Fileupload");
+                        $entity = $this->Fileupload->default_upload($data["file"], $bordId, "message_bords");
+                        $file = $this->MessageFiles->newEntities($entity);
+                        if($this->MessageFiles->saveMany($file)) 
+                        {
+                          $this->Flash->success(__('ファイルのアップロードに成功しました。'));
+                        }
+                        else
+                        {
+                          $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                        }
+                        return $this->redirect(['action' => 'index']);
+                    }
+                    else
+                    {
+                        return $this->redirect(['action' => 'index']);
+                    }
+                }
+            }
+            $this->Flash->error(__('The message bord could not be saved. Please, try again.'));
+            return $this->redirect(['action' => 'index']);
+
+        }
+        $messageStatuses = $this->MessageBords->MessageStatuses->find('list', ['limit' => 200]);
+        //各班ごとでユーザ取得
+        $soukatu = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 1])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $kenkyo = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 2])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $system = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 3])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $kintai = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 4])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $allUser = $this->Users->find("list", ["limit" => 200])
+            //->where(["users_id" => 14]);
+            ->where(["users_id" => 7]);
+        $users = $this->Users->find('list', ['limit' => 200])
+            ->order(["user_sort_number" => "asc"])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["delete_flag" => 0]);
+        $createUser = $this->Users->find("list", ["limit" => 200])
+            ->where(["users_id" => $loginUser]);
+
+        //$this->set(compact('messageBord', 'messageStatuses', "users", "allUser", "soukatu", "kenkyo", "system", "kintai", "createUser"));
+        $this->set(compact('messageBord', 'messageStatuses', "allUser", "soukatu", "kenkyo", "system", "kintai", "createUser", "loginUser"));
+    }
+
+    public function edit($id = null)
+    {
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $messageBord = $this->MessageBords->get($id, [
+            'contain' => ["MessageChoices", "MessageDestinations", "Users", "PrivateMessages"]
+        ]);
+        $privateMessagesId = $messageBord->private_messages[0]["private_messages_id"];
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($messageBord)){
+            $this->loadModels(["Users", "MessageFiles", "MessageDestinations", "PrivateMessages"]);
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $data = $this->request->getdata();
+                $this->log("---data---", LOG_DEBUG);
+                $this->log($data, LOG_DEBUG);
+                $messageBordSave = $this->MessageBords->patchEntity($messageBord, $data);
+                if ($this->MessageBords->save($messageBordSave)) {
+                    $this->Flash->success(__('The message bord has been saved.'));
+
+                    $allCheck = $this->PrivateMessages->find("list", ["list" => 200])
+                        ->select(["users_id"])
+                        ->where(["message_bords_id" => $id])
+                        //->where(["users_id" => 14]);
+                        ->where(["users_id" => 7]);
+
+                    //privateMessage保存
+                    if(!empty($data["allUser"][0]))
+                    {
+                        //allUserがすでに登録されていないことを確認
+                        //$this->log("---allCheck sql---", LOG_DEBUG);
+                        //$this->log($allCheck, LOG_DEBUG);
+                        //$this->log("---allCheck list---", LOG_DEBUG);
+                        //$this->log($allCheck->toList(), LOG_DEBUG);
+                        //$this->privateAllUserSave($data["allUser"][0], $id);
+                        if(empty($allCheck->toArray()))
+                        {
+                            //パターン　user->all
+                            
+                            //allUserは登録されていない
+                            //すべてのユーザに閲覧許可を与えたら、個々のユーザは削除する
+                            //そうしないと重複してメッセージボードが表示される
+                            
+                            //削除するprivateMessageのmessage_bords_id取得
+                            $deletePrivateMessage = $this->PrivateMessages->find("all")
+                                ->select(["message_bords_id"])
+                                ->where(["message_bords_id" => $id]);
+                            $tmp = $deletePrivateMessage->toArray();
+                            $deletePrivateMessage = ["message_bords_id" => $tmp[0]["message_bords_id"]];
+
+                            //一括削除
+                            if($this->PrivateMessages->deleteAll($deletePrivateMessage))
+                            {
+                                //削除成功したらallUserを登録
+                                $this->privateAllUserSave($data["allUser"][0], $id);
+                            }
+
+                        }
+
+                        //パターン　all->all
+                        //すでにallUserが登録されていたらなにもしない
+
+                        //editの場合、各ユーザが登録されたあとにallUserを登録するならば、
+                        //各ユーザは削除する処理を記述する
+                    }
+                    else if(!empty($data["soukatuPrv"]) || !empty($data["kenkyoPrv"]) || !empty($data["systemPrv"]) || !empty($data["kintaiPrv"]))
+                    {
+                        if(!empty($allCheck->toArray()))
+                        {
+                            //パターン　all->user
+
+                            //allUser登録済みだけど、ユーザを登録しようとしている
+                            //allUser削除して、ユーザを登録する
+
+                            $privateMessage = $this->PrivateMessages->get($privateMessagesId);
+                            if ($this->PrivateMessages->delete($privateMessage)) 
+                            {
+                                //allUser削除したら作成者の閲覧権限を登録
+                                $entity[] = $messageBord->users_id;
+                                $this->privateSave($entity, $id, $loginUser, false);
+                            }
+                            else
+                            {
+                                //$this->log("---allUser private message 削除失敗---", LOG_DEBUG);
+                            }
+
+                        }
+                        //パターン　user->user
+                        //パターン　all->user
+                        //共通処理
+                        $this->userEntityEdit($data, "Prv", "private", $loginUser, false, $id);
+                    }
+                    else
+                    {
+                        //$this->log("閲覧権限追加なし", LOG_DEBUG);
+                    }
+
+                    //choiceを保存
+                    if(!empty($data["content"][0]))
+                    {
+                        $this->choiceSave($data["content"], $id);
+                    }
+
+                    //destination保存
+                    if(!empty($data["soukatuDest"]) || !empty($data["kenkyoDest"]) || !empty($data["systemDest"]) || !empty($data["kintaiDest"]))
+                    {
+                        //登録ユーザあり
+                        $entity[] = $messageBord->users_id;
+                        $this->userEntityEdit($data, "Dest", "destination", $loginUser, false, $id);
+                    }
+                    else
+                    {
+                        //$this->log("宛先追加なし", LOG_DEBUG);
+                    }
+                    /*
+                    $group = [
+                        "soukatuDest",
+                        "kenkyoDest",
+                        "systemDest",
+                        "kintaiDest"
+                    ];
+                    foreach($group as $dest)
+                    {
+                        foreach($data[$dest] as $destUser)
+                        {
+                            $destinationUser[] = $destUser;
+                        }
+                    }
+                    if(!empty($destinationUser))
+                    {
+                        $this->destinationSave($destinationUser, $bordId);
+                    }
+                     */
+
+                    //file保存
+                    if(!empty($data["file"][0]["tmp_name"])){
+                      $this->Fileupload = $this->loadComponent("Fileupload");
+                      $entity = $this->Fileupload->default_upload($data["file"], $id, "message_bords");
+                      $file = $this->MessageFiles->newEntities($entity);
+                      if($this->MessageFiles->saveMany($file)) {
+                        $this->Flash->success(__('ファイルのアップロードに成功しました。'));
+                      }else{
+                        $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                      }
+                    }
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The message bord could not be saved. Please, try again.'));
+            }
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+
+        $messageStatuses = $this->MessageBords->MessageStatuses->find('list', ['limit' => 200]);
+        $messageDestinations = $messageBord->message_destinations;
+        $messageChoices = $messageBord->message_choices;
+
+        $privateUser = $this->MessageBords->get($id, [
+            'contain' => ['PrivateMessages.Users']
+        ]);
+
+        //作成者非表示用
+        $entity = $messageBord->users_id;
+
+        //各班ごとでユーザ取得
+        //private用
+        $privateSoukatu = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 1])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateKenkyo = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 2])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateSystem = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 3])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateKintai = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 4])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+
+
+        //private用
+        foreach($privateUser->private_messages as $user)
+        {
+            if($user->user->belongs_id == 1)
+            {
+                $privateSoukatu->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 2)
+            {
+                $privateKenkyo->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 3)
+            {
+                $privateSystem->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 4)
+            {
+                $privateKintai->where(["users_id !=" => $user->users_id]);
+            }
+        }
+
+
+        $destinationUser = $this->MessageBords->get($id, [
+            'contain' => ['MessageDestinations.Users']
+        ]);
+
+        //各班ごとでユーザ取得
+        //destination用
+        $destinationSoukatu = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 1])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $destinationKenkyo = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 2])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $destinationSystem = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 3])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+        $destinationKintai = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 4])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $loginUser])
+            ->where(["delete_flag" => 0]);
+
+        foreach($destinationUser->message_destinations as $user)
+        {
+            if($user->user->belongs_id == 1)
+            {
+                $destinationSoukatu->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 2)
+            {
+                $destinationKenkyo->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 3)
+            {
+                $destinationSystem->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 4)
+            {
+                $destinationKintai->where(["users_id !=" => $user->users_id]);
+            }
+        }
+
+        $users = $this->Users->find('list', ['limit' => 200])
+            ->order(["user_sort_number" => "asc"])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["delete_flag" => 0]);
+
+        $allUser = $this->Users->find("list", ["limit" => 200])
+            //->where(["users_id" => 14]);
+            ->where(["users_id" => 7]);
+
+        $createUser = $messageBord->users_id;
+
+
+
+        $this->set(compact(
+            'messageBord', 
+            'messageStatuses', 
+            "users", 
+            "createUser", 
+            "allUser", 
+            "loginUser",
+            "messageDestinations", 
+            "messageChoices", 
+            "privateSoukatu", 
+            "privateKenkyo", 
+            "privateSystem", 
+            "privateKintai", 
+            "privateUser", 
+            "destinationSoukatu", 
+            "destinationKenkyo", 
+            "destinationSystem", 
+            "destinationKintai",
+            "destinationUser"
+        ));
+    }
+
+    public function chronoloEdit($id = null)
+    {
+        $loginUser = $this->getRequest()->getSession()->read("Auth.User.users_id");
+        $messageBord = $this->MessageBords->get($id, [
+            'contain' => ["MessageChoices", "MessageDestinations", "Users", "PrivateMessages"]
+        ]);
+        $privateMessagesId = $messageBord->private_messages[0]["private_messages_id"];
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($messageBord)){
+            $this->loadModels(["Users", "MessageFiles", "PrivateMessages"]);
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $data = $this->request->getdata();
+                //$this->log("---data---", LOG_DEBUG);
+                //$this->log($data, LOG_DEBUG);
+                $messageBord = $this->MessageBords->patchEntity($messageBord, $data);
+                //$this->log("---patchEntity messageBord---", LOG_DEBUG);
+                //$this->log($messageBord, LOG_DEBUG);
+                if ($this->MessageBords->save($messageBord)) {
+                    $this->Flash->success(__('The message bord has been saved.'));
+                    //$bordId = $messageBord->message_bords_id;
+
+                    //privateMessage保存
+                    //allUserが登録されているか確認
+                    $allCheck = $this->PrivateMessages->find("list", ["list" => 200])
+                        ->select(["users_id"])
+                        ->where(["message_bords_id" => $id])
+                        //->where(["users_id" => 14]);
+                        ->where(["users_id" => 7]);
+                    //$this->log("---allCheck->toArray() ---", LOG_DEBUG);
+                    //$this->log($allCheck->toArray(), LOG_DEBUG);
+
+                    //$this->log("---empty allUser---" , LOG_DEBUG);
+                    //$this->log($data["allUser"], LOG_DEBUG);
+
+                    if(!empty($data["allUser"][0]))
+                    {
+                        //$this->log("---allUser not empty---" , LOG_DEBUG);
+                        if(empty($allCheck->toArray()))
+                        {
+                            //$this->log("---allUser 登録なし---", LOG_DEBUG);
+                            //$this->log("---private user 削除して allUser登録---", LOG_DEBUG);
+                            //すべてのユーザに閲覧許可を与えたら、個々のユーザは削除する
+                            //そうしないと重複してメッセージボードが表示される
+                            $deletePrivateMessage = $this->PrivateMessages->find("all")
+                                ->select(["message_bords_id"])
+                                ->where(["message_bords_id" => $id]);
+                            $tmp = $deletePrivateMessage->toArray();
+                            $deletePrivateMessage = ["message_bords_id" => $tmp[0]["message_bords_id"]];
+                            //$this->log("---deletePrivateMessage->toArray()[0][message_bords_id]---", LOG_DEBUG);
+                            //$this->log($deletePrivateMessage, LOG_DEBUG);
+                            if($this->PrivateMessages->deleteAll($deletePrivateMessage))
+                            {
+                                //$this->log("deleteAll complate. allUser save", LOG_DEBUG);
+                                $this->privateAllUserSave($data["allUser"][0], $id);
+                            }
+                            else
+                            {
+                                //$this->log("deleteAll error. not allSave", LOG_DEBUG);
+                            }
+
+                        }
+                        else
+                        {
+                            //$this->log("---allUserすでに登録あり---", LOG_DEBUG);
+                        }
+                        
+                        //editの場合、各ユーザが登録されたあとにallUserを登録するならば、
+                        //各ユーザは削除する処理を記述する
+                    }
+                    else if(!empty($data["soukatuPrv"]) || !empty($data["kenkyoPrv"]) || !empty($data["systemPrv"]) || !empty($data["kintaiPrv"])) 
+                    {
+                        if(!empty($allCheck->toArray()))
+                        {
+                            //$this->log("---allUser登録済みだけど、ユーザを登録しようとしている---", LOG_DEBUG);
+                            //$this->log("---allUser削除して、ユーザを登録する---", LOG_DEBUG);
+                            //$privateMessagesId = $messageBord->private_messages[0]["private_messages_id"];
+
+                            $privateMessage = $this->PrivateMessages->get($privateMessagesId);
+                            if ($this->PrivateMessages->delete($privateMessage)) 
+                            {
+                                //$this->log("---allUser private message 削除---", LOG_DEBUG);
+                                //allUser削除したら作成者の閲覧権限を登録
+                                $entity[] = $messageBord->users_id;
+                                $this->privateSave($entity, $id, $loginUser, false);
+                            }
+                            else
+                            {
+                                //$this->log("---allUser private message 削除失敗---", LOG_DEBUG);
+                            }
+
+                        }
+                        //$this->log("---ユーザ選択されている---", LOG_DEBUG);
+                        $this->userEntityEdit($data, "Prv", "private", $loginUser, false, $id);
+                    }
+
+                    //file保存
+                    if(!empty($data["file"][0]["tmp_name"])){
+                        $this->Fileupload = $this->loadComponent("Fileupload");
+                        $entity = $this->Fileupload->default_upload($data["file"], $id, "message_bords");
+                        $file = $this->MessageFiles->newEntities($entity);
+                        if($this->MessageFiles->saveMany($file)) {
+                          $this->Flash->success(__('ファイルのアップロードに成功しました。'));
+                        }else{
+                          $this->Flash->error(__('ファイルのアップロードに失敗しました。'));
+                        }
+                    }
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The message bord could not be saved. Please, try again.'));
+            }
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+
+        $messageStatuses = $this->MessageBords->MessageStatuses->find('list', ['limit' => 200]);
+        $messageDestinations = $messageBord->message_destinations;
+        $messageChoices = $messageBord->message_choices;
+
+        $privateUser = $this->MessageBords->get($id, [
+            'contain' => ['PrivateMessages.Users']
+        ]);
+
+        //作成者非表示用
+        $entity = $messageBord->users_id;
+        //各班ごとでユーザ取得
+        //private用
+        $privateSoukatu = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 1])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateKenkyo = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 2])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateSystem = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 3])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+        $privateKintai = $this->Users->find("list", ["limit" => 200])
+            ->where(["belongs_id" => 4])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["users_id !=" => $entity])
+            ->where(["delete_flag" => 0]);
+
+
+        //private用
+        foreach($privateUser->private_messages as $user)
+        {
+            if($user->user->belongs_id == 1)
+            {
+                $privateSoukatu->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 2)
+            {
+                $privateKenkyo->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 3)
+            {
+                $privateSystem->where(["users_id !=" => $user->users_id]);
+            }
+            elseif($user->user->belongs_id == 4)
+            {
+                $privateKintai->where(["users_id !=" => $user->users_id]);
+            }
+        }
+
+        $users = $this->Users->find('list', ['limit' => 200])
+            ->order(["user_sort_number" => "asc"])
+            //->where(["users_id !=" => 14])
+            ->where(["users_id !=" => 7])
+            ->where(["delete_flag" => 0]);
+
+        $allUser = $this->Users->find("list", ["limit" => 200])
+            //->where(["users_id" => 14]);
+            ->where(["users_id" => 7]);
+
+        $createUser = $messageBord->users_id;
+
+        $this->set(compact(
+            'messageBord', 
+            'messageStatuses', 
+            "users", 
+            "createUser", 
+            "allUser", 
+            "loginUser",
+            "messageChoices", 
+            "privateSoukatu", 
+            "privateKenkyo", 
+            "privateSystem", 
+            "privateKintai", 
+            "privateUser"
+        ));
+
+    }
+
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageBord = $this->MessageBords->get($id,[
+            "contain" => ["MessageFiles", "Users"]
+        ]);
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($messageBord)){
+            if ($this->MessageBords->delete($messageBord)) {
+                //ファイルあれば
+                if(!empty($messageBord->message_files)){
+                    foreach($messageBord->message_files as $file){
+                        $uniqueFileNames[] = $file->unique_file_name;
+                    }
+                    $this->FileDelete = $this->loadComponent("FileDelete");
+                    //ディレクトリ内のファイルを削除
+                    $this->FileDelete->deleteFiles($uniqueFileNames);
+                }
+                $this->Flash->success(__('The message bord has been deleted.'));
+            } else {
+                $this->Flash->error(__('The message bord could not be deleted. Please, try again.'));
+            }
+            return $this->redirect(['action' => 'index']);
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+    }
+
+    public function choiceSave($data = null, $id = null)
+    {
+        $this->loadModels(["MessageChoices"]);
+        //choiceのentity作成
+        foreach($data as $content){
+            $choiceEntity[] = [
+                "message_bords_id" => $id,
+                "content" => $content
+            ];
+        }
+        $messageChoice = $this->MessageChoices->newEntities($choiceEntity);
+        if($this->MessageChoices->saveMany($messageChoice)){
+            return true;
+        }
+        return false;
+    }
+
+    public function destinationSave($data = null, $id = null)
+    {
+        $this->loadModels(["MessageDestinations"]);
+        if($data != null)
+        {
+            foreach($data as $user){
+                $destinationEntity[] = [
+                    "message_bords_id" => $id,
+                    "users_id" => $user
+                ];
+            }
+        }
+        $messageDestination = $this->MessageDestinations->newEntities($destinationEntity);
+        if($this->MessageDestinations->saveMany($messageDestination)){
+            return true;
+        }
+        return false;
+    }
+
+    public function privateSave($data = null, $id = null, $loginUser = null, $isAdd = null)
+    {
+        //$this->loadModels(["PrivateMessages", "Users"]);
+        $this->loadModels(["PrivateMessages"]);
+        if($data != null)
+        {
+            foreach($data as $user){
+                $privateEntity[] = [
+                    "message_bords_id" => $id,
+                    "users_id" => $user
+                ];
+            }
+        }
+        //addのみログインユーザ(作成ユーザも兼ねてる)も追加
+        if($isAdd)
+        {
+            $privateEntity[] = [
+                "message_bords_id" => $id,
+                "users_id" => $loginUser
+            ];
+        }
+
+        /*
+        $normalUsers = $this->Users->find('list', ['limit' => 200])
+            ->where(["delete_flag" => 0])
+            ->order(["user_sort_number" => "asc"]);
+         */
+
+
+        $privateMessages = $this->PrivateMessages->newEntities($privateEntity);
+        if($this->PrivateMessages->saveMany($privateMessages)){
+            return true;
+        }
+        return false;
+    }
+
+    public function privateAllUserSave($allUser = null, $id = null)
+    {
+        $this->loadModels(["PrivateMessages"]);
+        $privateEntity = [
+            "message_bords_id" => $id,
+            "users_id" => $allUser
+        ];
+        $privateMessages = $this->PrivateMessages->newEntity();
+        $privateMessages = $this->PrivateMessages->patchEntity($privateMessages, $privateEntity);
+        if($this->PrivateMessages->save($privateMessages))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public function userEntityEdit($data, $groupType, $type, $loginUser, $isAdd, $id)
+    {
+        $groups = [
+            "soukatu{$groupType}",
+            "kenkyo{$groupType}",
+            "system{$groupType}",
+            "kintai{$groupType}"
+        ];
+        $users = null;
+        foreach($groups as $group)
+        {
+            //$this->log($group, LOG_DEBUG);
+            //$this->log("---data[group]---", LOG_DEBUG);
+            //$this->log($data[$group], LOG_DEBUG);
+            if(!empty($data[$group][0]))
+            {
+                foreach($data[$group] as $user)
+                {
+                    //$this->log("---foreach data[group] as user---", LOG_DEBUG);
+                    //$this->log($user, LOG_DEBUG);
+                    $users[] = $user;
+                }
+            }
+        }
+        //$this->log("---追加する private user---", LOG_DEBUG);
+        //$this->log($user, LOG_DEBUG);
+        if($users != null)
+        {
+            $type = "{$type}Save";
+            $this->$type($users, $id, $loginUser, $isAdd);
+        }
+    }
+
+    /*
+    public function duplication($data = null)
+    {
+        //private destination の重複登録を防ぐ
+        //登録データ取得(edit系のみ)
+        //POSTデータと比較
+            //POSTないですである重複も確認
+        $data["soukatu{$type}"]
+    }
+     */
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageChoices Controller
+ *
+ * @property \App\Model\Table\MessageChoicesTable $MessageChoices
+ *
+ * @method \App\Model\Entity\MessageChoice[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageChoicesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageBords']
+        ];
+        $messageChoices = $this->paginate($this->MessageChoices);
+
+        $this->set(compact('messageChoices'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Choice id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageChoice = $this->MessageChoices->get($id, [
+            'contain' => ['MessageBords', 'MessageAnswers']
+        ]);
+
+        $this->set('messageChoice', $messageChoice);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $messageChoice = $this->MessageChoices->newEntity();
+        if ($this->request->is('post')) {
+            $messageChoice = $this->MessageChoices->patchEntity($messageChoice, $this->request->getData());
+            if ($this->MessageChoices->save($messageChoice)) {
+                $this->Flash->success(__('The message choice has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message choice could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->MessageChoices->MessageBords->find('list', ['limit' => 200]);
+        $this->set(compact('messageChoice', 'messageBords'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message Choice id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageChoice = $this->MessageChoices->get($id, [
+            'contain' => ["MessageBords"]
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageChoice = $this->MessageChoices->patchEntity($messageChoice, $this->request->getData());
+            if ($this->MessageChoices->save($messageChoice)) {
+                $this->Flash->success(__('The message choice has been saved.'));
+
+                return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+            }
+            $this->Flash->error(__('The message choice could not be saved. Please, try again.'));
+        }
+        $this->set(compact('messageChoice'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message Choice id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageChoice = $this->MessageChoices->get($id);
+        if ($this->MessageChoices->delete($messageChoice)) {
+            $this->Flash->success(__('The message choice has been deleted.'));
+        } else {
+            $this->Flash->error(__('The message choice could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageDestinations Controller
+ *
+ * @property \App\Model\Table\MessageDestinationsTable $MessageDestinations
+ *
+ * @method \App\Model\Entity\MessageDestination[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageDestinationsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageBords', 'Users']
+        ];
+        $messageDestinations = $this->paginate($this->MessageDestinations);
+
+        $this->set(compact('messageDestinations'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Destination id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageDestination = $this->MessageDestinations->get($id, [
+            'contain' => ['MessageBords', 'Users', 'MessageAnswers']
+        ]);
+
+        $this->set('messageDestination', $messageDestination);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $messageDestination = $this->MessageDestinations->newEntity();
+        if ($this->request->is('post')) {
+            $messageDestination = $this->MessageDestinations->patchEntity($messageDestination, $this->request->getData());
+            if ($this->MessageDestinations->save($messageDestination)) {
+                $this->Flash->success(__('The message destination has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message destination could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->MessageDestinations->MessageBords->find('list', ['limit' => 200]);
+        $users = $this->MessageDestinations->Users->find('list', ['limit' => 200]);
+        $this->set(compact('messageDestination', 'messageBords', 'users'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message Destination id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageDestination = $this->MessageDestinations->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageDestination = $this->MessageDestinations->patchEntity($messageDestination, $this->request->getData());
+            if ($this->MessageDestinations->save($messageDestination)) {
+                $this->Flash->success(__('The message destination has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message destination could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->MessageDestinations->MessageBords->find('list', ['limit' => 200]);
+        $users = $this->MessageDestinations->Users->find('list', ['limit' => 200]);
+        $this->set(compact('messageDestination', 'messageBords', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message Destination id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $messageDestination = $this->MessageDestinations->get($id);
+        $this->loadModels(["MessageBords"]);
+        $messageBord = $this->MessageBords->get($messageDestination->message_bords_id, [
+            'contain' => ["Users"]
+        ]);
+
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($messageBord))
+        {
+            $this->request->allowMethod(['post', 'delete']);
+            $messageDestination = $this->MessageDestinations->get($id);
+            if ($this->MessageDestinations->delete($messageDestination)) {
+                $this->Flash->success(__('The message destination has been deleted.'));
+            } else {
+                $this->Flash->error(__('The message destination could not be deleted. Please, try again.'));
+            }
+        }
+        else
+        {
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+
+        return $this->redirect(["controller" => "MessageBords", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageFiles Controller
+ *
+ * @property \App\Model\Table\MessageFilesTable $MessageFiles
+ *
+ * @method \App\Model\Entity\MessageFile[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageFilesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageBords']
+        ];
+        $messageFiles = $this->paginate($this->MessageFiles);
+
+        $this->set(compact('messageFiles'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message File id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageFile = $this->MessageFiles->get($id, [
+            'contain' => ['MessageBords']
+        ]);
+
+        $this->set('messageFile', $messageFile);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $messageFile = $this->MessageFiles->newEntity();
+        if ($this->request->is('post')) {
+            $messageFile = $this->MessageFiles->patchEntity($messageFile, $this->request->getData());
+            if ($this->MessageFiles->save($messageFile)) {
+                $this->Flash->success(__('The message file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message file could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->MessageFiles->MessageBords->find('list', ['limit' => 200]);
+        $this->set(compact('messageFile', 'messageBords'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message File id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageFile = $this->MessageFiles->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageFile = $this->MessageFiles->patchEntity($messageFile, $this->request->getData());
+            if ($this->MessageFiles->save($messageFile)) {
+                $this->Flash->success(__('The message file has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message file could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->MessageFiles->MessageBords->find('list', ['limit' => 200]);
+        $this->set(compact('messageFile', 'messageBords'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message File id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageFile = $this->MessageFiles->get($id);
+        if ($this->MessageFiles->delete($messageFile)) {
+            $uniqueFileNames[] = $messageFile->unique_file_name;
+            //ディレクトリ内のファイルを削除
+            $this->FileDelete = $this->loadComponent("FileDelete");
+            $this->FileDelete->deleteFiles($uniqueFileNames);
+            $this->Flash->success(__('The message file has been deleted.'));
+        } else {
+            $this->Flash->error(__('The message file could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(["controller" => "message_bords", 'action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * MessageStatuses Controller
+ *
+ * @property \App\Model\Table\MessageStatusesTable $MessageStatuses
+ *
+ * @method \App\Model\Entity\MessageStatus[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class MessageStatusesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $messageStatuses = $this->paginate($this->MessageStatuses);
+
+        $this->set(compact('messageStatuses'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Message Status id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $messageStatus = $this->MessageStatuses->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('messageStatus', $messageStatus);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $messageStatus = $this->MessageStatuses->newEntity();
+        if ($this->request->is('post')) {
+            $messageStatus = $this->MessageStatuses->patchEntity($messageStatus, $this->request->getData());
+            if ($this->MessageStatuses->save($messageStatus)) {
+                $this->Flash->success(__('The message status has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message status could not be saved. Please, try again.'));
+        }
+        $this->set(compact('messageStatus'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Message Status id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $messageStatus = $this->MessageStatuses->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $messageStatus = $this->MessageStatuses->patchEntity($messageStatus, $this->request->getData());
+            if ($this->MessageStatuses->save($messageStatus)) {
+                $this->Flash->success(__('The message status has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The message status could not be saved. Please, try again.'));
+        }
+        $this->set(compact('messageStatus'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Message Status id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $messageStatus = $this->MessageStatuses->get($id);
+        if ($this->MessageStatuses->delete($messageStatus)) {
+            $this->Flash->success(__('The message status has been deleted.'));
+        } else {
+            $this->Flash->error(__('The message status could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * OrderNews Controller
+ *
+ * @property \App\Model\Table\OrderNewsTable $OrderNews
+ *
+ * @method \App\Model\Entity\OrderNews[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class OrderNewsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $orderNews = $this->paginate($this->OrderNews);
+
+        $this->set(compact('orderNews'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Order News id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $orderNews = $this->OrderNews->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('orderNews', $orderNews);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $orderNews = $this->OrderNews->newEntity();
+        if ($this->request->is('post')) {
+            $orderNews = $this->OrderNews->patchEntity($orderNews, $this->request->getData());
+            if ($this->OrderNews->save($orderNews)) {
+                $this->Flash->success(__('The order news has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The order news could not be saved. Please, try again.'));
+        }
+        $this->set(compact('orderNews'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Order News id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $orderNews = $this->OrderNews->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $orderNews = $this->OrderNews->patchEntity($orderNews, $this->request->getData());
+            if ($this->OrderNews->save($orderNews)) {
+                $this->Flash->success(__('The order news has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The order news could not be saved. Please, try again.'));
+        }
+        $this->set(compact('orderNews'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Order News id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $orderNews = $this->OrderNews->get($id);
+        if ($this->OrderNews->delete($orderNews)) {
+            $this->Flash->success(__('The order news has been deleted.'));
+        } else {
+            $this->Flash->error(__('The order news could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link      https://cakephp.org CakePHP(tm) Project
+ * @since     0.2.9
+ * @license   https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace App\Controller;
+
+use Cake\Core\Configure;
+use Cake\Http\Exception\ForbiddenException;
+use Cake\Http\Exception\NotFoundException;
+use Cake\View\Exception\MissingTemplateException;
+
+/**
+ * Static content controller
+ *
+ * This controller will render views from Template/Pages/
+ *
+ * @link https://book.cakephp.org/3.0/en/controllers/pages-controller.html
+ */
+class PagesController extends AppController
+{
+
+    /**
+     * Displays a view
+     *
+     * @param array ...$path Path segments.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Http\Exception\ForbiddenException When a directory traversal attempt.
+     * @throws \Cake\Http\Exception\NotFoundException When the view file could not
+     *   be found or \Cake\View\Exception\MissingTemplateException in debug mode.
+     */
+    public function display(...$path)
+    {
+        $count = count($path);
+        if (!$count) {
+            return $this->redirect('/');
+        }
+        if (in_array('..', $path, true) || in_array('.', $path, true)) {
+            throw new ForbiddenException();
+        }
+        $page = $subpage = null;
+
+        if (!empty($path[0])) {
+            $page = $path[0];
+        }
+        if (!empty($path[1])) {
+            $subpage = $path[1];
+        }
+        $this->set(compact('page', 'subpage'));
+
+        try {
+            $this->render(implode('/', $path));
+        } catch (MissingTemplateException $exception) {
+            if (Configure::read('debug')) {
+                throw $exception;
+            }
+            throw new NotFoundException();
+        }
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Positions Controller
+ *
+ * @property \App\Model\Table\PositionsTable $Positions
+ *
+ * @method \App\Model\Entity\Position[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class PositionsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $positions = $this->paginate($this->Positions);
+
+        $this->set(compact('positions'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Position id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $position = $this->Positions->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('position', $position);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $position = $this->Positions->newEntity();
+        if ($this->request->is('post')) {
+            $position = $this->Positions->patchEntity($position, $this->request->getData());
+            if ($this->Positions->save($position)) {
+                $this->Flash->success(__('The position has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The position could not be saved. Please, try again.'));
+        }
+        $this->set(compact('position'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Position id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $position = $this->Positions->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $position = $this->Positions->patchEntity($position, $this->request->getData());
+            if ($this->Positions->save($position)) {
+                $this->Flash->success(__('The position has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The position could not be saved. Please, try again.'));
+        }
+        $this->set(compact('position'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Position id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $position = $this->Positions->get($id);
+        if ($this->Positions->delete($position)) {
+            $this->Flash->success(__('The position has been deleted.'));
+        } else {
+            $this->Flash->error(__('The position could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * PrivateMessages Controller
+ *
+ * @property \App\Model\Table\PrivateMessagesTable $PrivateMessages
+ *
+ * @method \App\Model\Entity\PrivateMessage[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class PrivateMessagesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['MessageBords', 'Users']
+        ];
+        $privateMessages = $this->paginate($this->PrivateMessages);
+
+        $this->set(compact('privateMessages'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Private Message id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $privateMessage = $this->PrivateMessages->get($id, [
+            'contain' => ['MessageBords', 'Users']
+        ]);
+
+        $this->set('privateMessage', $privateMessage);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $privateMessage = $this->PrivateMessages->newEntity();
+        if ($this->request->is('post')) {
+            $privateMessage = $this->PrivateMessages->patchEntity($privateMessage, $this->request->getData());
+            if ($this->PrivateMessages->save($privateMessage)) {
+                $this->Flash->success(__('The private message has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The private message could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->PrivateMessages->MessageBords->find('list', ['limit' => 200]);
+        $users = $this->PrivateMessages->Users->find('list', ['limit' => 200]);
+        $this->set(compact('privateMessage', 'messageBords', 'users'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Private Message id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $privateMessage = $this->PrivateMessages->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $privateMessage = $this->PrivateMessages->patchEntity($privateMessage, $this->request->getData());
+            if ($this->PrivateMessages->save($privateMessage)) {
+                $this->Flash->success(__('The private message has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The private message could not be saved. Please, try again.'));
+        }
+        $messageBords = $this->PrivateMessages->MessageBords->find('list', ['limit' => 200]);
+        $users = $this->PrivateMessages->Users->find('list', ['limit' => 200]);
+        $this->set(compact('privateMessage', 'messageBords', 'users'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Private Message id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $privateMessage = $this->PrivateMessages->get($id);
+        $this->loadModels(["MessageBords"]);
+        $messageBord = $this->MessageBords->get($privateMessage->message_bords_id, [
+            'contain' => ["Users"]
+        ]);
+
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->authorityCheck($messageBord))
+        {
+            $this->request->allowMethod(['post', 'delete']);
+            $privateMessage = $this->PrivateMessages->get($id);
+            if ($this->PrivateMessages->delete($privateMessage)) {
+                $this->Flash->success(__('The private message has been deleted.'));
+            } else {
+                $this->Flash->error(__('The private message could not be deleted. Please, try again.'));
+            }
+
+            return $this->redirect(["controller" => "MessageBords", 'action' => 'index']);
+        }
+        else
+        {
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Ranks Controller
+ *
+ * @property \App\Model\Table\RanksTable $Ranks
+ *
+ * @method \App\Model\Entity\Rank[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class RanksController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $ranks = $this->paginate($this->Ranks);
+
+        $this->set(compact('ranks'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Rank id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $rank = $this->Ranks->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('rank', $rank);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $rank = $this->Ranks->newEntity();
+        if ($this->request->is('post')) {
+            $rank = $this->Ranks->patchEntity($rank, $this->request->getData());
+            if ($this->Ranks->save($rank)) {
+                //$this->log($rank, LOG_DEBUG);
+                $this->Flash->success(__('The rank has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The rank could not be saved. Please, try again.'));
+        }
+        $this->set(compact('rank'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Rank id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $rank = $this->Ranks->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $rank = $this->Ranks->patchEntity($rank, $this->request->getData());
+            if ($this->Ranks->save($rank)) {
+                $this->Flash->success(__('The rank has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The rank could not be saved. Please, try again.'));
+        }
+        $this->set(compact('rank'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Rank id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $rank = $this->Ranks->get($id);
+        if ($this->Ranks->delete($rank)) {
+            $this->Flash->success(__('The rank has been deleted.'));
+        } else {
+            $this->Flash->error(__('The rank could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+use Cake\Filesystem\Folder;
+use Cake\Filesystem\File;
+use RuntimeException;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
+use App\Controller\Component\FileuploadComponent;
+use Cake\ORM\TableRegistry;
+use Cake\datasource\ConnectionManager;
+
+/**
+ * RiskDetections Controller
+ *
+ * @property \App\Model\Table\RiskDetectionsTable $RiskDetections
+ *
+ * @method \App\Model\Entity\RiskDetection[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class RiskDetectionsController extends AppController
+{
+    //$this->log("", LOG_DEBUG);
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+    }
+
+    public function risk()
+    {
+        //検索結果用
+        //if($this->request->is("post"))
+        $data = $this->request->query();
+        if($this->request->is("get") && $data != null)
+        {
+            //$data = $this->request->getData();
+            $between = null;
+            //日付指定がある場合はfindよりさきにbetweenの定義が必要
+            if($data["response_start_time"] != "")
+            {
+                $searchStartDay = $data["response_start_time"];
+                $searchEndDay = $data["response_start_time_end"];
+                $between = ["conditions" => ["RiskDetections.response_start_time between '" . $searchStartDay . "' and '" . $searchEndDay . "'"]];
+            }
+
+
+            if($between === null)
+            {
+                $riskOnly = $this->RiskDetections->find("all")
+                ->where(["incident_cases_id" => 2]);
+            }
+            else
+            {
+                $riskOnly = $this->RiskDetections->find("all", $between)
+                ->where(["incident_cases_id" => 2]);
+            }
+            foreach($data as $key => $value)
+            {
+                //全検索
+                if($value != "")
+                {
+                    if($key == "comment")
+                    {
+                        $riskOnly = $riskOnly->where(["RiskDetections." . $key => "%" . $value . "%"]);
+                    }
+                    else if($key == "response_start_time" || $key == "response_start_time_end" || $key == "page")
+                    {
+                        //何もしない
+                    }
+                    else
+                    {
+                        $riskOnly = $riskOnly->where(["RiskDetections." . $key => (int)$value]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            $riskOnly = $this->RiskDetections->find("all")
+                ->where(["RiskDetections.statuses_id !=" => 3])
+                ->where(["incident_cases_id" => 2]);
+        }
+        $this->paginate = [
+            'contain' => [
+                'Systems', 
+                'Bases', 
+                'Units', 
+                'Statuses', 
+                'Reports', 
+                'Positives', 
+                'SecLevels', 
+                "IncidentManagements.ManagementPrefixes",
+                "IncidentChronologies.Users",
+                'InfectionRoutes'
+            ],
+            "limit" => 5,
+            "order" => ["risk_detections_id" => "desc"]
+        ];
+        //$riskDetections = $this->paginate($this->RiskDetections);
+        //incident_caseがウイルス検知のもののみ
+        $riskDetections = $this->paginate($riskOnly);
+        $systems = $this->RiskDetections->Systems->find('list', ['limit' => 200]);
+        $bases = $this->RiskDetections->Bases->find('list', ['limit' => 200]);
+        $units = $this->RiskDetections->Units->find('list', ['limit' => 200]);
+        $statuses = $this->RiskDetections->Statuses->find('list', ['limit' => 200]);
+        $reports = $this->RiskDetections->Reports->find('list', ['limit' => 200]);
+        $positives = $this->RiskDetections->Positives->find('list', ['limit' => 200]);
+        $secLevels = $this->RiskDetections->SecLevels->find('list', ['limit' => 200]);
+        $infectionRoutes = $this->RiskDetections->InfectionRoutes->find('list', ['limit' => 200]);
+        $this->loadModels(["incidentChronologies"]);
+        $incidentChronology = $this->incidentChronologies->newEntity();
+        $users = $this->RiskDetections->incidentChronologies->Users->find('list', ['limit' => 200])
+          ->where(["delete_flag" => 0]);
+
+        $this->set(compact('riskDetections', "systems", 'bases', 'units', 'statuses', 'reports', 'positives', 'secLevels', 'infectionRoutes', "incidentChronology", "users"));
+    }
+
+    public function malmail()
+    {
+        //if($this->request->is("post"))
+        $data = $this->request->query();
+        if($this->request->is("get") && $data != null)
+        {
+            //$data = $this->request->getData();
+            $between = null;
+            if($data["response_start_time"] != "")
+            {
+                $searchStartDay = $data["response_start_time"];
+                $searchEndDay = $data["response_start_time_end"];
+                //betweenはfindより先に定義する必要がある
+                $between = ["conditions" => ["RiskDetections.response_start_time between '" . $searchStartDay . "' and '" . $searchEndDay . "'"]];
+            }
+            if($between === null)
+            {
+                $riskOnly = $this->RiskDetections->find("all")
+                    ->where(["incident_cases_id" => 1]);
+            }
+            else
+            {
+                $riskOnly = $this->RiskDetections->find("all", $between)
+                    ->where(["incident_cases_id" => 1]);
+            }
+            foreach($data as $key => $value)
+            {
+                if($value != "")
+                {
+                    if($key == "comment")
+                    {
+                        $riskOnly = $riskOnly->where(["RiskDetections." . $key => "%" . $value . "%"]);
+                    }
+                    else if($key == "response_start_time" || $key == "response_start_time_end" || $key == "page")
+                    {
+                        //何もしない
+                    }
+                    else
+                    {
+                        $riskOnly = $riskOnly->where(["RiskDetections." . $key => (int)$value]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            $riskOnly = $this->RiskDetections->find("all")
+                ->where(["RiskDetections.statuses_id !=" => 3])
+                ->where(["incident_cases_id" => 1]);
+        }
+        $this->paginate = [
+            'contain' => [
+                'Systems', 
+                'Bases', 
+                'Units', 
+                'Statuses', 
+                'Reports', 
+                'Positives', 
+                'SecLevels', 
+                'SuspiciousDestinationAddresses', 
+                'SuspiciousLinks', 
+                "IncidentManagements.ManagementPrefixes",
+                "IncidentChronologies.Users",
+                'InfectionRoutes'
+            ],
+            "limit" => 5,
+            "order" => ["risk_detections_id" => "desc"]
+        ];
+        //incident_caseがウイルス検知のもののみ
+        $riskDetections = $this->paginate($riskOnly);
+        $systems = $this->RiskDetections->Systems->find('list', ['limit' => 200]);
+        $bases = $this->RiskDetections->Bases->find('list', ['limit' => 200]);
+        $units = $this->RiskDetections->Units->find('list', ['limit' => 200]);
+        $statuses = $this->RiskDetections->Statuses->find('list', ['limit' => 200]);
+        $reports = $this->RiskDetections->Reports->find('list', ['limit' => 200]);
+        $positives = $this->RiskDetections->Positives->find('list', ['limit' => 200]);
+        $secLevels = $this->RiskDetections->SecLevels->find('list', ['limit' => 200]);
+        $this->loadModels(["incidentChronologies", "suspiciousDestinationAddresses", "suspiciousLinks"]);
+        $incidentChronology = $this->incidentChronologies->newEntity();
+        $destinationAddress = $this->suspiciousDestinationAddresses->newEntity();
+        $link = $this->suspiciousLinks->newEntity();
+        $users = $this->RiskDetections->incidentChronologies->Users->find('list', ['limit' => 200])
+          ->where(["delete_flag" => 0]);
+
+        $this->set(compact(
+            'riskDetections', 
+            "systems", 
+            'bases', 
+            'units', 
+            'statuses', 
+            'reports', 
+            'positives', 
+            'secLevels', 
+            "incidentChronology", 
+            'destinationAddress', 
+            "users",
+            "link"
+        ));
+    }
+
+    public function spreadsheet()
+    {
+        $year = date("Y") . "-04-01";
+        $startDay = $year;
+        //$incidents = [];
+        //$malwares = [];
+        for($i = 0; $i <= 4; $i++)
+        {
+            $endDay = date("Y-m-d", strtotime("+1 year", strtotime($startDay)));
+            $between = ["conditions" => ["RiskDetections.response_start_time between '" . $startDay . "' and '" . $endDay . "'"]];
+            $query = $this->RiskDetections->find("all", $between)
+                ->where(["reports_id" => 3]);
+            $malware[$i] = $query->count();
+            $query = $this->RiskDetections->find("all", $between);
+            $incident[$i] = $query->count();
+            $startDay = date("Y-m-d", strtotime("-1 year", strtotime($startDay)));
+        }
+        $this->set(compact("year", "incident", "malware"));
+    }
+
+    public function malmailDestination()
+    {
+        $this->loadModels(["suspiciousDestinationAddresses"]);
+        $sql = "select count(destination_address) duplicate_count, destination_address from suspicious_destination_addresses group by destination_address having count(destination_address) > 2 order by duplicate_count desc";
+        $connection = ConnectionManager::get("default");
+        $suspiciousAddresses = $connection->execute($sql)->fetchAll("assoc");
+        /*
+        $suspiciousAddresses = $this->suspiciousDestinationAddresses->find("all")
+            ->select("destination_address");
+         */
+        $this->set(compact("suspiciousAddresses"));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Risk Detection id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $riskDetection = $this->RiskDetections->get($id, [
+            'contain' => ['Systems', 'Bases', 'Units', 'Statuses', 'Reports', 'Positives', 'SecLevels', 'InfectionRoutes']
+        ]);
+
+        $this->set('riskDetection', $riskDetection);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function riskAdd()
+    {
+        $riskDetection = $this->RiskDetections->newEntity();
+        if ($this->request->is('post')) 
+        {
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            $data = $this->request->getData();
+
+            //save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(5)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $riskDetection = $this->RiskDetections->patchEntity($riskDetection, $data);
+
+                if ($this->RiskDetections->save($riskDetection)) 
+                {
+                    $this->Flash->success(__('riskDetections 保存成功'));
+                    return $this->redirect(['action' => 'risk']);
+                }
+                $this->Flash->error(__('インシデントID生成成功、risk_detections save 失敗'));
+            }
+            $this->Flash->error(__('インシデントID生成失敗'));
+        }
+        $systems = $this->RiskDetections->Systems->find('list', ['limit' => 200]);
+        $bases = $this->RiskDetections->Bases->find('list', ['limit' => 200]);
+        $units = $this->RiskDetections->Units->find('list', ['limit' => 200]);
+        $statuses = $this->RiskDetections->Statuses->find('list', ['limit' => 200]);
+        $reports = $this->RiskDetections->Reports->find('list', ['limit' => 200]);
+        $positives = $this->RiskDetections->Positives->find('list', ['limit' => 200]);
+        $secLevels = $this->RiskDetections->SecLevels->find('list', ['limit' => 200]);
+        $infectionRoutes = $this->RiskDetections->InfectionRoutes->find('list', ['limit' => 200]);
+        $this->set(compact('riskDetection', 'systems', 'bases', 'units', 'statuses', 'reports', 'positives', 'secLevels', 'infectionRoutes'));
+    }
+
+    public function malmailAdd()
+    {
+        $riskDetection = $this->RiskDetections->newEntity();
+        if ($this->request->is('post')) {
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            $data = $this->request->getData();
+
+            //save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(5)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $riskDetection = $this->RiskDetections->patchEntity($riskDetection, $data);
+
+                if ($this->RiskDetections->save($riskDetection)) 
+                {
+                    $this->Flash->success(__('riskDetections 保存成功'));
+                    return $this->redirect(['action' => 'malmail']);
+                }
+                $this->Flash->error(__('インシデントID生成成功、risk_detections save 失敗'));
+                return $this->redirect(['action' => 'malmailAdd']);
+            }
+            $this->Flash->error(__('インシデントID生成失敗'));
+        }
+        $systems = $this->RiskDetections->Systems->find('list', ['limit' => 200]);
+        $bases = $this->RiskDetections->Bases->find('list', ['limit' => 200]);
+        $units = $this->RiskDetections->Units->find('list', ['limit' => 200]);
+        $statuses = $this->RiskDetections->Statuses->find('list', ['limit' => 200]);
+        $reports = $this->RiskDetections->Reports->find('list', ['limit' => 200]);
+        $positives = $this->RiskDetections->Positives->find('list', ['limit' => 200]);
+        $secLevels = $this->RiskDetections->SecLevels->find('list', ['limit' => 200]);
+        $infectionRoutes = $this->RiskDetections->InfectionRoutes->find('list', ['limit' => 200]);
+        $this->set(compact('riskDetection', 'systems', 'bases', 'units', 'statuses', 'reports', 'positives', 'secLevels', 'infectionRoutes'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Risk Detection id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $riskDetection = $this->RiskDetections->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $riskDetection = $this->RiskDetections->patchEntity($riskDetection, $this->request->getData());
+            if ($this->RiskDetections->save($riskDetection)) {
+                $this->Flash->success(__('The risk detection has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The risk detection could not be saved. Please, try again.'));
+        }
+        $systems = $this->RiskDetections->Systems->find('list', ['limit' => 200]);
+        $bases = $this->RiskDetections->Bases->find('list', ['limit' => 200]);
+        $units = $this->RiskDetections->Units->find('list', ['limit' => 200]);
+        $statuses = $this->RiskDetections->Statuses->find('list', ['limit' => 200]);
+        $reports = $this->RiskDetections->Reports->find('list', ['limit' => 200]);
+        $positives = $this->RiskDetections->Positives->find('list', ['limit' => 200]);
+        $secLevels = $this->RiskDetections->SecLevels->find('list', ['limit' => 200]);
+        $infectionRoutes = $this->RiskDetections->InfectionRoutes->find('list', ['limit' => 200]);
+        $this->set(compact('riskDetection', 'systems', 'bases', 'units', 'statuses', 'reports', 'positives', 'secLevels', 'infectionRoutes'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Risk Detection id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $riskDetection = $this->RiskDetections->get($id);
+        if ($this->RiskDetections->delete($riskDetection)) {
+            $this->Flash->success(__('The risk detection has been deleted.'));
+        } else {
+            $this->Flash->error(__('The risk detection could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Schedules Controller
+ *
+ * @property \App\Model\Table\SchedulesTable $Schedules
+ *
+ * @method \App\Model\Entity\Schedule[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class SchedulesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $schedules = $this->paginate($this->Schedules);
+
+        $this->set(compact('schedules'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Schedule id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $schedule = $this->Schedules->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('schedule', $schedule);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $schedule = $this->Schedules->newEntity();
+        if ($this->request->is('post')) {
+          /*
+            $repe_flags = $this->request->getData("field[]");
+            foreach($repe_flags as $repe_flag){
+              $count += $repe_flag;
+            }
+           */
+            $dayWeek = ["mon", "tue", "wed", "thu", "fry", "sat", "sun"];
+            $data = $this->request->getData();
+            foreach($data["dayOfWeeks"] as $dayOfWeek)
+            {
+                for($i = 0; $i < 7; $i++)
+                {
+                    if($dayOfWeek == $i)
+                    {
+                        $data[$dayWeek[$i]] = 1;
+                    }
+                }
+            }
+            $this->IncidentManagement = $this->loadComponent("IncidentAdd");
+            //MessageBord save前にincident_managements更新
+            if(is_int($incidentNumber = $this->IncidentManagement->incident_number(1)))
+            {
+                //インシデント番号生成成功したら
+                $data = array_merge($data, ["incident_managements_id" => $incidentNumber]);
+                $this->log("---data---", LOG_DEBUG);
+                $this->log($data, LOG_DEBUG);
+                $schedule = $this->Schedules->patchEntity($schedule, $data);
+                if ($this->Schedules->save($schedule)) {
+                    $this->Flash->success(__('The schedule has been saved.'));
+
+                    return $this->redirect(["controller" => "Dairy", 'action' => 'index']);
+                }
+                $this->Flash->error(__('schedules save 失敗'));
+                return $this->redirect(["controller" => "Dairy", 'action' => 'index']);
+            }
+            $this->Flash->error(__('incident_number 生成　失敗'));
+            return $this->redirect(["controller" => "Dairy", 'action' => 'index']);
+        }
+        $dayOfWeek = [
+            [
+                1 => "月曜日"
+            ],
+            [
+                1 => "火曜日"
+            ],
+            [
+                1 => "水曜日"
+            ],
+            [
+                1 => "木曜日"
+            ],
+            [
+                1 => "金曜日"
+            ],
+            [
+                1 => "土曜日"
+            ],
+            [
+                1 => "日曜日"
+            ]
+        ];
+        $this->set(compact('schedule', "dayOfWeek"));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Schedule id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $schedule = $this->Schedules->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $schedule = $this->Schedules->patchEntity($schedule, $this->request->getData());
+            if ($this->Schedules->save($schedule)) {
+                $this->Flash->success(__('The schedule has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The schedule could not be saved. Please, try again.'));
+        }
+        $this->set(compact('schedule'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Schedule id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $schedule = $this->Schedules->get($id);
+        if ($this->Schedules->delete($schedule)) {
+            $this->Flash->success(__('The schedule has been deleted.'));
+        } else {
+            $this->Flash->error(__('The schedule could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Shifts Controller
+ *
+ * @property \App\Model\Table\ShiftsTable $Shifts
+ *
+ * @method \App\Model\Entity\Shift[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class ShiftsController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $shifts = $this->paginate($this->Shifts);
+
+        $this->set(compact('shifts'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Shift id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $shift = $this->Shifts->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('shift', $shift);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $shift = $this->Shifts->newEntity();
+        if ($this->request->is('post')) {
+            $shift = $this->Shifts->patchEntity($shift, $this->request->getData());
+            if ($this->Shifts->save($shift)) {
+                $this->Flash->success(__('The shift has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The shift could not be saved. Please, try again.'));
+        }
+        $this->set(compact('shift'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Shift id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $shift = $this->Shifts->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $shift = $this->Shifts->patchEntity($shift, $this->request->getData());
+            if ($this->Shifts->save($shift)) {
+                $this->Flash->success(__('The shift has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The shift could not be saved. Please, try again.'));
+        }
+        $this->set(compact('shift'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Shift id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $shift = $this->Shifts->get($id);
+        if ($this->Shifts->delete($shift)) {
+            $this->Flash->success(__('The shift has been deleted.'));
+        } else {
+            $this->Flash->error(__('The shift could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Statuses Controller
+ *
+ * @property \App\Model\Table\StatusesTable $Statuses
+ *
+ * @method \App\Model\Entity\Status[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class StatusesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            "order" => ["status_sort_number" => "asc"]
+        ];
+        $statuses = $this->paginate($this->Statuses);
+
+        $this->set(compact('statuses'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Status id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $status = $this->Statuses->get($id, [
+            'contain' => []
+        ]);
+
+        $this->set('status', $status);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $status = $this->Statuses->newEntity();
+        if ($this->request->is('post')) {
+            $status = $this->Statuses->patchEntity($status, $this->request->getData());
+            if ($this->Statuses->save($status)) {
+                $this->Flash->success(__('The status has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The status could not be saved. Please, try again.'));
+        }
+        $this->set(compact('status'));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Status id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $status = $this->Statuses->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $status = $this->Statuses->patchEntity($status, $this->request->getData());
+            if ($this->Statuses->save($status)) {
+                $this->Flash->success(__('The status has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The status could not be saved. Please, try again.'));
+        }
+        $this->set(compact('status'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Status id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $status = $this->Statuses->get($id);
+        if ($this->Statuses->delete($status)) {
+            $this->Flash->success(__('The status has been deleted.'));
+        } else {
+            $this->Flash->error(__('The status could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * SuspiciousDestinationAddresses Controller
+ *
+ * @property \App\Model\Table\SuspiciousDestinationAddressesTable $SuspiciousDestinationAddresses
+ *
+ * @method \App\Model\Entity\SuspiciousDestinationAddress[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class SuspiciousDestinationAddressesController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['RiskDetections']
+        ];
+        $suspiciousDestinationAddresses = $this->paginate($this->SuspiciousDestinationAddresses);
+
+        $this->set(compact('suspiciousDestinationAddresses'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Suspicious Destination Address id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $suspiciousDestinationAddress = $this->SuspiciousDestinationAddresses->get($id, [
+            'contain' => ['RiskDetections']
+        ]);
+
+        $this->set('suspiciousDestinationAddress', $suspiciousDestinationAddress);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $data = $this->request->getData();
+        foreach($data["destination_address"] as $address)
+        {
+            $addressEntity[] = [
+                "risk_detections_id" => $data["risk_detections_id"],
+                "destination_address" => $address
+            ];
+        }
+        $destinationAddresses = $this->SuspiciousDestinationAddresses->newEntities($addressEntity);
+        if($this->SuspiciousDestinationAddresses->saveMany($destinationAddresses)){
+            $this->Flash->success(__('アドレス登録完了'));
+            return $this->redirect(["controller" => "risk_detections", 'action' => 'malmail']);
+        }
+        $this->Flash->error(__('アドレス登録失敗'));
+        return $this->redirect(["controller" => "risk_detections", 'action' => 'malmail']);
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Suspicious Destination Address id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $suspiciousDestinationAddress = $this->SuspiciousDestinationAddresses->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $suspiciousDestinationAddress = $this->SuspiciousDestinationAddresses->patchEntity($suspiciousDestinationAddress, $this->request->getData());
+            if ($this->SuspiciousDestinationAddresses->save($suspiciousDestinationAddress)) {
+                $this->Flash->success(__('The suspicious destination address has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The suspicious destination address could not be saved. Please, try again.'));
+        }
+        $riskDetections = $this->SuspiciousDestinationAddresses->RiskDetections->find('list', ['limit' => 200]);
+        $this->set(compact('suspiciousDestinationAddress', 'riskDetections'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Suspicious Destination Address id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $suspiciousDestinationAddress = $this->SuspiciousDestinationAddresses->get($id);
+        if ($this->SuspiciousDestinationAddresses->delete($suspiciousDestinationAddress)) {
+            $this->Flash->success(__('The suspicious destination address has been deleted.'));
+        } else {
+            $this->Flash->error(__('The suspicious destination address could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * SuspiciousLinks Controller
+ *
+ * @property \App\Model\Table\SuspiciousLinksTable $SuspiciousLinks
+ *
+ * @method \App\Model\Entity\SuspiciousLink[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class SuspiciousLinksController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['RiskDetections']
+        ];
+        $suspiciousLinks = $this->paginate($this->SuspiciousLinks);
+
+        $this->set(compact('suspiciousLinks'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Suspicious Link id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $suspiciousLink = $this->SuspiciousLinks->get($id, [
+            'contain' => ['RiskDetections']
+        ]);
+
+        $this->set('suspiciousLink', $suspiciousLink);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $data = $this->request->getData();
+        foreach($data["link"] as $link)
+        {
+            $linkEntity[] = [
+                "risk_detections_id" => $data["risk_detections_id"],
+                "link" => $link
+            ];
+        }
+        $links = $this->SuspiciousLinks->newEntities($linkEntity);
+        if($this->SuspiciousLinks->saveMany($links)){
+            $this->Flash->success(__('リンク登録完了'));
+            return $this->redirect(["controller" => "risk_detections", 'action' => 'malmail']);
+        }
+        $this->Flash->error(__('リンク登録失敗'));
+        return $this->redirect(["controller" => "risk_detections", 'action' => 'malmail']);
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Suspicious Link id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $suspiciousLink = $this->SuspiciousLinks->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $suspiciousLink = $this->SuspiciousLinks->patchEntity($suspiciousLink, $this->request->getData());
+            if ($this->SuspiciousLinks->save($suspiciousLink)) {
+                $this->Flash->success(__('The suspicious link has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The suspicious link could not be saved. Please, try again.'));
+        }
+        $riskDetections = $this->SuspiciousLinks->RiskDetections->find('list', ['limit' => 200]);
+        $this->set(compact('suspiciousLink', 'riskDetections'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Suspicious Link id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $suspiciousLink = $this->SuspiciousLinks->get($id);
+        if ($this->SuspiciousLinks->delete($suspiciousLink)) {
+            $this->Flash->success(__('The suspicious link has been deleted.'));
+        } else {
+            $this->Flash->error(__('The suspicious link could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}
+<?php
+namespace App\Controller;
+
+use Cake\Auth\DefaultPasswordHasher;
+use App\Controller\AppController;
+use Cake\Event\Event;
+
+/**
+ * Users Controller
+ *
+ * @property \App\Model\Table\UsersTable $Users
+ *
+ * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class UsersController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['Belongs', 'Ranks', "Roles"],
+            "order" => ["user_sort_number" => "asc"]
+        ];
+        $users = $this->paginate($this->Users);
+
+        $this->set(compact('users'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $user = $this->Users->get($id, [
+            'contain' => ['Belongs', 'Ranks']
+        ]);
+
+        $this->set('user', $user);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $user = $this->Users->newEntity();
+        if ($this->request->is('post')) {
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('The user has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        }
+        $belongs = $this->Users->Belongs->find('list', ['limit' => 200]);
+        $ranks = $this->Users->Ranks->find('list', ['limit' => 200]);
+        $roles = $this->authority();
+
+        $this->set(compact('user', 'belongs', 'ranks', "roles"));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $user = $this->Users->get($id, [
+            'contain' => []
+        ]);
+        //認証
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->userAuthorityCheck($user)){
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $user = $this->Users->patchEntity($user, $this->request->getData());
+                if ($this->Users->save($user)) {
+                    $this->Flash->success(__('The user has been saved.'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            }
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+        $belongs = $this->Users->Belongs->find('list', ['limit' => 200]);
+        $ranks = $this->Users->Ranks->find('list', ['limit' => 200]);
+        $roles = $this->authority();
+        $this->set(compact('user', 'belongs', 'ranks', "roles"));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id User id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $user = $this->Users->get($id);
+        $this->log("---getしたuser---", LOG_DEBUG);
+        $this->log($user, LOG_DEBUG);
+/*
+        $this->Authority = $this->loadComponent("Authority");
+        if($this->Authority->userAuthorityCheck($user)){
+ */
+          /*
+            //削除ではなくdelete_flagを立てる
+            $user = $this->Users->get($id, [
+                'contain' => []
+            ]);
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+           */
+
+
+          /*
+            if ($this->Users->delete($user)) {
+                $this->Flash->success(__('The user has been deleted.'));
+            } else {
+                $this->Flash->error(__('The user could not be deleted. Please, try again.'));
+            }
+           */
+/*
+        }else{
+            $this->Flash->error(__('権限がありません'));
+            return $this->redirect($this->referer());
+        }
+ */
+        return $this->redirect(['action' => 'index']);
+    }
+
+    public function login()
+    {
+        if($this->request->is("post")){
+            $user = $this->Auth->identify();
+            if($user){
+                $this->Auth->setUser($user);
+                return $this->redirect($this->Auth->redirectUrl());
+            }
+            $this->Flash->error(__("ユーザ名もしくはパスワードが間違っています。"));
+        }
+        if(!empty($this->request->session()->read("Auth.User"))){
+            return $this->redirect(["controller" => "Dairy", "action" => "index"]);
+        }
+    }
+
+    public function logout()
+    {
+        return $this->redirect($this->Auth->logout());
+    }
+
+    public function authority()
+    {
+        $authority = $this->request->session()->read("Auth.User.roles_id");
+        $authority = $this->Users->Roles->find("all")
+            ->select(["role_level"])
+            ->where(["roles_id" => $authority]);
+        $authority = $authority->first()["role_level"];
+        $roles = $this->Users->Roles->find('list', [
+            'limit' => 200,
+            "order" => ["role_level" => "desc"]
+        ])
+            ->where(["role_level >=" => $authority]);
+        return $roles;
+    }
+}
+<?php
+namespace App\Controller;
+
+use App\Controller\AppController;
+
+/**
+ * Workers Controller
+ *
+ * @property \App\Model\Table\WorkersTable $Workers
+ *
+ * @method \App\Model\Entity\Worker[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class WorkersController extends AppController
+{
+    /**
+     * Index method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function index()
+    {
+        $this->paginate = [
+            'contain' => ['Users', 'Positions', 'Shifts', 'Duties']
+        ];
+        $workers = $this->paginate($this->Workers);
+
+        $this->set(compact('workers'));
+    }
+
+    /**
+     * View method
+     *
+     * @param string|null $id Worker id.
+     * @return \Cake\Http\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function view($id = null)
+    {
+        $worker = $this->Workers->get($id, [
+            'contain' => ['Users', 'Positions', 'Shifts', 'Duties']
+        ]);
+
+        $this->set('worker', $worker);
+    }
+
+    /**
+     * Add method
+     *
+     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
+     */
+    public function add()
+    {
+        $worker = $this->Workers->newEntity();
+        if ($this->request->is('post')) {
+            $worker = $this->Workers->patchEntity($worker, $this->request->getData());
+            if ($this->Workers->save($worker)) {
+                $this->Flash->success(__('The worker has been saved.'));
+
+                return $this->redirect(['action' => 'add']);
+            }
+            $this->Flash->error(__('The worker could not be saved. Please, try again.'));
+        }
+
+        $this->paginate = [
+            'contain' => [
+                'Users', 
+                'Positions', 
+                'Shifts', 
+                'Duties', 
+            ]
+        ];
+        $users = $this->Workers->Users->find('list', ['limit' => 200]);
+        $positions = $this->Workers->Positions->find('list', ['limit' => 200]);
+        $shifts = $this->Workers->Shifts->find('list', ['limit' => 200]);
+        $duties = $this->Workers->Duties->find('list', ['limit' => 200]);
+        $today = date("Y-m-d");
+        $todayWorkers = $this->Workers->find("all")
+            ->where(["date" => $today]);
+        $todayWorkers = $this->paginate($todayWorkers);
+        $this->set(compact('worker', 'users', 'positions', 'shifts', 'duties', "todayWorkers"));
+    }
+
+    /**
+     * Edit method
+     *
+     * @param string|null $id Worker id.
+     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function edit($id = null)
+    {
+        $worker = $this->Workers->get($id, [
+            'contain' => []
+        ]);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $worker = $this->Workers->patchEntity($worker, $this->request->getData());
+            if ($this->Workers->save($worker)) {
+                $this->Flash->success(__('The worker has been saved.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('The worker could not be saved. Please, try again.'));
+        }
+        $users = $this->Workers->Users->find('list', ['limit' => 200]);
+        //$classes = $this->Workers->Classes->find('list', ['limit' => 200]);
+        $positions = $this->Workers->Positions->find('list', ['limit' => 200]);
+        $shifts = $this->Workers->Shifts->find('list', ['limit' => 200]);
+        $duties = $this->Workers->Duties->find('list', ['limit' => 200]);
+        //$this->set(compact('worker', 'users', 'classes', 'positions', 'shifts', 'duties'));
+        $this->set(compact('worker', 'users', 'positions', 'shifts', 'duties'));
+    }
+
+    /**
+     * Delete method
+     *
+     * @param string|null $id Worker id.
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $worker = $this->Workers->get($id);
+        if ($this->Workers->delete($worker)) {
+            $this->Flash->success(__('The worker has been deleted.'));
+        } else {
+            $this->Flash->error(__('The worker could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+}

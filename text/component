@@ -1,0 +1,5 @@
+component 作成
+
+bin/cake bake component コンポーネント名
+
+ex) bin/cake bake component Text

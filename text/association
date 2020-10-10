@@ -1,0 +1,5 @@
+association[アソシエーション]
+1:1   hasOne
+1:多  hasMany
+多:1  belongs To
+多:多 belongs ToMany

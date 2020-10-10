@@ -1,0 +1,3 @@
+debugでfindの結果見るとき
+debug($find_query->toList());
+↑toList()にすることで$find_queryの結果を見れる

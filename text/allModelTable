@@ -1,0 +1,2679 @@
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Bases Model
+ *
+ * @method \App\Model\Entity\Basis get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Basis newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Basis[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Basis|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Basis saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Basis patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Basis[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Basis findOrCreate($search, callable $callback = null, $options = [])
+ */
+class BasesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('bases');
+        $this->setDisplayField('base');
+        $this->setPrimaryKey('bases_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('bases_id')
+            ->allowEmptyString('bases_id', null, 'create');
+
+        $validator
+            ->scalar('base')
+            ->maxLength('base', 30)
+            ->requirePresence('base', 'create')
+            ->notEmptyString('base');
+
+        $validator
+            ->integer('base_sort_number')
+            ->requirePresence('base_sort_number', 'create')
+            ->notEmptyString('base_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Belongs Model
+ *
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\HasMany $Users
+ *
+ * @method \App\Model\Entity\Belong get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Belong newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Belong[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Belong|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Belong saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Belong patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Belong[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Belong findOrCreate($search, callable $callback = null, $options = [])
+ */
+class BelongsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('belongs');
+        $this->setDisplayField('belong');
+        $this->setPrimaryKey('belongs_id');
+
+        $this->hasMany('Users', [
+            'foreignKey' => 'belong_id'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('belongs_id')
+            ->allowEmptyString('belongs_id', null, 'create');
+
+        $validator
+            ->scalar('belong')
+            ->maxLength('belong', 20)
+            ->requirePresence('belong', 'create')
+            ->notEmptyString('belong');
+
+        $validator
+            ->integer('belong_sort_number')
+            ->allowEmptyString('belong_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Categories Model
+ *
+ * @method \App\Model\Entity\Category get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Category newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Category[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Category|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Category saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Category patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Category[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Category findOrCreate($search, callable $callback = null, $options = [])
+ */
+class CategoriesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('categories');
+        $this->setDisplayField('category');
+        $this->setPrimaryKey('categories_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('categories_id')
+            ->allowEmptyString('categories_id', null, 'create');
+
+        $validator
+            ->scalar('category')
+            ->maxLength('category', 50)
+            ->requirePresence('category', 'create')
+            ->notEmptyString('category');
+
+        $validator
+            ->integer('category_sort_number')
+            ->requirePresence('category_sort_number', 'create')
+            ->notEmptyString('category_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Classes Model
+ *
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\HasMany $Users
+ *
+ * @method \App\Model\Entity\Class get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Class newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Class[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Class|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Class saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Class patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Class[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Class findOrCreate($search, callable $callback = null, $options = [])
+ */
+class ClassesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('classes');
+        $this->setDisplayField('class');
+        $this->setPrimaryKey('classes_id');
+
+        $this->hasMany('Users', [
+            'foreignKey' => 'class_id'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('classes_id')
+            ->allowEmptyString('classes_id', null, 'create');
+
+        $validator
+            ->scalar('class')
+            ->maxLength('class', 8)
+            ->requirePresence('class', 'create')
+            ->notEmptyString('class');
+
+        $validator
+            ->integer('class_sort_number')
+            ->requirePresence('class_sort_number', 'create')
+            ->notEmptyString('class_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * CommentFiles Model
+ *
+ * @property \App\Model\Table\CrewSendCommentsTable&\Cake\ORM\Association\BelongsTo $CrewSendComments
+ *
+ * @method \App\Model\Entity\CommentFile get($primaryKey, $options = [])
+ * @method \App\Model\Entity\CommentFile newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\CommentFile[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\CommentFile|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CommentFile saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CommentFile patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\CommentFile[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\CommentFile findOrCreate($search, callable $callback = null, $options = [])
+ */
+class CommentFilesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('comment_files');
+        $this->setDisplayField('comment_files_id');
+        $this->setPrimaryKey('comment_files_id');
+
+        $this->belongsTo('CrewSendComments', [
+            'foreignKey' => 'crew_send_comments_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('comment_files_id')
+            ->allowEmptyFile('comment_files_id', null, 'create');
+
+        $validator
+            ->scalar('file_name')
+            ->maxLength('file_name', 255)
+            ->requirePresence('file_name', 'create')
+            ->notEmptyFile('file_name');
+
+        $validator
+            ->scalar('file_size')
+            ->maxLength('file_size', 255)
+            ->requirePresence('file_size', 'create')
+            ->notEmptyFile('file_size');
+
+        $validator
+            ->scalar('unique_file_name')
+            ->maxLength('unique_file_name', 255)
+            ->requirePresence('unique_file_name', 'create')
+            ->notEmptyFile('unique_file_name');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['crew_send_comments_id'], 'CrewSendComments'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * CrewSendComments Model
+ *
+ * @property \App\Model\Table\CrewSendsTable&\Cake\ORM\Association\BelongsTo $CrewSends
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ *
+ * @method \App\Model\Entity\CrewSendComment get($primaryKey, $options = [])
+ * @method \App\Model\Entity\CrewSendComment newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\CrewSendComment[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSendComment|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CrewSendComment saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CrewSendComment patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSendComment[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSendComment findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class CrewSendCommentsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('crew_send_comments');
+        $this->setDisplayField('crew_send_comments_id');
+        $this->setPrimaryKey('crew_send_comments_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('CrewSends', [
+            'foreignKey' => 'crew_sends_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('CommentFiles', [
+            'foreignKey' => 'crew_send_comments_id',
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('crew_send_comments_id')
+            ->allowEmptyString('crew_send_comments_id', null, 'create');
+
+        $validator
+            ->scalar('comment')
+            ->requirePresence('comment', 'create')
+            ->notEmptyString('comment');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['crew_sends_id'], 'CrewSends'));
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * CrewSends Model
+ *
+ * @property \App\Model\Table\CategoriesTable&\Cake\ORM\Association\BelongsTo $Categories
+ * @property \App\Model\Table\StatusesTable&\Cake\ORM\Association\BelongsTo $Statuses
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ *
+ * @method \App\Model\Entity\CrewSend get($primaryKey, $options = [])
+ * @method \App\Model\Entity\CrewSend newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\CrewSend[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSend|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CrewSend saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\CrewSend patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSend[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\CrewSend findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class CrewSendsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('crew_sends');
+        $this->setDisplayField('title');
+        $this->setPrimaryKey('crew_sends_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('IncidentManagements', [
+            'foreignKey' => 'incident_managements_id',
+            'joinType' => 'INNER'
+        ]);
+
+        $this->belongsTo('Categories', [
+            'foreignKey' => 'categories_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Statuses', [
+            'foreignKey' => 'statuses_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany("Files", [
+            "foreignKey" => "crew_sends_id"
+        ]);
+        $this->hasMany("CrewSendComments", [
+            "foreignKey" => "crew_sends_id"
+        ]);
+
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('crew_sends_id')
+            ->allowEmptyString('crew_sends_id', null, 'create');
+
+        $validator
+            ->scalar('title')
+            ->maxLength('title', 255)
+            ->requirePresence('title', 'create')
+            ->notEmptyString('title');
+
+        $validator
+            //->dateTime('period')
+            ->date('period')
+            ->allowEmptyDateTime('period');
+
+        $validator
+            ->scalar('comment')
+            ->requirePresence('comment', 'create')
+            ->notEmptyString('comment');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['categories_id'], 'Categories'));
+        $rules->add($rules->existsIn(['statuses_id'], 'Statuses'));
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Duties Model
+ *
+ * @method \App\Model\Entity\Duty get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Duty newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Duty[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Duty|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Duty saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Duty patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Duty[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Duty findOrCreate($search, callable $callback = null, $options = [])
+ */
+class DutiesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('duties');
+        $this->setDisplayField('duty');
+        $this->setPrimaryKey('duties_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('duties_id')
+            ->allowEmptyString('duties_id', null, 'create');
+
+        $validator
+            ->scalar('duty')
+            ->maxLength('duty', 20)
+            ->requirePresence('duty', 'create')
+            ->notEmptyString('duty');
+
+        $validator
+            ->integer('duty_sort_number')
+            ->requirePresence('duty_sort_number', 'create')
+            ->notEmptyString('duty_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Files Model
+ *
+ * @method \App\Model\Entity\File get($primaryKey, $options = [])
+ * @method \App\Model\Entity\File newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\File[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\File|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\File saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\File patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\File[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\File findOrCreate($search, callable $callback = null, $options = [])
+ */
+class FilesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('files');
+        $this->setDisplayField('files_id');
+        $this->setPrimaryKey('files_id');
+
+        $this->belongsTo('CrewSends', [
+            'foreignKey' => 'crew_sends_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('files_id')
+            ->allowEmptyFile('files_id', null, 'create');
+
+        $validator
+            ->scalar('file_name')
+            ->maxLength('file_name', 255)
+            ->requirePresence('file_name', 'create')
+            ->notEmptyFile('file_name');
+
+        $validator
+            ->scalar('file_size')
+            ->maxLength('file_size', 10)
+            ->requirePresence('file_size', 'create')
+            ->notEmptyFile('file_size');
+
+        $validator
+            ->scalar('unique_file_name')
+            ->maxLength('unique_file_name', 255)
+            ->requirePresence('unique_file_name', 'create')
+            ->notEmptyFile('unique_file_name');
+
+        $validator
+            ->integer('crew_sends_id')
+            ->requirePresence('crew_sends_id', 'create')
+            ->notEmptyFile('crew_sends_id');
+
+        return $validator;
+    }
+
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['crew_sends_id'], 'CrewSends'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * IncidentChronologies Model
+ *
+ * @property \App\Model\Table\RiskDetectionsTable&\Cake\ORM\Association\BelongsTo $RiskDetections
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ *
+ * @method \App\Model\Entity\IncidentChronology get($primaryKey, $options = [])
+ * @method \App\Model\Entity\IncidentChronology newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\IncidentChronology[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentChronology|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\IncidentChronology saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\IncidentChronology patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentChronology[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentChronology findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class IncidentChronologiesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('incident_chronologies');
+        $this->setDisplayField('incident_chronologies_id');
+        $this->setPrimaryKey('incident_chronologies_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('RiskDetections', [
+            'foreignKey' => 'risk_detections_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('incident_chronologies_id')
+            ->allowEmptyString('incident_chronologies_id', null, 'create');
+
+        $validator
+            ->scalar('message')
+            ->allowEmptyString('message');
+
+        $validator
+            ->scalar('reference')
+            ->allowEmptyString('reference');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['risk_detections_id'], 'RiskDetections'));
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * IncidentManagements Model
+ *
+ * @property \App\Model\Table\ManagementPrefixesTable&\Cake\ORM\Association\BelongsTo $ManagementPrefixes
+ *
+ * @method \App\Model\Entity\IncidentManagement get($primaryKey, $options = [])
+ * @method \App\Model\Entity\IncidentManagement newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\IncidentManagement[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentManagement|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\IncidentManagement saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\IncidentManagement patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentManagement[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\IncidentManagement findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class IncidentManagementsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('incident_managements');
+        $this->setDisplayField('incident_managements_id');
+        $this->setPrimaryKey('incident_managements_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('ManagementPrefixes', [
+            'foreignKey' => 'management_prefixes_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('incident_managements_id')
+            ->allowEmptyString('incident_managements_id', null, 'create');
+
+        $validator
+            ->integer('number')
+            ->requirePresence('number', 'create')
+            ->notEmptyString('number');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['management_prefixes_id'], 'ManagementPrefixes'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * InfectionRoutes Model
+ *
+ * @method \App\Model\Entity\InfectionRoute get($primaryKey, $options = [])
+ * @method \App\Model\Entity\InfectionRoute newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\InfectionRoute[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\InfectionRoute|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\InfectionRoute saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\InfectionRoute patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\InfectionRoute[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\InfectionRoute findOrCreate($search, callable $callback = null, $options = [])
+ */
+class InfectionRoutesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('infection_routes');
+        $this->setDisplayField('infection_route');
+        $this->setPrimaryKey('infection_routes_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('infection_routes_id')
+            ->allowEmptyString('infection_routes_id', null, 'create');
+
+        $validator
+            ->scalar('infection_route')
+            ->maxLength('infection_route', 50)
+            ->requirePresence('infection_route', 'create')
+            ->notEmptyString('infection_route');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * ManagementPrefixes Model
+ *
+ * @method \App\Model\Entity\ManagementPrefix get($primaryKey, $options = [])
+ * @method \App\Model\Entity\ManagementPrefix newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\ManagementPrefix[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\ManagementPrefix|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\ManagementPrefix saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\ManagementPrefix patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\ManagementPrefix[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\ManagementPrefix findOrCreate($search, callable $callback = null, $options = [])
+ */
+class ManagementPrefixesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('management_prefixes');
+        $this->setDisplayField('management_prefix');
+        $this->setPrimaryKey('management_prefixes_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('management_prefixes_id')
+            ->allowEmptyString('management_prefixes_id', null, 'create');
+
+        $validator
+            ->scalar('management_prefix')
+            ->maxLength('management_prefix', 50)
+            ->requirePresence('management_prefix', 'create')
+            ->notEmptyString('management_prefix');
+
+        $validator
+            ->integer('sort_number')
+            ->requirePresence('sort_number', 'create')
+            ->notEmptyString('sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageAnswers Model
+ *
+ * @property \App\Model\Table\MessageDestinationsTable&\Cake\ORM\Association\BelongsTo $MessageDestinations
+ * @property &\Cake\ORM\Association\BelongsTo $MessageChoices
+ *
+ * @method \App\Model\Entity\MessageAnswer get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageAnswer newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageAnswer[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageAnswer|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageAnswer saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageAnswer patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageAnswer[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageAnswer findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class MessageAnswersTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_answers');
+        $this->setDisplayField('message_answers_id');
+        $this->setPrimaryKey('message_answers_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->hasOne('MessageDestinations', [
+            'foreignKey' => 'message_destinations_id',
+            'bindingKey' => 'message_destinations_id'
+        ]);
+        $this->belongsTo('MessageChoices', [
+            'foreignKey' => 'message_choices_id'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_answers_id')
+            ->allowEmptyString('message_answers_id', null, 'create');
+
+        $validator
+            ->requirePresence("message_choices_id");
+
+        $validator
+            ->scalar('message')
+            ->allowEmptyString('message');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['message_destinations_id'], 'MessageDestinations'));
+        $rules->add($rules->existsIn(['message_choices_id'], 'MessageChoices'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageBords Model
+ *
+ * @property \App\Model\Table\MessageStatusesTable&\Cake\ORM\Association\BelongsTo $MessageStatuses
+ *
+ * @method \App\Model\Entity\MessageBord get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageBord newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageBord[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageBord|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageBord saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageBord patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageBord[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageBord findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class MessageBordsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_bords');
+        $this->setDisplayField('title');
+        $this->setPrimaryKey('message_bords_id');
+
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('IncidentManagements', [
+            'foreignKey' => 'incident_managements_id',
+            'joinType' => 'INNER'
+        ]);
+
+        /*
+        $this->belongsTo('MessageStatuses', [
+            'foreignKey' => 'message_statuses_id',
+            'joinType' => 'INNER'
+        ]);
+         */
+        $this->hasOne('MessageStatuses', [
+            'foreignKey' => 'message_statuses_id',
+            'bindingKey' => 'message_statuses_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('MessageDestinations', [
+            'foreignKey' => 'message_bords_id',
+        ]);
+        $this->hasMany('MessageChoices', [
+            'foreignKey' => 'message_bords_id',
+        ]);
+        $this->hasMany('MessageFiles', [
+            'foreignKey' => 'message_bords_id',
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_bords_id')
+            ->allowEmptyString('message_bords_id', null, 'create');
+
+        $validator
+            ->scalar('title')
+            ->maxLength('title', 255)
+            ->requirePresence('title', 'create')
+            ->notEmptyString('title');
+
+        $validator
+            ->integer('choice')
+            ->notEmptyString('choice');
+
+        $validator
+            ->scalar('message')
+            ->allowEmptyString('message');
+
+        $validator
+            ->date('period')
+            ->requirePresence('period', 'create')
+            ->notEmptyDate('period');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['message_statuses_id'], 'MessageStatuses'));
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageChoices Model
+ *
+ * @property \App\Model\Table\MessageBordsTable&\Cake\ORM\Association\BelongsTo $MessageBords
+ *
+ * @method \App\Model\Entity\MessageChoice get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageChoice newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageChoice[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageChoice|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageChoice saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageChoice patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageChoice[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageChoice findOrCreate($search, callable $callback = null, $options = [])
+ */
+class MessageChoicesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_choices');
+        $this->setDisplayField('message_choices_id');
+        $this->setPrimaryKey('message_choices_id');
+
+        $this->belongsTo('MessageBords', [
+            'foreignKey' => 'message_bords_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('MessageAnswers', [
+            'foreignKey' => 'message_choices_id'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_choices_id')
+            ->allowEmptyString('message_choices_id', null, 'create');
+
+        $validator
+            ->scalar('content')
+            ->maxLength('content', 255)
+            ->requirePresence('content', 'create')
+            ->notEmptyString('content');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['message_bords_id'], 'MessageBords'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageDestinations Model
+ *
+ * @property \App\Model\Table\MessageBordsTable&\Cake\ORM\Association\BelongsTo $MessageBords
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ *
+ * @method \App\Model\Entity\MessageDestination get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageDestination newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageDestination[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageDestination|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageDestination saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageDestination patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageDestination[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageDestination findOrCreate($search, callable $callback = null, $options = [])
+ */
+class MessageDestinationsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_destinations');
+        $this->setDisplayField('message_destinations_id');
+        $this->setPrimaryKey('message_destinations_id');
+
+        $this->belongsTo('MessageBords', [
+            'foreignKey' => 'message_bords_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasOne("MessageAnswers", [
+            "foreignKey" => "message_destinations_id"
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_destinations_id')
+            ->allowEmptyString('message_destinations_id', null, 'create');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['message_bords_id'], 'MessageBords'));
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageFiles Model
+ *
+ * @property \App\Model\Table\MessageBordsTable&\Cake\ORM\Association\BelongsTo $MessageBords
+ *
+ * @method \App\Model\Entity\MessageFile get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageFile newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageFile[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageFile|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageFile saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageFile patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageFile[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageFile findOrCreate($search, callable $callback = null, $options = [])
+ */
+class MessageFilesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_files');
+        $this->setDisplayField('message_files_id');
+        $this->setPrimaryKey('message_files_id');
+
+        $this->belongsTo('MessageBords', [
+            'foreignKey' => 'message_bords_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_files_id')
+            ->allowEmptyFile('message_files_id', null, 'create');
+
+        $validator
+            ->scalar('file_name')
+            ->maxLength('file_name', 255)
+            ->requirePresence('file_name', 'create')
+            ->notEmptyFile('file_name');
+
+        $validator
+            ->scalar('file_size')
+            ->maxLength('file_size', 16)
+            ->requirePresence('file_size', 'create')
+            ->notEmptyFile('file_size');
+
+        $validator
+            ->scalar('unique_file_name')
+            ->maxLength('unique_file_name', 255)
+            ->requirePresence('unique_file_name', 'create')
+            ->notEmptyFile('unique_file_name');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['message_bords_id'], 'MessageBords'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * MessageStatuses Model
+ *
+ * @method \App\Model\Entity\MessageStatus get($primaryKey, $options = [])
+ * @method \App\Model\Entity\MessageStatus newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\MessageStatus[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\MessageStatus|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageStatus saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\MessageStatus patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageStatus[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\MessageStatus findOrCreate($search, callable $callback = null, $options = [])
+ */
+class MessageStatusesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('message_statuses');
+        $this->setDisplayField('status');
+        $this->setPrimaryKey('message_statuses_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('message_statuses_id')
+            ->allowEmptyString('message_statuses_id', null, 'create');
+
+        $validator
+            ->scalar('status')
+            ->maxLength('status', 255)
+            ->requirePresence('status', 'create')
+            ->notEmptyString('status');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * OrderNews Model
+ *
+ * @method \App\Model\Entity\OrderNews get($primaryKey, $options = [])
+ * @method \App\Model\Entity\OrderNews newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\OrderNews[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\OrderNews|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\OrderNews saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\OrderNews patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\OrderNews[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\OrderNews findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class OrderNewsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('order_news');
+        $this->setDisplayField('title');
+        $this->setPrimaryKey('order_news_id');
+
+        $this->addBehavior('Timestamp');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('order_news_id')
+            ->allowEmptyString('order_news_id', null, 'create');
+
+        $validator
+            ->date('order_news_date')
+            ->requirePresence('order_news_date', 'create')
+            ->notEmptyDate('order_news_date');
+
+        $validator
+            ->scalar('title')
+            ->maxLength('title', 255)
+            ->requirePresence('title', 'create')
+            ->notEmptyString('title');
+
+        $validator
+            ->scalar('comment')
+            ->allowEmptyString('comment');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Positions Model
+ *
+ * @method \App\Model\Entity\Position get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Position newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Position[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Position|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Position saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Position patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Position[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Position findOrCreate($search, callable $callback = null, $options = [])
+ */
+class PositionsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('positions');
+        $this->setDisplayField('position');
+        $this->setPrimaryKey('positions_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('positions_id')
+            ->allowEmptyString('positions_id', null, 'create');
+
+        $validator
+            ->scalar('position')
+            ->maxLength('position', 15)
+            ->requirePresence('position', 'create')
+            ->notEmptyString('position');
+
+        $validator
+            ->integer('position_sort_number')
+            ->requirePresence('position_sort_number', 'create')
+            ->notEmptyString('position_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Positives Model
+ *
+ * @method \App\Model\Entity\Positive get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Positive newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Positive[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Positive|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Positive saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Positive patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Positive[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Positive findOrCreate($search, callable $callback = null, $options = [])
+ */
+class PositivesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('positives');
+        $this->setDisplayField('positive');
+        $this->setPrimaryKey('positives_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('positives_id')
+            ->allowEmptyString('positives_id', null, 'create');
+
+        $validator
+            ->scalar('positive')
+            ->maxLength('positive', 30)
+            ->requirePresence('positive', 'create')
+            ->notEmptyString('positive');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Ranks Model
+ *
+ * @method \App\Model\Entity\Rank get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Rank newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Rank[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Rank|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Rank saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Rank patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Rank[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Rank findOrCreate($search, callable $callback = null, $options = [])
+ */
+class RanksTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('ranks');
+        $this->setDisplayField('rank');
+        $this->setPrimaryKey('ranks_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('ranks_id')
+            ->allowEmptyString('ranks_id', null, 'create');
+
+        $validator
+            ->scalar('rank')
+            ->maxLength('rank', 8)
+            ->requirePresence('rank', 'create')
+            ->notEmptyString('rank');
+
+        $validator
+            ->scalar('abb_rank')
+            ->maxLength('abb_rank', 8)
+            ->requirePresence('abb_rank', 'create')
+            ->notEmptyString('abb_rank');
+
+        $validator
+            ->integer('rank_sort_number')
+            ->requirePresence('rank_sort_number', 'create')
+            ->notEmptyString('rank_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Reports Model
+ *
+ * @method \App\Model\Entity\Report get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Report newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Report[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Report|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Report saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Report patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Report[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Report findOrCreate($search, callable $callback = null, $options = [])
+ */
+class ReportsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('reports');
+        $this->setDisplayField('report');
+        $this->setPrimaryKey('reports_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('reports_id')
+            ->allowEmptyString('reports_id', null, 'create');
+
+        $validator
+            ->scalar('report')
+            ->maxLength('report', 30)
+            ->requirePresence('report', 'create')
+            ->notEmptyString('report');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * RiskDetections Model
+ *
+ * @property &\Cake\ORM\Association\BelongsTo $IncidentManagements
+ * @property \App\Model\Table\SystemsTable&\Cake\ORM\Association\BelongsTo $Systems
+ * @property \App\Model\Table\BasesTable&\Cake\ORM\Association\BelongsTo $Bases
+ * @property \App\Model\Table\UnitsTable&\Cake\ORM\Association\BelongsTo $Units
+ * @property \App\Model\Table\StatusesTable&\Cake\ORM\Association\BelongsTo $Statuses
+ * @property \App\Model\Table\ReportsTable&\Cake\ORM\Association\BelongsTo $Reports
+ * @property \App\Model\Table\PositivesTable&\Cake\ORM\Association\BelongsTo $Positives
+ * @property \App\Model\Table\SecLevelsTable&\Cake\ORM\Association\BelongsTo $SecLevels
+ * @property &\Cake\ORM\Association\BelongsTo $IncidentCases
+ * @property \App\Model\Table\InfectionRoutesTable&\Cake\ORM\Association\BelongsTo $InfectionRoutes
+ *
+ * @method \App\Model\Entity\RiskDetection get($primaryKey, $options = [])
+ * @method \App\Model\Entity\RiskDetection newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\RiskDetection[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\RiskDetection|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\RiskDetection saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\RiskDetection patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\RiskDetection[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\RiskDetection findOrCreate($search, callable $callback = null, $options = [])
+ */
+class RiskDetectionsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('risk_detections');
+        $this->setDisplayField('risk_detections_id');
+        $this->setPrimaryKey('risk_detections_id');
+
+        $this->belongsTo('IncidentManagements', [
+            'foreignKey' => 'incident_managements_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Systems', [
+            'foreignKey' => 'systems_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Bases', [
+            'foreignKey' => 'bases_id'
+        ]);
+        $this->belongsTo('Units', [
+            'foreignKey' => 'units_id'
+        ]);
+        $this->belongsTo('Statuses', [
+            'foreignKey' => 'statuses_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Reports', [
+            'foreignKey' => 'reports_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Positives', [
+            'foreignKey' => 'positives_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('SecLevels', [
+            'foreignKey' => 'sec_levels_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('IncidentCases', [
+            'foreignKey' => 'incident_cases_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('InfectionRoutes', [
+            'foreignKey' => 'infection_routes_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('risk_detections_id')
+            ->allowEmptyString('risk_detections_id', null, 'create');
+
+        $validator
+            ->dateTime('occurrence_datetime')
+            ->allowEmptyDateTime('occurrence_datetime');
+
+        $validator
+            ->dateTime('response_start_time')
+            ->requirePresence('response_start_time', 'create')
+            ->notEmptyDateTime('response_start_time');
+
+        $validator
+            ->dateTime('response_end_time')
+            ->allowEmptyDateTime('response_end_time');
+
+        $validator
+            ->boolean('sim_live_flag')
+            ->notEmptyString('sim_live_flag');
+
+        $validator
+            ->boolean('samari_flag')
+            ->notEmptyString('samari_flag');
+
+        $validator
+            ->boolean('attachment')
+            ->notEmptyString('attachment');
+
+        $validator
+            ->scalar('comment')
+            ->allowEmptyString('comment');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['incident_managements_id'], 'IncidentManagements'));
+        $rules->add($rules->existsIn(['systems_id'], 'Systems'));
+        $rules->add($rules->existsIn(['bases_id'], 'Bases'));
+        $rules->add($rules->existsIn(['units_id'], 'Units'));
+        $rules->add($rules->existsIn(['statuses_id'], 'Statuses'));
+        $rules->add($rules->existsIn(['reports_id'], 'Reports'));
+        $rules->add($rules->existsIn(['positives_id'], 'Positives'));
+        $rules->add($rules->existsIn(['sec_levels_id'], 'SecLevels'));
+        $rules->add($rules->existsIn(['incident_cases_id'], 'IncidentCases'));
+        $rules->add($rules->existsIn(['infection_routes_id'], 'InfectionRoutes'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Roles Model
+ *
+ * @method \App\Model\Entity\Role get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Role newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Role[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Role|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Role saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Role patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Role[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Role findOrCreate($search, callable $callback = null, $options = [])
+ */
+class RolesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('roles');
+        $this->setDisplayField('role_jp');
+        $this->setPrimaryKey('roles_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('roles_id')
+            ->allowEmptyString('roles_id', null, 'create');
+
+        $validator
+            ->scalar('role_jp')
+            ->maxLength('role', 30)
+            ->requirePresence('role', 'create')
+            ->notEmptyString('role');
+
+        $validator
+            ->scalar('role_en')
+            ->maxLength('role', 30)
+            ->requirePresence('role', 'create')
+            ->notEmptyString('role');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Schedules Model
+ *
+ * @method \App\Model\Entity\Schedule get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Schedule newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Schedule[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Schedule|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Schedule saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Schedule patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Schedule[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Schedule findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ */
+class SchedulesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('schedules');
+        $this->setDisplayField('schedules_id');
+        $this->setPrimaryKey('schedules_id');
+
+        $this->addBehavior('Timestamp');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('schedules_id')
+            ->allowEmptyString('schedules_id', null, 'create');
+
+        $validator
+            ->date('schedule_start_date')
+            ->requirePresence('schedule_start_date', 'create')
+            ->notEmptyDate('schedule_start_date');
+
+        $validator
+            ->date('schedule_end_date')
+            ->requirePresence('schedule_end_date', 'create')
+            ->notEmptyDate('schedule_end_date');
+
+        $validator
+            ->integer('repe_flag')
+            ->requirePresence('repe_flag', 'create')
+            ->notEmptyString('repe_flag');
+
+        $validator
+            ->scalar('schedule')
+            ->requirePresence('schedule', 'create')
+            ->notEmptyString('schedule');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * SecLevels Model
+ *
+ * @method \App\Model\Entity\SecLevel get($primaryKey, $options = [])
+ * @method \App\Model\Entity\SecLevel newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\SecLevel[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\SecLevel|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\SecLevel saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\SecLevel patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\SecLevel[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\SecLevel findOrCreate($search, callable $callback = null, $options = [])
+ */
+class SecLevelsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('sec_levels');
+        $this->setDisplayField('sec_level');
+        $this->setPrimaryKey('sec_levels_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('sec_levels_id')
+            ->allowEmptyString('sec_levels_id', null, 'create');
+
+        $validator
+            ->scalar('sec_level')
+            ->maxLength('sec_level', 30)
+            ->requirePresence('sec_level', 'create')
+            ->notEmptyString('sec_level');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Shifts Model
+ *
+ * @method \App\Model\Entity\Shift get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Shift newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Shift[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Shift|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Shift saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Shift patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Shift[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Shift findOrCreate($search, callable $callback = null, $options = [])
+ */
+class ShiftsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('shifts');
+        $this->setDisplayField('shift');
+        $this->setPrimaryKey('shifts_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('shifts_id')
+            ->allowEmptyString('shifts_id', null, 'create');
+
+        $validator
+            ->scalar('shift')
+            ->maxLength('shift', 6)
+            ->requirePresence('shift', 'create')
+            ->notEmptyString('shift');
+
+        $validator
+            ->integer('shift_sort_number')
+            ->requirePresence('shift_sort_number', 'create')
+            ->notEmptyString('shift_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Statuses Model
+ *
+ * @method \App\Model\Entity\Status get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Status newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Status[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Status|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Status saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Status patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Status[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Status findOrCreate($search, callable $callback = null, $options = [])
+ */
+class StatusesTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('statuses');
+        $this->setDisplayField('status');
+        $this->setPrimaryKey('statuses_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('statuses_id')
+            ->allowEmptyString('statuses_id', null, 'create');
+
+        $validator
+            ->scalar('status')
+            ->maxLength('status', 50)
+            ->requirePresence('status', 'create')
+            ->notEmptyString('status');
+
+        $validator
+            ->integer('status_sort_number')
+            ->requirePresence('status_sort_number', 'create')
+            ->notEmptyString('status_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Systems Model
+ *
+ * @method \App\Model\Entity\System get($primaryKey, $options = [])
+ * @method \App\Model\Entity\System newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\System[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\System|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\System saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\System patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\System[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\System findOrCreate($search, callable $callback = null, $options = [])
+ */
+class SystemsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('systems');
+        $this->setDisplayField('system');
+        $this->setPrimaryKey('systems_id');
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('systems_id')
+            ->allowEmptyString('systems_id', null, 'create');
+
+        $validator
+            ->scalar('system')
+            ->maxLength('system', 50)
+            ->requirePresence('system', 'create')
+            ->notEmptyString('system');
+
+        $validator
+            ->scalar('abb_system')
+            ->maxLength('abb_system', 30)
+            ->requirePresence('abb_system', 'create')
+            ->notEmptyString('abb_system');
+
+        $validator
+            ->integer('system_sort_number')
+            ->requirePresence('system_sort_number', 'create')
+            ->notEmptyString('system_sort_number');
+
+        return $validator;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Units Model
+ *
+ * @property \App\Model\Table\BasesTable&\Cake\ORM\Association\BelongsTo $Bases
+ *
+ * @method \App\Model\Entity\Unit get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Unit newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Unit[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Unit|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Unit saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Unit patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Unit[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Unit findOrCreate($search, callable $callback = null, $options = [])
+ */
+class UnitsTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('units');
+        $this->setDisplayField('unit');
+        $this->setPrimaryKey('units_id');
+
+        $this->belongsTo('Bases', [
+            'foreignKey' => 'bases_id',
+            'joinType' => 'INNER'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('units_id')
+            ->allowEmptyString('units_id', null, 'create');
+
+        $validator
+            ->scalar('unit')
+            ->maxLength('unit', 30)
+            ->requirePresence('unit', 'create')
+            ->notEmptyString('unit');
+
+        $validator
+            ->integer('unit_sort_number')
+            ->requirePresence('unit_sort_number', 'create')
+            ->notEmptyString('unit_sort_number');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['bases_id'], 'Bases'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Users Model
+ *
+ * @property \App\Model\Table\BelongsTable&\Cake\ORM\Association\BelongsTo $Belongs
+ * @property \App\Model\Table\RanksTable&\Cake\ORM\Association\BelongsTo $Ranks
+ *
+ * @method \App\Model\Entity\User get($primaryKey, $options = [])
+ * @method \App\Model\Entity\User newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\User|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\User saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\User patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\User[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\User findOrCreate($search, callable $callback = null, $options = [])
+ */
+class UsersTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('users');
+        $this->setDisplayField(['first_name', 'last_name']);
+        $this->setPrimaryKey('users_id');
+
+        $this->belongsTo('Belongs', [
+            'foreignKey' => 'belongs_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Ranks', [
+            'foreignKey' => 'ranks_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Roles', [
+            'foreignKey' => 'roles_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('CrewSendComments', [
+            'foreignKey' => 'users_id',
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->integer('users_id')
+            ->allowEmptyString('users_id', null, 'create');
+
+        $validator
+            ->scalar('first_name')
+            ->maxLength('first_name', 8)
+            ->requirePresence('first_name', 'create')
+            ->notEmptyString('first_name');
+
+        $validator
+            ->scalar('last_name')
+            ->maxLength('last_name', 8)
+            ->requirePresence('last_name', 'create')
+            ->notEmptyString('last_name');
+
+        $validator
+            ->scalar('password')
+            ->maxLength('password', 255)
+            ->requirePresence('password', 'create')
+            ->notEmptyString('password');
+
+        $validator
+            ->integer('user_sort_number')
+            ->requirePresence('user_sort_number', 'create')
+            ->notEmptyString('user_sort_number');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['belongs_id'], 'Belongs'));
+        $rules->add($rules->existsIn(['ranks_id'], 'Ranks'));
+
+        return $rules;
+    }
+}
+<?php
+namespace App\Model\Table;
+
+use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
+/**
+ * Workers Model
+ *
+ * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ * @property \App\Model\Table\ClassesTable&\Cake\ORM\Association\BelongsTo $Classes
+ * @property \App\Model\Table\PositionsTable&\Cake\ORM\Association\BelongsTo $Positions
+ * @property \App\Model\Table\ShiftsTable&\Cake\ORM\Association\BelongsTo $Shifts
+ * @property \App\Model\Table\DutiesTable&\Cake\ORM\Association\BelongsTo $Duties
+ *
+ * @method \App\Model\Entity\Worker get($primaryKey, $options = [])
+ * @method \App\Model\Entity\Worker newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\Worker[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\Worker|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Worker saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\Worker patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\Worker[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\Worker findOrCreate($search, callable $callback = null, $options = [])
+ */
+class WorkersTable extends Table
+{
+    /**
+     * Initialize method
+     *
+     * @param array $config The configuration for the Table.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+
+        $this->setTable('workers');
+        $this->setDisplayField('date');
+        $this->setPrimaryKey(['date', 'users_id']);
+
+        $this->belongsTo('Users', [
+            'foreignKey' => 'users_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Positions', [
+            'foreignKey' => 'positions_id'
+        ]);
+        $this->belongsTo('Shifts', [
+            'foreignKey' => 'shifts_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Duties', [
+            'foreignKey' => 'duties_id'
+        ]);
+    }
+
+    /**
+     * Default validation rules.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->date('date')
+            ->allowEmptyDate('date', null, 'create');
+
+        return $validator;
+    }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->existsIn(['users_id'], 'Users'));
+        $rules->add($rules->existsIn(['positions_id'], 'Positions'));
+        $rules->add($rules->existsIn(['shifts_id'], 'Shifts'));
+        $rules->add($rules->existsIn(['duties_id'], 'Duties'));
+
+        return $rules;
+    }
+}

@@ -1,0 +1,9 @@
+cakephp3 エラーログ
+
+入力
+$this->log(変数, LOG_DEBUG);
+変数部分は"~~~"でも可
+
+出力
+cakephpプロジェクトディレクトリ内の"/logs/debug.log"
+tail使うと便利

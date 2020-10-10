@@ -1,0 +1,13 @@
+mysqlコマンド
+
+データ全削除
+delete from テーブル名;
+
+カラム追加
+alter table テーブル名 add 新規カラム名 型情報 
+　順番指定
+　alter table テーブル名 add 新規カラム名 型情報 after 既存カラム名
+　alter table テーブル名 add 新規カラム名 型情報 first
+　
+データ更新
+update テーブル名 set カラム名=値 where 条件
