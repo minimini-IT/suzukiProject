@@ -1,0 +1,10 @@
+整合性違反
+値が曖昧と出るので、テーブル名を指定する
+例）
+○  $riskOnly = $this->RiskDetections->find("all")
+       ->where(["incident_cases_id" => 2])
+       ->where(['RiskDetections.' . "infection_routes_id" => 2]);
+
+✖︎   $riskOnly = $this->RiskDetections->find("all")
+       ->where(["incident_cases_id" => 2])
+       ->where(["infection_routes_id" => 2]);

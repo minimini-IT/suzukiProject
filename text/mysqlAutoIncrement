@@ -1,0 +1,3 @@
+auto_increment初期化
+
+alter table テーブル名 auto_increment = 1;

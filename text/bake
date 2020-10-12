@@ -1,0 +1,12 @@
+bakeでコード自動生成
+
+all
+component
+controller
+helper
+migration
+model
+template
+
+ex)
+bin/cake bake all users

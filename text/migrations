@@ -1,0 +1,22 @@
+cakephp Migration
+
+targetまでのMigrationをdownからupにする
+bin/cake migrations mark_migrated --target=番号
+
+すべてをupにする
+bin/cake migrations mark_migrated
+
+特定のMigrationをdownからupにする
+bin/cake migrations mark_migrated --target=番号 --only
+
+     up  20191022180552  CreateCrewSends           
+     up  20191026142712  RemoveClassesCreateRanks  
+　　上記の２つはmark_migratedしておくこと
+
+migrationファイル作成
+bin/cake bake migration CreateFiles files_id:integer file_group:integer file_name:string file_size:string created modified
+
+空Migrationファイル作成
+bin/cake migrations create ファイル名
+
+

@@ -1,0 +1,366 @@
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Systems seed.
+ */
+class SystemsSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "system" => "事務共通",
+                "abb_system" => "oaci",
+                "system_sort_number" => 1,
+            ],
+            [
+                "system" => "空自インターネット",
+                "abb_system" => "inet",
+                "system_sort_number" => 2,
+            ],
+            [
+                "system" => "自衛隊指揮システム",
+                "abb_system" => "jacs",
+                "system_sort_number" => 3,
+            ],
+            [
+                "system" => "部隊LAN",
+                "abb_system" => "LAN",
+                "system_sort_number" => 4,
+            ],
+        ];
+
+        $table = $this->table('systems');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Bases seed.
+ */
+class BasesSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "base" => "市ヶ谷",
+                "base_sort_number" => "1",
+            ],
+            [
+                "base" => "十条",
+                "base_sort_number" => "2",
+            ],
+            [
+                "base" => "千歳",
+                "base_sort_number" => "3",
+            ],
+            [
+                "base" => "三沢",
+                "base_sort_number" => "4",
+            ]
+        ];
+
+        $table = $this->table('bases');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Units seed.
+ */
+class UnitsSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "bases_id" => "1",
+                "unit" => "航空システム通信隊",
+                "unit_sort_number" => "1"
+            ],
+            [
+                "bases_id" => "2",
+                "unit" => "補給本部",
+                "unit_sort_number" => "2"
+            ],
+            [
+                "bases_id" => "3",
+                "unit" => "第２航空団",
+                "unit_sort_number" => "3"
+            ],
+            [
+                "bases_id" => "4",
+                "unit" => "北部航空警戒管制団",
+                "unit_sort_number" => "4"
+            ],
+        ];
+
+        $table = $this->table('units');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Statuses seed.
+ */
+class StatusesSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+      $data = [
+        [
+          "status" => "対処中",
+          "status_sort_number" => 1
+        ],
+        [
+          "status" => "対処完了",
+          "status_sort_number" => 2
+        ],
+        [
+          "status" => "収束",
+          "status_sort_number" => 3
+        ],
+        [
+          "status" => "経過観察",
+          "status_sort_number" => 4
+        ]
+      ];
+
+        $table = $this->table('statuses');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Reports seed.
+ */
+class ReportsSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+      $data = [
+            [
+                "report" => "未確定"
+            ],
+            [
+                "report" => "報告無し"
+            ],
+            [
+                "report" => "報告有り"
+            ]
+        ];
+
+        $table = $this->table('reports');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * Positives seed.
+ */
+class PositivesSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+      $data = [
+            [
+                "positive" => "未確定"
+            ],
+            [
+                "positive" => "誤検知"
+            ],
+            [
+                "positive" => "正検知"
+            ]
+        ];
+
+        $table = $this->table('positives');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * SecLevels seed.
+ */
+class SecLevelsSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "sec_level" => 1
+            ],
+            [
+                "sec_level" => 2
+            ],
+            [
+                "sec_level" => 3
+            ],
+            [
+                "sec_level" => 4
+            ]
+        ];
+
+        $table = $this->table('sec_levels');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * IncedentCases seed.
+ */
+class IncedentCasesSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "incident_case" => "不審メール"
+            ],
+            [
+                "incident_case" => "ウイルス検知"
+            ],
+            [
+                "incident_case" => "ソフトウェア不正利用"
+            ]
+        ];
+
+        $table = $this->table('incident_cases');
+        $table->insert($data)->save();
+    }
+}
+<?php
+use Migrations\AbstractSeed;
+
+/**
+ * InfectionRoutes seed.
+ */
+class InfectionRoutesSeed extends AbstractSeed
+{
+    /**
+     * Run Method.
+     *
+     * Write your database seeder using this method.
+     *
+     * More information on writing seeds is available here:
+     * http://docs.phinx.org/en/latest/seeding.html
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $data = [
+            [
+                "infection_route" => "WEB"
+            ],
+            [
+                "infection_route" => "MAIL"
+            ],
+            [
+                "infection_route" => "USB"
+            ],
+            [
+                "infection_route" => "その他"
+            ]
+        ];
+
+        $table = $this->table('infection_routes');
+        $table->insert($data)->save();
+    }
+}

@@ -1,0 +1,5 @@
+show engine innodb status;
+
+外部キーのエラーを確認しよう
+データベースのログを確認
+latest foreign key errorの部分
