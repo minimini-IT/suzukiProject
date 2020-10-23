@@ -18,16 +18,22 @@ class BulletinBoardCommentsSeed extends AbstractSeed
                 "bulletin_boards_id" => 1,
                 "comment_author" => "はげまんと",
                 "comment_contents" => "なはなはなはなはなはなはなはなはなは",
+                "created" => "2020/10/01",
+                "modified" => "2020/10/01"
             ],
             [
                 "bulletin_boards_id" => 1,
                 "comment_author" => "鬼サイボーグ",
                 "comment_contents" => "けらけらケセラセラ",
+                "created" => "2020/10/01",
+                "modified" => "2020/10/01"
             ],
             [
                 "bulletin_boards_id" => 2,
                 "comment_author" => "永野芽衣",
                 "comment_contents" => "動かざること山のごとし",
+                "created" => "2020/10/05",
+                "modified" => "2020/10/05",
             ],
         ];
 

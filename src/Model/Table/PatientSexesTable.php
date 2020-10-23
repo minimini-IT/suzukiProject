@@ -38,7 +38,7 @@ class PatientSexesTable extends Table
         parent::initialize($config);
 
         $this->setTable('patient_sexes');
-        $this->setDisplayField('patient_sexes_id');
+        $this->setDisplayField('patient_sex');
         $this->setPrimaryKey('patient_sexes_id');
     }
 

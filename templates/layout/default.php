@@ -14,7 +14,6 @@
  * @var \App\View\AppView $this
  */
 
-$cakeDescription = 'CakePHP: the rapid development php framework';
 ?>
 <!DOCTYPE html>
 <html>
@@ -22,14 +21,17 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
-        <?= $cakeDescription ?>:
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
 
+    <?= $this->Html->script('jquery-3.4.1.js') ?>
+    <?= $this->Html->script('jquery-ui.js') ?>
+    <?= $this->Html->script('checkbox.js') ?>
+
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake']) ?>
+    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake', 'suzupro']) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -38,11 +40,16 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <body>
     <nav class="top-nav">
         <div class="top-nav-title">
+            <h2>病気の人の交流サイト</h2>
+<!--
             <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
+-->
         </div>
         <div class="top-nav-links">
+<!--
             <a target="_blank" rel="noopener" href="https://book.cakephp.org/4/">Documentation</a>
             <a target="_blank" rel="noopener" href="https://api.cakephp.org/4/">API</a>
+-->
         </div>
     </nav>
     <main class="main">

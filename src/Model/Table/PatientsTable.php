@@ -44,12 +44,24 @@ class PatientsTable extends Table
         $this->setDisplayField('patients_id');
         $this->setPrimaryKey('patients_id');
 
+        /*
         $this->belongsTo('Sicknesses', [
             'foreignKey' => 'sicknesses_id',
             'joinType' => 'INNER',
         ]);
+         */
         $this->belongsTo('PatientSexes', [
             'foreignKey' => 'patient_sexes_id',
+            'joinType' => 'INNER',
+        ]);
+        /*
+        $this->hasMany('InterviewSymptoms', [
+            'foreignKey' => 'patients_id',
+            'joinType' => 'INNER',
+        ]);
+         */
+        $this->hasMany('Diseaseds', [
+            'foreignKey' => 'patients_id',
             'joinType' => 'INNER',
         ]);
     }
@@ -67,10 +79,10 @@ class PatientsTable extends Table
             ->allowEmptyString('patients_id', null, 'create');
 
         $validator
-            ->scalar('patients_initial')
-            ->maxLength('patients_initial', 10)
-            ->requirePresence('patients_initial', 'create')
-            ->notEmptyString('patients_initial');
+            ->scalar('pen_name')
+            ->maxLength('pen_name', 10)
+            ->requirePresence('pen_name', 'create')
+            ->notEmptyString('pen_name');
 
         $validator
             ->integer('age_of_onset')
@@ -102,7 +114,7 @@ class PatientsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn(['sicknesses_id'], 'Sicknesses'), ['errorField' => 'sicknesses_id']);
+        //$rules->add($rules->existsIn(['sicknesses_id'], 'Sicknesses'), ['errorField' => 'sicknesses_id']);
         $rules->add($rules->existsIn(['patient_sexes_id'], 'PatientSexes'), ['errorField' => 'patient_sexes_id']);
 
         return $rules;

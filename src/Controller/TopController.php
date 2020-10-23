@@ -7,9 +7,12 @@ class TopController extends AppController
 {
     public function index()
     {
-        $this->loadModels(["Sicknesses"]);
+        //$this->loadModels(["Sicknesses", "Symptoms", "SymptomsParts"]);
+        $this->loadModels(["Sicknesses", "Symptoms", "Locations"]);
         $sicknesses = $this->Sicknesses->find('list', ['limit' => 200]);
-        $this->set(compact('sicknesses'));
+        $symptoms = $this->Symptoms->find('list', ['limit' => 200]);
+        $locations = $this->Locations->find('list', ['limit' => 200]);
+        $this->set(compact('sicknesses', "symptoms", "locations"));
     }
 
 }

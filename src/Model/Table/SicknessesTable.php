@@ -40,6 +40,15 @@ class SicknessesTable extends Table
         $this->setTable('sicknesses');
         $this->setDisplayField('sickness_name');
         $this->setPrimaryKey('sicknesses_id');
+
+        $this->hasMany('Diseaseds', [
+            'foreignKey' => 'sicknesses_id',
+            'joinType' => 'INNER',
+        ]);
+        $this->hasMany('Represents', [
+            'foreignKey' => 'sicknesses_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**

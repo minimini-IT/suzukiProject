@@ -1,0 +1,22 @@
+using migration paths 
+ - /home/vagrant/suzukiProject/config/Migrations
+using seed paths 
+ - /home/vagrant/suzukiProject/config/Seeds
+using environment default
+
+ Status  Migration ID    Migration Name 
+-----------------------------------------
+   down  20201005122609  CreateSicknesses 
+   down  20201005133857  CreatePatientSexes 
+   down  20201006005354  CreatePatients 
+   down  20201006011404  CreateBulletinBoards 
+   down  20201006012101  CreateBulletinBoardComments 
+   down  20201006012136  CreateManagementUsers 
+   down  20201013013457  CreateSymptoms 
+   down  20201013015404  CreateRepresents 
+   down  20201013022320  CreateLocations 
+   down  20201013023722  CreateIndicates 
+   down  20201013151203  CreateInterviewSymptoms 
+   down  20201017002008  CreateDiseaseds 
+   down  20201017135516  CreateSymptomsLocations 
+

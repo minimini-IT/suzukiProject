@@ -25,14 +25,18 @@ class ManagementUsersSeed extends AbstractSeed
             [
                 "last_name" => "いとう",
                 "first_name" => "としあき",
-                "password" => $this->_setPassword(123456),
+                "password" => $this->_setPassword("123456"),
                 "mail" => "test@test.com",
+                "created" => "2020/10/01",
+                "modified" => "2020/10/01",
             ],
             [
                 "last_name" => "ながの",
                 "first_name" => "めい",
-                "password" => $this->_setPassword(123456),
+                "password" => $this->_setPassword("123456"),
                 "mail" => "test@test.com",
+                "created" => "2020/10/11",
+                "modified" => "2020/10/11",
             ],
         ];
 

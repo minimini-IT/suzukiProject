@@ -1,3 +1,6 @@
 auto_increment初期化
 
-alter table テーブル名 auto_increment = 1;
+    alter table テーブル名 auto_increment = 1;
+
+auto_increment値確認
+    select auto_increment from information_schema.tables where table_schema = "DB名" and table_name = "テーブル名";

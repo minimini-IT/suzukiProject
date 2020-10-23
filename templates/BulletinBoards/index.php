@@ -1,4 +1,6 @@
 <?php
+$this->assign("title", "掲示板");
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\BulletinBoard[]|\Cake\Collection\CollectionInterface $bulletinBoards
@@ -7,6 +9,7 @@
 <div class="bulletinBoards index content">
     <?= $this->Html->link(__('スレッド作成'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('掲示板') ?></h3>
+    <?= $this->Html->link(__('戻る'), ["controller" => "Top", 'action' => 'index']) ?>
     <div class="table-responsive">
         <table>
             <thead>

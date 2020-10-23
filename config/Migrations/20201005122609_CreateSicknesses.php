@@ -20,6 +20,11 @@ class CreateSicknesses extends AbstractMigration
                 'limit' => 80,
                 'null' => false,
             ])
+            ->addColumn('sickness_number', 'integer', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
             ->create();
     }
 

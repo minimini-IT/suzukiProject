@@ -15,16 +15,19 @@ class CreatePatients extends AbstractMigration
                 'limit' => 11,
                 'null' => false,
             ])
-            ->addColumn('patients_initial', 'string', [
+            ->addColumn('pen_name', 'string', [
                 'default' => null,
-                'limit' => 10,
+                'limit' => 100,
                 'null' => false,
             ])
+            //多：多にする
+            /*
             ->addColumn('sicknesses_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
                 'null' => false,
             ])
+             */
             ->addColumn('patient_sexes_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
@@ -42,16 +45,24 @@ class CreatePatients extends AbstractMigration
             ])
             ->addColumn('cured', 'date', [
                 'default' => null,
-                'limit' => 11,
                 'null' => true,
             ])
             ->addColumn('comment', 'text', [
                 'default' => null,
                 'null' => true,
             ])
+            ->addColumn('created', 'date', [
+                'default' => null,
+                'null' => true,
+            ])
+            ->addColumn('modified', 'date', [
+                'default' => null,
+                'null' => true,
+            ])
             ->create();
 
         $this->table('patients')
+            /*
             ->addForeignKey(
                 'sicknesses_id',
                 'sicknesses',
@@ -61,6 +72,7 @@ class CreatePatients extends AbstractMigration
                     'delete' => 'CASCADE'
                 ]
             )
+             */
             ->addForeignKey(
                 'patient_sexes_id',
                 'patient_sexes',
@@ -75,7 +87,7 @@ class CreatePatients extends AbstractMigration
     public function down()
     {
         $this->table('patients')
-            ->dropForeignKey('sicknesses_id')
+            //->dropForeignKey('sicknesses_id')
             ->dropForeignKey('patient_sexes_id')
             ->save();
         $this->table('patients')->drop()->save();

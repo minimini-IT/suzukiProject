@@ -1,4 +1,6 @@
 <?php
+$this->assign("title", "掲示板作成");
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\BulletinBoard $bulletinBoard

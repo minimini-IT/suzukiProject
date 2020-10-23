@@ -8,4 +8,6 @@ SEEDファイルのすべてを実行
 bin/cake migrations seed
 
 ターゲットを絞って実行
-bin/cake migrations seed --seed ファイル名
+bin/cake migrations seed --seed クラス名
+bin/cake migratiobs seed --seed UsersSeed
+

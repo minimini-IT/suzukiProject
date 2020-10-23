@@ -32,8 +32,8 @@ class Patient extends Entity
      * @var array
      */
     protected $_accessible = [
-        'patients_initial' => true,
-        'sicknesses_id' => true,
+        'pen_name' => true,
+        //'sicknesses_id' => true,
         'patient_sexes_id' => true,
         'age_of_onset' => true,
         'year_of_onset' => true,

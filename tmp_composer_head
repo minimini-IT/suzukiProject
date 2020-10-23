@@ -1,0 +1,17 @@
+
+<<<<<<< HEAD
+            "version": "4.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cakephp/cakephp.git",
+                "reference": "d9f9c5739eb87426c9a7c63fe0f869103c265673"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/d9f9c5739eb87426c9a7c63fe0f869103c265673",
+                "reference": "d9f9c5739eb87426c9a7c63fe0f869103c265673",
+=======
+
+
+
+>>>>>>> origin/master

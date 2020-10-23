@@ -1,4 +1,6 @@
 <?php
+$this->assign("title", "闘病者インタビュー");
+
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Patient[]|\Cake\Collection\CollectionInterface $patients
@@ -8,12 +10,13 @@
 <!--
     <?= $this->Html->link(__('闘病者を追加する'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     -->
-    <h3><?= __('闘病者') ?></h3>
+    <h3><?= __('闘病者インタビュー') ?></h3>
+    <?= $this->Html->link(__('戻る'), ["controller" => "Top", 'action' => 'index']) ?>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th>イニシャル</th>
+                    <th>ペンネーム</th>
                     <th>病名</th>
                     <th>性別</th>
                     <th>発病時の年齢</th>
@@ -25,8 +28,12 @@
             <tbody>
                 <?php foreach ($patients as $patient): ?>
                 <tr>
-                    <td><?= h($patient->patients_initial) ?></td>
-                    <td><?= h($patient->sickness->sickness_name) ?></td>
+                    <td><?= h($patient->pen_name) ?></td>
+                    <td>
+                        <?php foreach ($patient->diseaseds as $diseased): ?>
+                            <p><?= h($diseased->sickness->sickness_name) ?></p>
+                        <?php endforeach ?>
+                    </td>
                     <td><?= h($patient->patient_sex->patient_sex) ?></td>
                     <td><?= $this->Number->format($patient->age_of_onset) ?></td>
                     <td><?= h($patient->year_of_onset->format("Y-m-d")) ?></td>

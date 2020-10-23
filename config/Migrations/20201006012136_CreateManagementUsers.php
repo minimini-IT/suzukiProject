@@ -35,6 +35,14 @@ class CreateManagementUsers extends AbstractMigration
                 'limit' => 100,
                 'null' => false,
             ])
+            ->addColumn('created', 'date', [
+                'default' => null,
+                'null' => false,
+            ])
+            ->addColumn('modified', 'date', [
+                'default' => null,
+                'null' => false,
+            ])
             ->create();
     }
 
