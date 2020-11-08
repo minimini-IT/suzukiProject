@@ -27,11 +27,10 @@
 
     <?= $this->Html->script('jquery-3.4.1.js') ?>
     <?= $this->Html->script('jquery-ui.js') ?>
-    <?= $this->Html->script('checkbox.js') ?>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake', 'suzupro']) ?>
+    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake', 'suzupro', "test"]) ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

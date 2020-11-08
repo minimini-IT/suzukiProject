@@ -9,15 +9,14 @@ $this->assign("title", "ユーザ管理");
 <div class="managementUsers index content">
     <?= $this->Html->link(__('ユーザを登録する'), ['action' => 'add'], ['class' => 'button float-right']) ?>
     <h3><?= __('ユーザ管理') ?></h3>
-    <?= $this->Html->link(__('戻る'), ["controller" => "DashboardManagement", 'action' => 'index']) ?>
+    <?= $this->Html->link(__('戻る'), ["controller" => "ManagementUsers", 'action' => 'top']) ?>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
-                    <th>ユーザID</th>
                     <th>姓</th>
                     <th>名</th>
-                    <th>パスワード</th>
+                    <th>ユーザID</th>
                     <!--<th>メールアドレス</th>-->
                     <th></th>
                 </tr>
@@ -25,10 +24,8 @@ $this->assign("title", "ユーザ管理");
             <tbody>
                 <?php foreach ($managementUsers as $managementUser): ?>
                 <tr>
-                    <td><?= $this->Number->format($managementUser->management_users_id) ?></td>
                     <td><?= h($managementUser->last_name) ?></td>
                     <td><?= h($managementUser->first_name) ?></td>
-                    <!--<td><?= h($managementUser->password) ?></td>-->
                     <td><?= h($managementUser->mail) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('編集'), ['action' => 'edit', $managementUser->management_users_id]) ?>

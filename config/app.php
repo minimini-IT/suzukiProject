@@ -17,6 +17,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
+    //'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
     'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
 
     /*
@@ -178,6 +179,7 @@ return [
      */
     'Error' => [
         'errorLevel' => E_ALL,
+        //'exceptionRenderer' => "App\Error\AppExceptionRenderer",
         'exceptionRenderer' => ExceptionRenderer::class,
         'skipLog' => [],
         'log' => true,

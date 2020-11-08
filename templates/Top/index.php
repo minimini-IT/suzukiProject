@@ -1,5 +1,6 @@
 <?php
 $this->assign("title", "病気の人の交流サイト");
+$this->Html->script("TopCheckbox.js", ["block" => true]);
 
 ?>
 <div class="row">
@@ -52,8 +53,12 @@ $this->assign("title", "病気の人の交流サイト");
 
     <aside class="column">
         <div class="side-nav">
+            <?= $this->Html->link(__('*管理者用* 管理メニュー'), ['controller' => 'ManagementUsers', 'action' => 'top']) ?>
             <h3>最近の記事</h3>
-            <?= $this->Html->link(__('*管理者用* 管理メニュー'), ['controller' => 'DashboardManagement', 'action' => 'index']) ?>
+            <?php foreach($patients as $patient): ?>
+                <p><?= $this->Html->link(__($patient->pen_name), ['controller' => 'patients', 'action' => 'view', $patient->patients_id]) ?></p>
+                
+            <?php endforeach ?>
         </div>
     </aside>
 

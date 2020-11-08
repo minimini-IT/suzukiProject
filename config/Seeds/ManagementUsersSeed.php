@@ -43,7 +43,7 @@ class ManagementUsersSeed extends AbstractSeed
                 "last_name" => "ながの",
                 "first_name" => "めい",
                 "password" => $this->_setPassword("222222"),
-                "mail" => "test@test.com",
+                "mail" => "asdf@test.com",
                 "created" => $datetime,
                 "modified" => $datetime,
             ],

@@ -5,7 +5,8 @@
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 
-$this->layout = 'error';
+//$this->layout = 'error';
+$this->layout = 'error_layout';
 
 if (Configure::read('debug')) :
     $this->layout = 'dev_error';
@@ -35,8 +36,8 @@ if (Configure::read('debug')) :
     $this->end();
 endif;
 ?>
-<h2><?= __d('cake', 'An Internal Error Has Occurred') ?></h2>
+<h2><?= __d('cake', 'お探しのページが存在しません') ?></h2>
 <p class="error">
-    <strong><?= __d('cake', 'Error') ?>: </strong>
+    <strong><?= __d('cake', 'エラー500') ?>: </strong>
     <?= h($message) ?>
 </p>

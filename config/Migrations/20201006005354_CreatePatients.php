@@ -20,14 +20,6 @@ class CreatePatients extends AbstractMigration
                 'limit' => 100,
                 'null' => false,
             ])
-            //多：多にする
-            /*
-            ->addColumn('sicknesses_id', 'integer', [
-                'default' => null,
-                'limit' => 11,
-                'null' => false,
-            ])
-             */
             ->addColumn('patient_sexes_id', 'integer', [
                 'default' => null,
                 'limit' => 11,
@@ -51,28 +43,17 @@ class CreatePatients extends AbstractMigration
                 'default' => null,
                 'null' => true,
             ])
-            ->addColumn('created', 'date', [
+            ->addColumn('created', 'datetime', [
                 'default' => null,
-                'null' => true,
+                'null' => false,
             ])
-            ->addColumn('modified', 'date', [
+            ->addColumn('modified', 'datetime', [
                 'default' => null,
-                'null' => true,
+                'null' => false,
             ])
             ->create();
 
         $this->table('patients')
-            /*
-            ->addForeignKey(
-                'sicknesses_id',
-                'sicknesses',
-                'sicknesses_id',
-                [
-                    'update' => 'CASCADE',
-                    'delete' => 'CASCADE'
-                ]
-            )
-             */
             ->addForeignKey(
                 'patient_sexes_id',
                 'patient_sexes',
@@ -87,7 +68,6 @@ class CreatePatients extends AbstractMigration
     public function down()
     {
         $this->table('patients')
-            //->dropForeignKey('sicknesses_id')
             ->dropForeignKey('patient_sexes_id')
             ->save();
         $this->table('patients')->drop()->save();

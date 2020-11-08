@@ -6,8 +6,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 
 
-//$this->layout = 'error';
-$this->layout = 'my_error';
+$this->layout = 'error_layout';
 
 if (Configure::read('debug')) :
     $this->layout = 'dev_error';
@@ -16,6 +15,7 @@ if (Configure::read('debug')) :
     $this->assign('templateName', 'error400.php');
 
     $this->start('file');
+
 ?>
 <?php if (!empty($error->queryString)) : ?>
     <p class="notice">
@@ -35,6 +35,6 @@ endif;
 ?>
 <h2><?= h($message) ?></h2>
 <p class="error">
-    <strong><?= __d('cake', 'エラー400') ?>: </strong>
+    <strong><?= __d('cake', 'Error') ?>: </strong>
     <?= __d('cake', 'The requested address {0} was not found on this server.', "<strong>'{$url}'</strong>") ?>
 </p>

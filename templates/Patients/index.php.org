@@ -1,0 +1,42 @@
+<?php
+$this->assign("title", "闘病者インタビュー");
+
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Patient[]|\Cake\Collection\CollectionInterface $patients
+ */
+?>
+<div class="patients index content">
+    <h3><?= __('闘病者インタビュー') ?></h3>
+    <?= $this->Html->link(__('戻る'), ["controller" => "Top", 'action' => 'index']) ?>
+    <?php foreach ($patients as $patient): ?>
+        <ul>
+            <li><?= h($patient->patients_id) ?></li>
+            <ul>
+                <?php foreach ($patient->diseaseds as $diseased): ?>
+                    <li><?= h($diseased->sicknesses_id) ?></li>
+                    <ul>
+                        <?php foreach ($diseased->interview_symptoms as $interviewSymptoms): ?>
+                            <li><?= h($interviewSymptoms->symptoms_id) ?></li>
+                            <ul>
+                                <?php foreach ($interviewSymptoms->symptoms_locations as $symptomsLocations): ?>
+                                    <li><?= h($symptomsLocations->locations_id) ?></li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endforeach ?>
+                    </ul>
+                <?php endforeach ?>
+            </ul>
+        </ul>
+    <?php endforeach; ?>
+    <div class="paginator">
+        <ul class="pagination">
+            <?= $this->Paginator->first('<< ' . __('first')) ?>
+            <?= $this->Paginator->prev('< ' . __('previous')) ?>
+            <?= $this->Paginator->numbers() ?>
+            <?= $this->Paginator->next(__('next') . ' >') ?>
+            <?= $this->Paginator->last(__('last') . ' >>') ?>
+        </ul>
+        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
+    </div>
+</div>

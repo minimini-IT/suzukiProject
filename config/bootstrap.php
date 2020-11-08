@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+/*
+ * エラーハンドラー
+ */
+use App\Error\AppError;
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -101,6 +106,11 @@ if (Configure::read('debug')) {
 }
 
 /*
+ * Authorization回避
+ */
+Configure::write("DebugKit.ignoreAuthorization", true);
+
+/*
  * Set the default server timezone. Using UTC makes time calculations / conversions easier.
  * Check http://php.net/manual/en/timezones.php for list of valid timezone strings.
  */
@@ -176,6 +186,16 @@ ServerRequest::addDetector('tablet', function ($request) {
 
     return $detector->isTablet();
 });
+
+/*
+ * エラーハンドラー
+ */
+/*
+$errorHandler = new AppError();
+$errorHandler->register();
+ */
+
+
 
 /*
  * You can set whether the ORM uses immutable or mutable Time types.

@@ -8,46 +8,25 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * ManagementUsers Model
- *
- * @method \App\Model\Entity\ManagementUser newEmptyEntity()
- * @method \App\Model\Entity\ManagementUser newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\ManagementUser[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\ManagementUser get($primaryKey, $options = [])
- * @method \App\Model\Entity\ManagementUser findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\ManagementUser patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\ManagementUser[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\ManagementUser|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\ManagementUser saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\ManagementUser[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\ManagementUser[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\ManagementUser[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\ManagementUser[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+/*
+ * beforeRules用
  */
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
+
 class ManagementUsersTable extends Table
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
     public function initialize(array $config): void
     {
         parent::initialize($config);
+
+        $this->addBehavior("Timestamp");
 
         $this->setTable('management_users');
         $this->setDisplayField('management_users_id');
         $this->setPrimaryKey('management_users_id');
     }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
     public function validationDefault(Validator $validator): Validator
     {
         $validator
@@ -79,5 +58,15 @@ class ManagementUsersTable extends Table
             ->notEmptyString('mail');
 
         return $validator;
+    }
+
+    public function buildRules(RulesChecker $rules): RulesChecker
+    {
+        /*
+         * add()で作成、更新で適用
+         * 同じメールアドレスは登録不可
+         */
+        $rules->add($rules->isUnique(["mail"], "このメールアドレスは登録済みです"));
+        return $rules;
     }
 }

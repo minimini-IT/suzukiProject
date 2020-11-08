@@ -21,6 +21,7 @@ $this->assign("title", "管理画面");
         </div>
     </div>
     <div class="column">
-        <?= $this->Html->link(__('戻る'), ['controller' => 'Top', 'action' => 'index']) ?>
+        <p><?= $this->Html->link(__('戻る'), ['controller' => 'Top', 'action' => 'index']) ?></p>
+        <p><?= $this->Html->link(__('LOGOUT'), ['controller' => 'ManagementUsers', 'action' => 'logout']) ?></p>
     </div>
 </div>
