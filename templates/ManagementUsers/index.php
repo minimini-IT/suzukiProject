@@ -16,8 +16,6 @@ $this->assign("title", "ユーザ管理");
                 <tr>
                     <th>姓</th>
                     <th>名</th>
-                    <th>ユーザID</th>
-                    <!--<th>メールアドレス</th>-->
                     <th></th>
                 </tr>
             </thead>
@@ -26,7 +24,6 @@ $this->assign("title", "ユーザ管理");
                 <tr>
                     <td><?= h($managementUser->last_name) ?></td>
                     <td><?= h($managementUser->first_name) ?></td>
-                    <td><?= h($managementUser->mail) ?></td>
                     <td class="actions">
                         <?= $this->Html->link(__('編集'), ['action' => 'edit', $managementUser->management_users_id]) ?>
                         <?= $this->Form->postLink(__('削除'), ['action' => 'delete', $managementUser->management_users_id], ['confirm' => __('Are you sure you want to delete # {0}?', $managementUser->management_users_id)]) ?>

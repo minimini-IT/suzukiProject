@@ -30,6 +30,7 @@ class SymptomsLocationsSeed extends AbstractSeed
                 "interview_symptoms_id" => 2,
                 "locations_id" => 4,
             ],
+            /*
             [
                 "interview_symptoms_id" => 3,
                 "locations_id" => 5,
@@ -70,6 +71,7 @@ class SymptomsLocationsSeed extends AbstractSeed
                 "interview_symptoms_id" => 7,
                 "locations_id" => 8,
             ],
+             */
         ];
 
         $table = $this->table('symptoms_locations');

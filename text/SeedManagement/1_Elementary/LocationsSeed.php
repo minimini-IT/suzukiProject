@@ -16,6 +16,9 @@ class LocationsSeed extends AbstractSeed
     {
         $data = [
             [
+                "location" => "なし"
+            ],
+            [
                 "location" => "脇腹"
             ],
             [

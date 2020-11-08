@@ -29,6 +29,7 @@ class DiseasedsSeed extends AbstractSeed
                 "patients_id" => 1,
                 "sicknesses_id" => 1,
             ],
+            /*
             [
                 "patients_id" => 2,
                 "sicknesses_id" => 2,
@@ -45,6 +46,7 @@ class DiseasedsSeed extends AbstractSeed
                 "patients_id" => 4,
                 "sicknesses_id" => 4,
             ],
+             */
         ];
 
         $table = $this->table('diseaseds');

@@ -17,8 +17,7 @@ class PatientsSeed extends AbstractSeed
     {
         $data = [
             [
-                "pen_name" => "ゆでたまごまん",
-                //"sicknesses_id" => 1,
+                "pen_name" => "テスト",
                 "patient_sexes_id" => 1,
                 "age_of_onset" => 20,
                 "year_of_onset" => "2000/05/01",
@@ -27,6 +26,7 @@ class PatientsSeed extends AbstractSeed
                 "modified" => "2020/10/01",
                 "comment" => "治った！！！！！！",
             ],
+            /*
             [
                 "pen_name" => "ケロケロけろっぴ",
                 //"sicknesses_id" => 2,
@@ -60,6 +60,7 @@ class PatientsSeed extends AbstractSeed
                 "modified" => "2020/10/20",
                 "comment" => "もうどうでもいいや",
             ],
+             */
         ];
 
         $table = $this->table('patients');

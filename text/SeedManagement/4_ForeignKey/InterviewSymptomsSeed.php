@@ -25,7 +25,6 @@ class InterviewSymptomsSeed extends AbstractSeed
      */
     public function run()
     {
-        $datetime = date("Y-m-d H:i:s");
         $data = [
             [
                 "diseaseds_id" => 1,
@@ -35,6 +34,7 @@ class InterviewSymptomsSeed extends AbstractSeed
                 "diseaseds_id" => 1,
                 "symptoms_id" => 2,
             ],
+            /*
             [
                 "diseaseds_id" => 2,
                 "symptoms_id" => 3,
@@ -55,6 +55,7 @@ class InterviewSymptomsSeed extends AbstractSeed
                 "diseaseds_id" => 4,
                 "symptoms_id" => 4,
             ],
+             */
         ];
 
         $table = $this->table('interview_symptoms');
