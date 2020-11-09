@@ -4,7 +4,7 @@ $this->assign("title", "編集");
 <div class="row">
     <aside class="column">
         <div class="side-nav">
-            <?= $this->Html->link(__('戻る'), ["controller" => "DashboardManagement", 'action' => 'search'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('戻る'), ["controller" => "DashboardManagement", 'action' => 'select'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
     <div class="column-responsive column-80">
