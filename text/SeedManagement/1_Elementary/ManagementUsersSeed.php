@@ -47,6 +47,14 @@ class ManagementUsersSeed extends AbstractSeed
                 "created" => $datetime,
                 "modified" => $datetime,
             ],
+            [
+                "last_name" => "加藤",
+                "first_name" => "佑季",
+                "password" => $this->_setPassword("87UYhgBV"),
+                "mail" => "kato@test.com",
+                "created" => $datetime,
+                "modified" => $datetime,
+            ],
         ];
 
         $table = $this->table('management_users');

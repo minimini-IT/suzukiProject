@@ -18,7 +18,7 @@ $this->assign("title", "インタビュー作成");
                     echo $this->Form->control('age_of_onset', ["label" => "発病時の年齢", "min" => 0]);
                     echo $this->Form->control('year_of_onset', ["label" => "発病年月"]);
                     echo $this->Form->control('cured', ["label" => "完治した年月", 'empty' => true]);
-                    echo $this->Form->control('comment', ["label" => "内容"]);
+                    echo $this->Form->control('comment', ["label" => "内容", "style" => "height: 200px"]);
                 ?>
             </fieldset>
             <?= $this->Form->button(__('送信')) ?>
