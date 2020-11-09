@@ -27,7 +27,7 @@ $this->assign("title", "インタビュー作成");
     </div>
     <aside class="column">
         <div class="side-nav">
-            <?= $this->Html->link(__('戻る'), ["controller" => "DashboardManagement", 'action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(__('戻る'), ["controller" => "ManagementUsers", 'action' => 'top'], ['class' => 'side-nav-item']) ?>
         </div>
     </aside>
 </div>

@@ -3,7 +3,7 @@ $this->assign("title", "編集するインタビューを選択");
 ?>
 <div class="patients index content">
     <h3><?= __('編集するインタビューを選択') ?></h3>
-    <?= $this->Html->link(__('戻る'), ["controller" => "DashboardManagement", 'action' => 'index']) ?>
+    <?= $this->Html->link(__('戻る'), ["controller" => "ManagementUsers", 'action' => 'top']) ?>
     <div class="table-responsive">
         <table>
             <thead>
