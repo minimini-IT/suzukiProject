@@ -5,16 +5,6 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 
-/**
- * Diseased Entity
- *
- * @property int $diseaseds_id
- * @property int $patients_id
- * @property int $sicknesses_id
- *
- * @property \App\Model\Entity\Patient $patient
- * @property \App\Model\Entity\Sickness $sickness
- */
 class Diseased extends Entity
 {
     /**
@@ -31,5 +21,6 @@ class Diseased extends Entity
         'sicknesses_id' => true,
         'patient' => true,
         'sickness' => true,
+        'interview_symptoms' => true,
     ];
 }

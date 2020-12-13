@@ -1,0 +1,2 @@
+<?= debug($login_user->management_users_id) ?>
+でid取り出す

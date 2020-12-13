@@ -59,12 +59,33 @@ class PatientsTable extends Table
             ->notEmptyDate('year_of_onset');
 
         $validator
+            ->date('diagnosis_date')
+            ->requirePresence('diagnosis_date', 'create')
+            ->notEmptyDate('diagnosis_date');
+
+        $validator
             ->date('cured')
             ->allowEmptyDate('cured');
 
         $validator
-            ->scalar('comment')
-            ->allowEmptyString('comment');
+            ->scalar('interview_first')
+            ->allowEmptyString('interview_first');
+
+        $validator
+            ->scalar('interview_second')
+            ->allowEmptyString('interview_second');
+
+        $validator
+            ->scalar('interview_third')
+            ->allowEmptyString('interview_third');
+
+        $validator
+            ->scalar('interview_force')
+            ->allowEmptyString('interview_force');
+
+        $validator
+            ->scalar('other')
+            ->allowEmptyString('other');
 
         return $validator;
     }

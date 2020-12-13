@@ -21,10 +21,15 @@ class PatientsSeed extends AbstractSeed
                 "patient_sexes_id" => 1,
                 "age_of_onset" => 20,
                 "year_of_onset" => "2000/05/01",
+                "diagnosis_date" => "2000/04/20",
                 "cured" => "2010/05/01",
+                "interview_first" => "現在の状況",
+                "interview_second" => "病気がわかった経緯",
+                "interview_third" => "生活が変わったか",
+                "interview_force" => "同じ病気の方へアドバイス",
+                "other" => "その他何でも",
                 "created" => "2020/10/01",
                 "modified" => "2020/10/01",
-                "comment" => "治った！！！！！！",
             ],
             /*
             [

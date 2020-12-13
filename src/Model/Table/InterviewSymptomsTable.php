@@ -8,28 +8,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * InterviewSymptoms Model
- *
- * @property \App\Model\Table\PatientsTable&\Cake\ORM\Association\BelongsTo $Patients
- * @property \App\Model\Table\SymptomsTable&\Cake\ORM\Association\BelongsTo $Symptoms
- *
- * @method \App\Model\Entity\InterviewSymptom newEmptyEntity()
- * @method \App\Model\Entity\InterviewSymptom newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\InterviewSymptom[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\InterviewSymptom get($primaryKey, $options = [])
- * @method \App\Model\Entity\InterviewSymptom findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\InterviewSymptom patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\InterviewSymptom[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\InterviewSymptom|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\InterviewSymptom saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\InterviewSymptom[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\InterviewSymptom[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\InterviewSymptom[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\InterviewSymptom[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
- * @mixin \Cake\ORM\Behavior\TimestampBehavior
- */
 class InterviewSymptomsTable extends Table
 {
     /**
@@ -48,12 +26,6 @@ class InterviewSymptomsTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        /*
-        $this->belongsTo('Patients', [
-            'foreignKey' => 'patients_id',
-            'joinType' => 'INNER',
-        ]);
-         */
         $this->belongsTo('Diseaseds', [
             'foreignKey' => 'diseaseds_id',
             'joinType' => 'INNER',

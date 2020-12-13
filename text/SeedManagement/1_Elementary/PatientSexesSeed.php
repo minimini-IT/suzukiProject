@@ -15,10 +15,10 @@ class PatientSexesSeed extends AbstractSeed
     {
         $data = [
             [
-                "patient_sex" => "男",
+                "patient_sex" => "男性",
             ],
             [
-                "patient_sex" => "女",
+                "patient_sex" => "女性",
             ],
             [
                 "patient_sex" => "その他",

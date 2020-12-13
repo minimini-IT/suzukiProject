@@ -44,10 +44,8 @@ class InterviewSymptomsController extends AppController
         $this->set(compact('interviewSymptom'));
     }
 
-    //public function add()
     public function add($patients_id = null)
     {
-        //idはpatients_id
         $count = null;
         $symptoms_number = null;
         $this->loadModels(["Diseaseds"]);
@@ -94,50 +92,24 @@ class InterviewSymptomsController extends AppController
 
             if($this->InterviewSymptoms->saveMany($interviewSymptoms))
             {
-                $this->Flash->success(__('The interview symptom has been saved.'));
-
-                return $this->redirect(["controller" => "Patients", 'action' => 'view', $patients_id]);
+                $this->log("---save patients-related interview_symptoms clear---", LOG_DEBUG);
+                return $this->redirect(["controller" => "symptoms_locations", 'action' => 'add', $patients_id]);
 
             }
-            $this->Flash->error(__('The interview symptom could not be saved. Please, try again.'));
-        }
-
-
-        /*
-         * 入力すべき病名と入力済みの症状の数をくらべる
-         * すべての病名に症状が入力されていればリダイレクト
-         */
-        $inputRequired = $this->Diseaseds->find()
-            ->select(["sicknesses_id"])
-            ->join([
-                "i" => [
-                    "table" => "interview_symptoms",
-                    "type" => "RIGHT",
-                    "conditions" => "Diseaseds.diseaseds_id = i.diseaseds_id"
-                ],
-            ])
-            ->where(["patients_id" => $patients_id])
-            ->group(["sicknesses_id"]);
-
-        $entered = $this->Diseaseds->find()
-            ->select(["sicknesses_id"])
-            ->join([
-                "i" => [
-                    "table" => "interview_symptoms",
-                    "type" => "LEFT",
-                    "conditions" => "Diseaseds.diseaseds_id = i.diseaseds_id"
-                ],
-            ])
-            ->where(["patients_id" => $patients_id])
-            ->group(["sicknesses_id"]);
-
-        if($inputRequired->count() >= $entered->count())
-        {
-            return $this->redirect(["controller" => "patients", 'action' => 'view', $patients_id]);
+            $this->log("---patients-related interview_symptoms errlr---", LOG_DEBUG);
+            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
+            $this->Flash->error(__('管理者へ報告してください。'));
+            return $this->redirect(["controller" => "patients", 'action' => 'select']);
         }
 
         /*
          * 症状が未入力の病名のみ表示
+         * select * from diseaseds as d
+         * ->left join interview_symptoms as i on d.diseaseds_id = i.diseaseds_id
+         * ->where patients_id = $patients_id and symptoms_id is NULL;
+         *
+         * emptyなら入力
+         * 違うならSymptomsLocationsへ
          */
         $sick = $this->Diseaseds->find()
             ->contain(["Sicknesses"])
@@ -149,6 +121,14 @@ class InterviewSymptomsController extends AppController
                 ],
             ])
             ->where(["patients_id" => $patients_id, "symptoms_id is NULL"]);
+
+        if(empty($sick->toList()))
+        {
+            /*
+             * 入力済みなのでリダイレクト
+             */
+            return $this->redirect(["controller" => "symptoms_locations", 'action' => 'add', $patients_id]);
+        }
 
         $symptoms = $this->InterviewSymptoms->Symptoms->find('list', ['limit' => 200]);
         $this->set(compact('symptoms', "patients_id", "sick"));

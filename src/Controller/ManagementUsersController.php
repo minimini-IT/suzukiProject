@@ -9,7 +9,6 @@ use Cake\Auth\DefaultPasswordHasher;
  * 404表示用
  */
 use Cake\Http\Exception\NotFoundException;
-//use Cake\Network\Exception\NotFoundException;
 
 class ManagementUsersController extends AppController
 {
@@ -27,8 +26,13 @@ class ManagementUsersController extends AppController
             return $this->redirect(['action' => 'login']);
         }
 
+        $this->paginate = [
+            "limit" => 10,
+        ];
+
         $managementUsers = $this->ManagementUsers->find()
             ->where(["management_users_id !=" => 1]);
+
         $managementUsers = $this->paginate($managementUsers);
 
         $this->set(compact('managementUsers'));
@@ -83,6 +87,7 @@ class ManagementUsersController extends AppController
          */
         $managementUser = $this->ManagementUsers->find()
             ->where(["management_users_id" => $id])
+            ->select(["management_users_id", "last_name", "first_name", "mail"])
             ->first();
         if(empty($managementUser))
         {
@@ -101,9 +106,12 @@ class ManagementUsersController extends AppController
             return $this->redirect(['action' => 'index']);
         }
          */
+        /*
         $managementUser = $this->ManagementUsers->get($id, [
             'contain' => [],
+            "select" => ["management_users_id", "last_name", "first_name", "mail"],
         ]);
+         */
 
 
         /*

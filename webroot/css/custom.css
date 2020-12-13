@@ -1,0 +1,320 @@
+/*
+ * レスポンシブ
+ * @media(max-width: px / min-width: px)
+ * {
+ *      処理
+ * }
+ * pc: 1001px以上
+ * タブレット: 671px ~ 1000px
+ * スマホ: 670px以下
+ * 一番下に書く
+ */
+
+main
+{
+    background-color: #D7EEFF;
+}
+
+footer
+{
+    background-color: #008080 !important;
+    color: white;
+}
+
+.header-title
+{
+    width: 390px;
+    height: 90px;
+}
+
+th
+{
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+td
+{
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+#locations_checkbox
+{
+    display: none;
+}
+
+.active a  {
+    color: red;
+    font-size: 1.3rem;
+}
+
+.bgc-h3
+{
+    /*background-color: hsla(50, 33%, 25%, .75);*/
+    background-color: rgba(255, 255, 128, .5);gT
+}
+
+.patient-view-top-color
+{
+    background-color: rgba(255, 255, 128);
+}
+
+.div-align-left
+{
+    padding-left: -40px !important;
+}
+
+#search
+{
+    display: none;
+}
+
+.main-width
+{
+    width: 1020px;
+}
+
+.padding-top
+{
+    padding-top: 30px;
+}
+
+.padding-bottom
+{
+    padding-bottom: 30px;
+}
+
+.header-small-nav, .small-table
+{
+    display: none !important;
+}
+
+.small-link
+{
+    width: 90px;
+    height: 90px;
+}
+
+.main-link
+{
+    width: 130px;
+    height: 90px;
+}
+
+.pro-image
+{
+    background-color: green;
+}
+
+.pro-image-back
+{
+    background-color: red;
+}
+
+.grid-nest
+{
+    padding-left: 40px !important;
+}
+
+.grid-nest-margin
+{
+    margin-left: 40px !important;
+}
+
+.management-sub-button
+{
+    width: 130px;
+}
+
+.form-label-text
+{
+    font-size: 20px;
+}
+
+.checkbox-margin
+{
+    margin-top: -21px;
+    padding-left: 50px;
+}
+
+.password-form-width
+{
+    width: auto !important;
+}
+
+.small-margin-right
+{
+    margin-right: 20px;
+}
+
+.middle-padding-remove-left
+{
+    padding-left: 0 !important;
+}
+
+.login-form-width
+{
+    width: 400px;
+}
+
+.grid-margin-remove
+{
+    margin-left: 0 !important;
+    /*
+    padding-left: 0 !important;
+    */
+}
+
+.grid-margin-remove>.grid-child
+{
+    padding-left: 0 !important;
+}
+
+.small-subbar, .medium-subbar, .small-divider, .medium-divider, .medium-div
+{
+    display: none;
+}
+
+.form-width-long
+{
+    width: 500px !important;
+}
+
+.label-background
+{
+    background-color: rgba(255, 255, 128, .5);gT
+}
+
+/*@media(max-width: 760px)*/
+@media(max-width: 639px)
+{
+    .small-link, .medium-table, .medium-div
+    {
+        display: none;
+    }
+
+    .header-small-nav, .small-table
+    {
+        display: inline !important;
+    }
+
+    .small-divider
+    {
+        display: block;
+    }
+    
+    .small-margin-right
+    {
+        margin-right: 0;
+    }
+
+    .main-link
+    {
+        width: 100%;
+        height: 60px;
+    }
+
+    .login-form-width
+    {
+        width: 300px;
+    }
+
+    .small-subbar
+    {
+        display: block;
+        width: 100%;
+        padding-left: 0 !important;
+        margin-bottom: 30px !important;
+    }
+
+    .small-subbar-li
+    {
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+
+    .small-remove
+    {
+        display: none;
+    }
+
+    .small-subbar-height
+    {
+        min-height: 50px !important;
+    }
+
+    .management-sub-button
+    {
+        width: 70px;
+    }
+}
+
+@media(max-width: 960px)
+{
+    .medium-padding
+    {
+        padding-right: 3rem;
+        padding-left: 3rem;
+    }
+
+    .medium-margin
+    {
+        margin-right: 3rem;
+        margin-left: 3rem;
+    }
+
+    .middle-padding-remove-left
+    {
+        padding-left: 30px !important;
+    }
+
+    .form-width-long
+    {
+        width: 300px !important;
+    }
+
+    .medium-padding-remove-lr
+    {
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .medium-subbar
+    {
+        display: block;
+        width: 100%;
+        padding-left: 0 !important;
+        margin-bottom: 30px !important;
+    }
+
+    .medium-subbar-li
+    {
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+
+    .medium-subbar-height
+    {
+        min-height: 50px !important;
+    }
+
+    .medium-remove, .default-divider
+    {
+        display: none;
+    }
+
+    .medium-divider, .medium-div
+    {
+        display: block;
+    }
+}
+
+@media(max-width: 1019px)
+{
+    .main-width
+    {
+        width: 100%;
+    }
+}
+

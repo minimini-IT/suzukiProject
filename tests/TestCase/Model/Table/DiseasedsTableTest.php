@@ -27,6 +27,7 @@ class DiseasedsTableTest extends TestCase
         'app.Diseaseds',
         'app.Patients',
         'app.Sicknesses',
+        'app.InterviewSymptoms',
     ];
 
     /**

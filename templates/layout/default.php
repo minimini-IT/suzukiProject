@@ -1,20 +1,3 @@
-<?php
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         0.10.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
- * @var \App\View\AppView $this
- */
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,37 +10,103 @@
 
     <?= $this->Html->script('jquery-3.4.1.js') ?>
     <?= $this->Html->script('jquery-ui.js') ?>
+    <?= $this->Html->script('uikit.min.js') ?>
+    <?= $this->Html->script('uikit-icons.min.js') ?>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'cake', 'suzupro', "test"]) ?>
-
+    <?= $this->Html->css(["custom", "uikit.min"]) ?>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
+
 </head>
 <body>
-    <nav class="top-nav">
-        <div class="top-nav-title">
-            <h2>病気の人の交流サイト</h2>
-<!--
-            <a href="<?= $this->Url->build('/') ?>"><span>Cake</span>PHP</a>
--->
+    <header>
+        <div class="uk-margin-auto-left uk-margin-auto-right main-width">
+            <div class="pro-image-back">
+                <div class="uk-flex uk-flex-left@s uk-flex-center">
+                    <div>
+                        <img src="/img/title.png" alt="title_buttom" class="header-title small-margin-right">
+                    </div>
+                    <div>
+                        <?= $this->Html->image("home.jpg", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "top", "action" => "index"]]) ?>
+                    </div>
+                    <div>
+                        <?= $this->Html->image("buttom.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
+                        <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">インタビュー</div>', 
+                            [
+                                'controller' => 'patients', 
+                                'action' => 'index',
+                            ], 
+                            [
+                                "escape" => false
+                            ],
+                        )-->
+                    </div>
+                    <div>
+                        <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "bulletin-boards", "action" => "index"]]) ?>
+                        <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">掲示板</div>', 
+                            [
+                                'controller' => 'bulletin-boards', 
+                                'action' => 'index',
+                            ], 
+                            [
+                                "escape" => false
+                            ],
+                        )-->
+                    </div>
+                </div>
+                <div class="uk-position-right">
+                    <nav class="uk-nabar-container header-small-nav" uk-navbar="mode: click; boundary-align: true; align:right;">
+                        <div class="uk-navbar-right">
+                            <ul class="uk-navbar-nav">
+                                <li>
+                                    <a href="#"><span class="uk-icon" uk-icon="icon: menu"></span></a>
+                                    <div class="uk-navbar-dropdown">
+                                        <ul class="uk-nav uk-navbar-dropdown-nav">
+                                            <li><?= $this->Html->link(__("HOME"), ['controller' => 'top', 'action' => 'index']) ?></li>
+                                            <li><?= $this->Html->link(__("インタビュー"), ['controller' => 'patients', 'action' => 'index']) ?></li>
+                                            <li><?= $this->Html->link(__("掲示板"), ['controller' => 'bulletin_boards', 'action' => 'index']) ?></li>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
         </div>
-        <div class="top-nav-links">
-<!--
-            <a target="_blank" rel="noopener" href="https://book.cakephp.org/4/">Documentation</a>
-            <a target="_blank" rel="noopener" href="https://api.cakephp.org/4/">API</a>
--->
-        </div>
-    </nav>
-    <main class="main">
-        <div class="container">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
+    </header>
+    <main>
+        <div class="uk-margin-auto-left uk-margin-auto-right main-width padding-top">
+            <div class="container">
+                <?= $this->Flash->render() ?>
+                <?= $this->fetch('content') ?>
+            </div>
         </div>
     </main>
     <footer>
+        <div class="uk-margin-auto-left uk-margin-auto-right main-width padding-top padding-bottom">
+            <div class="uk-grid uk-child-width-1-3@m uk-child-width-1-2@s uk-child-width-1-1 uk-text-center uk-text-left@s uk-grid-divider">
+                <div class="uk-first-column">
+                    <img src="/img/title.png" alt="title_buttom" class="header-title">
+                    <p>サイト説明</p>
+                    <hr class="uk-divider-icon small-divider">
+                </div>
+                <div>
+                    <ul class="uk-list">
+                        <li><?= $this->Html->link(__('HOME'), ['controller' => 'top', 'action' => 'index',]) ?></li>
+                        <li><?= $this->Html->link(__('インタビュー'), ['controller' => 'patients', 'action' => 'index',]) ?></li>
+                        <li><?= $this->Html->link(__('掲示板'), ['controller' => 'bulletin_boards', 'action' => 'index',]) ?></li>
+                    </ul>
+                    <hr class="uk-divider-icon medium-divider">
+                </div>
+                <div class="medium-div"></div>
+                <div>
+                    てすと
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>

@@ -3,19 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-/**
- * SymptomsLocations Controller
- *
- * @property \App\Model\Table\SymptomsLocationsTable $SymptomsLocations
- * @method \App\Model\Entity\SymptomsLocation[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class SymptomsLocationsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
     public function index()
     {
         $this->paginate = [
@@ -26,13 +15,6 @@ class SymptomsLocationsController extends AppController
         $this->set(compact('symptomsLocations'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Symptoms Location id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function view($id = null)
     {
         $symptomsLocation = $this->SymptomsLocations->get($id, [
@@ -44,15 +26,11 @@ class SymptomsLocationsController extends AppController
 
     public function add($patients_id = null)
     {
-        $this->response = $this->response->withDisabledCache();
-
         $this->loadModels(["Diseaseds", "InterviewSymptoms"]);
         $symptomsLocation = $this->SymptomsLocations->newEmptyEntity();
         if ($this->request->is('post')) 
         {
             $data = $this->request->getData();
-
-            $patients_id = $data["patients_id"];
 
             /*
              * interview_symptoms_idを取得
@@ -95,34 +73,29 @@ class SymptomsLocationsController extends AppController
 
             if($this->SymptomsLocations->saveMany($symptomsLocations))
             {
-                $this->Flash->success(__('The symptoms location has been saved.'));
-
-                return $this->redirect(["controller" => "patients", 'action' => 'view', $patients_id]);
+                $this->log("---save patients-related symptoms_locations clear---", LOG_DEBUG);
+                return $this->redirect(["controller" => "patients", 'action' => 'edit', $patients_id]);
             }
-            $this->Flash->error(__('The symptoms location could not be saved. Please, try again.'));
+            $this->log("---patients-related symptoms_locations error---", LOG_DEBUG);
+            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
+            $this->Flash->error(__('管理者へ報告してください。'));
+            return $this->redirect(["controller" => "patients", 'action' => 'select']);
         }
 
         /*
-         * 部位が入力済みの場合はリダイレクト
+         * 部位が未入力の症状のみ表示
+         * select * from diseaseds as d
+         * ->left join interview_symptoms as i on d.diseaseds_id = i.diseaseds_id
+         * ->left join symptoms_locations as sl on i.interview_symptoms_id = sl.interview_symptoms_id
+         * ->where patients_id = $patients_id and locations_id is NULL;
+         *
+         * containでInterviewSymptoms=>Symptomsで取得できなかったのでムリヤリ
          */
-        $inputRequired = $this->Diseaseds->find()
-            ->select(["i.symptoms_id"])
-            ->join([
-                "i" => [
-                    "table" => "interview_symptoms",
-                    "type" => "RIGHT",
-                    "conditions" => "Diseaseds.diseaseds_id = i.diseaseds_id"
-                ],
-                "sl" => [
-                    "table" => "symptoms_locations",
-                    "type" => "RIGHT",
-                    "conditions" => "i.interview_symptoms_id = sl.interview_symptoms_id"
-                ],
+        $interviewSymptoms = $this->Diseaseds->find()
+            ->contain([
+                "Sicknesses",
+                "InterviewSymptoms.Symptoms",
             ])
-            ->where(["patients_id" => $patients_id]);
-
-        $entered = $this->Diseaseds->find()
-            ->select(["i.symptoms_id"])
             ->join([
                 "i" => [
                     "table" => "interview_symptoms",
@@ -135,29 +108,19 @@ class SymptomsLocationsController extends AppController
                     "conditions" => "i.interview_symptoms_id = sl.interview_symptoms_id"
                 ],
             ])
-            ->where(["patients_id" => $patients_id]);
+            ->where(["Diseaseds.patients_id" => $patients_id, "locations_id is NULL"])
+            ->group(["Diseaseds.diseaseds_id"]);
 
-        if($inputRequired->count() >= $entered->count())
+        if(empty($interviewSymptoms->toList()))
         {
+            /*
+             * 入力済みなのでリダイレクト
+             */
             return $this->redirect(["controller" => "patients", 'action' => 'view', $patients_id]);
         }
 
-
-
-
-
-        $interviewSymptoms = $this->Diseaseds->find()
-            ->contain([
-                "Patients",
-                "Sicknesses", 
-                "InterviewSymptoms", 
-                "InterviewSymptoms.Symptoms", 
-                "InterviewSymptoms.SymptomsLocations"
-            ])
-            ->where(["Diseaseds.patients_id" => $patients_id]);
-        
         $locations = $this->SymptomsLocations->Locations->find('list', ['limit' => 200]);
-        $this->set(compact('symptomsLocation', 'interviewSymptoms', 'locations'));
+        $this->set(compact('symptomsLocation', 'interviewSymptoms', 'locations', "patients_id"));
         
     }
 

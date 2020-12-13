@@ -35,11 +35,32 @@ class CreatePatients extends AbstractMigration
                 'limit' => 11,
                 'null' => false,
             ])
+            ->addColumn('diagnosis_date', 'date', [
+                'default' => null,
+                'limit' => 11,
+                'null' => false,
+            ])
             ->addColumn('cured', 'date', [
                 'default' => null,
                 'null' => true,
             ])
-            ->addColumn('comment', 'text', [
+            ->addColumn('interview_first', 'text', [
+                'default' => null,
+                'null' => true,
+            ])
+            ->addColumn('interview_second', 'text', [
+                'default' => null,
+                'null' => true,
+            ])
+            ->addColumn('interview_third', 'text', [
+                'default' => null,
+                'null' => true,
+            ])
+            ->addColumn('interview_force', 'text', [
+                'default' => null,
+                'null' => true,
+            ])
+            ->addColumn('other', 'text', [
                 'default' => null,
                 'null' => true,
             ])
