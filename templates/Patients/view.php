@@ -1,7 +1,6 @@
 <?php
 $this->assign("title", "インタビュー");
 ?>
-
 <div class="uk-grid">
 
     <div class="uk-width-3-4@m uk-width-1-1 uk-container uk-position-relative uk-padding-remove-right uk-margin-medium-bottom">
@@ -52,13 +51,13 @@ $symp_count = 0;
             <tbody>
                 <?php foreach ($patient->diseaseds as $diseased): ?>
                     <tr>
-                        <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $table_sickness_row[$diseased->diseaseds_id] ?>"><?= h($diseased->sickness->sickness_name) ?></td>
+                        <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $diseased->sickness_row ?>"><?= h($diseased->sickness->sickness_name) ?></td>
                         <?php foreach($diseased->interview_symptoms as $interview): ?>
                             <?php $sick_count == 0 ? "" : "<tr>" ?>
-                            <td class="uk-text-center uk-tile-muted" rowspan="<?= $table_symptoms_row[$interview->interview_symptoms_id] ?>"><?= h($interview->symptom->symptoms) ?></td>
+                            <td class="uk-text-center uk-tile-muted" rowspan="<?= $interview->symptoms_row ?>"><?= h($interview->symptom->symptoms) ?></td>
                                 <?php foreach($interview->symptoms_locations as $location): ?>
                                     <?php $symp_count == 0 ? "" : "<tr>" ?>
-                                    <td class="uk-text-center"><?= h($location->location->location) ?></td></tr>
+                                    <td class="uk-text-center uk-card uk-card-default"><?= h($location->location->location) ?></td></tr>
                                     <?php $symp_count++; ?>
                                 <?php endforeach ?>
                             <?php $sick_count++; ?>
@@ -102,15 +101,45 @@ $symp_count = 0;
 
     </div>
     <div class="uk-width-1-4@m uk-width-1-1 uk-padding-remove uk-text-center">
+<?php
+/*
+    foreach($patient->diseaseds as $diseased)
+    {
+        debug($diseased);
+    }
+ */
+?>
         <div class="medium-padding">
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">関連するインタビュー</p>
                 <div class="medium-padding">
-                    <p class="uk-text-normal uk-text-center@m uk-text-left">同じ病気、症状の方</p>
-                    <div class="medium-padding">
-                        <ul class="uk-list">
-                        <?php foreach($relation_patients as $relation): ?>
-                            <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($relation->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $relation->patients_id]) ?></li>
+                    <div class="uk-margin-large-bottom">
+                        <p class="uk-text-normal uk-text-center@m uk-text-left bgc-66ff66">同じ病気の方</p>
+                        <?php foreach($patient->diseaseds as $diseased): ?>
+                            <p class="uk-text-normal uk-text-center@m uk-text-left bgc-ffffcc uk-margin-remove-bottom uk-margin-right uk-margin-left"><?= h($diseased->sickness->sickness_name) ?></p>
+                            <ul class="uk-list uk-margin-remove-top">
+                            <?php foreach($related_sickness as $related): ?>
+                                <?php if($related->RelatedSickness == $diseased->sicknesses_id): ?>
+                                        <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></li>
+                                <?php endif ?>
+                            <?php endforeach ?>
+                            </ul>
+                        <?php endforeach ?>
+                    </div>
+
+                    <div>
+                        <p class="uk-text-normal uk-text-center@m uk-text-left bgc-66ff66">同じ症状の方</p>
+                        <?php foreach($patient->diseaseds as $diseased): ?>
+                            <?php foreach($diseased->interview_symptoms as $interview_symptoms): ?>
+                                <p class="uk-text-normal uk-text-center@m uk-text-left bgc-ffffcc uk-margin-remove-bottom uk-margin-right uk-margin-left"><?= h($interview_symptoms->symptom->symptoms) ?></p>
+                                <ul class="uk-list uk-margin-remove-top">
+                                <?php foreach($related_symptoms as $related): ?>
+                                    <?php if($related->RelatedSymptoms == $interview_symptoms->symptoms_id): ?>
+                                        <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></li>
+                                    <?php endif ?>
+                                <?php endforeach ?>
+                                </ul>
+                            <?php endforeach ?>
                         <?php endforeach ?>
                     </div>
                 </div>

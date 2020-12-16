@@ -7,15 +7,6 @@ use Cake\ORM\Entity;
 
 class Diseased extends Entity
 {
-    /**
-     * Fields that can be mass assigned using newEntity() or patchEntity().
-     *
-     * Note that when '*' is set to true, this allows all unspecified fields to
-     * be mass assigned. For security purposes, it is advised to set '*' to false
-     * (or remove it), and explicitly make individual fields accessible as needed.
-     *
-     * @var array
-     */
     protected $_accessible = [
         'patients_id' => true,
         'sicknesses_id' => true,
@@ -23,4 +14,20 @@ class Diseased extends Entity
         'sickness' => true,
         'interview_symptoms' => true,
     ];
+
+    /*
+     * patients view
+     * 病気に対する部位の数を数える
+     * tableのrow数
+     */
+    protected function _getSicknessRow()
+    {
+        $table_row = 0;
+        foreach($this->interview_symptoms as $i)
+        {
+            $table_row += count($i->symptoms_locations);
+        }
+        
+        return $table_row;
+    }
 }

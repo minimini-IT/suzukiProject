@@ -24,4 +24,22 @@ class Patient extends Entity
         'sickness' => true,
         'patient_sex' => true,
     ];
+
+    /*
+     * patients view
+     * 関連するインタビューの同じ病気のインタビューを参照するのに使用
+     */
+    protected function _getRelatedSickness()
+    {
+        return (int)$this->d["sicknesses_id"];
+    }
+
+    /*
+     * patients view
+     * 関連するインタビューの同じ症状のインタビューを参照するのに使用
+     */
+    protected function _getRelatedSymptoms()
+    {
+        return (int)$this->i["symptoms_id"];
+    }
 }

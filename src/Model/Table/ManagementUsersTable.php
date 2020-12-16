@@ -27,6 +27,21 @@ class ManagementUsersTable extends Table
         $this->setPrimaryKey('management_users_id');
     }
 
+    public function findManagementUsersCheck(Query $query, array $options)
+    {
+        $management_users_id = $options["management_users_id"];
+
+        return $query
+            ->where(["management_users_id" => $management_users_id])
+            ->select(["management_users_id", "last_name", "first_name", "mail"]);
+    }
+
+    public function findManagementUsersList(Query $query, array $options)
+    {
+        return $query
+            ->where(["management_users_id !=" => 1]);
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator

@@ -30,28 +30,15 @@ class ManagementUsersController extends AppController
             "limit" => 10,
         ];
 
-        $managementUsers = $this->ManagementUsers->find()
-            ->where(["management_users_id !=" => 1]);
+        $managementUsers = $this->ManagementUsers->find("ManagementUsersList");
 
         $managementUsers = $this->paginate($managementUsers);
 
         $this->set(compact('managementUsers'));
     }
 
-    /*
-    public function view($id = null)
-    {
-        $managementUser = $this->ManagementUsers->get($id, [
-            'contain' => [],
-        ]);
-
-        $this->set(compact('managementUser'));
-    }
-     */
-
     public function add()
     {
-
         /*
          * 承認用
          */
@@ -66,54 +53,23 @@ class ManagementUsersController extends AppController
 
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            //$data["password"] = $this->_setPassword($data["password"]);
             $managementUser = $this->ManagementUsers->patchEntity($managementUser, $data);
 
             if ($this->ManagementUsers->save($managementUser)) {
-                $this->Flash->success(__('The management user has been saved.'));
-
+                $this->log("---add ManagementUsers save clear---", LOG_DEBUG);
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The management user could not be saved. Please, try again.'));
+                $this->log("---add ManagementUsers error---", LOG_DEBUG);
+                $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
+                $this->Flash->error(__('管理者へ報告してください。'));
+                return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
         $this->set(compact('managementUser'));
     }
 
     public function edit($id = null)
     {
-
-        /*
-         * 該当ユーザがいなければエラーページ
-         */
-        $managementUser = $this->ManagementUsers->find()
-            ->where(["management_users_id" => $id])
-            ->select(["management_users_id", "last_name", "first_name", "mail"])
-            ->first();
-        if(empty($managementUser))
-        {
-            throw new NotFoundException(__("該当ユーザがいません"));
-        }
-
-        /*
-        try
-        {
-            $managementUser = $this->ManagementUsers->get($id, [
-                'contain' => [],
-            ]);
-        }
-        catch(\Exception $e)
-        {
-            return $this->redirect(['action' => 'index']);
-        }
-         */
-        /*
-        $managementUser = $this->ManagementUsers->get($id, [
-            'contain' => [],
-            "select" => ["management_users_id", "last_name", "first_name", "mail"],
-        ]);
-         */
-
-
         /*
          * 承認用
          */
@@ -125,16 +81,28 @@ class ManagementUsersController extends AppController
             return $this->redirect(['action' => 'index']);
         }
 
+        /*
+         * 該当ユーザがいなければエラーページ
+         */
+        $managementUser = $this->ManagementUsers
+            ->find("ManagementUsersCheck", ["management_users_id" => $id])
+            ->first();
+        if(empty($managementUser))
+        {
+            throw new NotFoundException(__("該当ユーザがいません"));
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $data = $this->request->getData();
-            //$data["password"] = $this->_setPassword($data["password"]);
             $managementUser = $this->ManagementUsers->patchEntity($managementUser, $data);
             if ($this->ManagementUsers->save($managementUser)) {
-                $this->Flash->success(__('The management user has been saved.'));
-
+                $this->log("---edit ManagementUsers save clear---", LOG_DEBUG);
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The management user could not be saved. Please, try again.'));
+            $this->log("---edit ManagementUsers error---", LOG_DEBUG);
+            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
+            $this->Flash->error(__('管理者へ報告してください。'));
+            return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
         $this->set(compact('managementUser'));
     }
@@ -151,9 +119,13 @@ class ManagementUsersController extends AppController
         $this->Authorization->authorize($managementUser);
 
         if ($this->ManagementUsers->delete($managementUser)) {
-            $this->Flash->success(__('The management user has been deleted.'));
+            $this->log("---delete ManagementUsers clear---", LOG_DEBUG);
+            return $this->redirect(['action' => 'index']);
         } else {
-            $this->Flash->error(__('The management user could not be deleted. Please, try again.'));
+            $this->log("---delete ManagementUsers error---", LOG_DEBUG);
+            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
+            $this->Flash->error(__('管理者へ報告してください。'));
+            return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
 
         return $this->redirect(['action' => 'index']);
@@ -166,20 +138,6 @@ class ManagementUsersController extends AppController
          */
         $this->Authorization->skipAuthorization();
     }
-
-    /*
-     * パスワードハッシュ
-     * Entityでやるので不要かも（2重にかけちゃうことになる）
-     */
-    /*
-    protected function _setPassword(string $value) : ?string
-    {
-        if(strlen($value) > 0)
-        {
-            return (new DefaultPasswordHasher())->hash($value);
-        }
-    }
-     */
 
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {

@@ -3,7 +3,7 @@ $this->assign("title", "検索結果：");
 $this->Html->script("TopCheckbox.js", ["block" => true]);
 ?>
 <div class="uk-grid">
-    <div class="uk-width-2-3@m uk-width-1-1">
+    <div class="uk-width-3-4@m uk-width-1-1">
         <div class="uk-padding-remove uk-first-column uk-grid uk-margin-bottom">
             <div class="uk-width-auto">
                 <h3>
@@ -25,7 +25,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                 </h3>
             </div>
         </div>
-        <div class="uk-padding-remove uk-first-column">
+        <div class="uk-padding-remove">
             <h3 class="pro-image main-link" id="search_toggle"><?= __('検索') ?></h3>
             <div class="uk-padding-remove uk-width-1-1 uk-margin-medium-top uk-margin-medium-bottom" id="search">
                 <div class="uk-padding-remove" uk-grid>
@@ -84,7 +84,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                 <tbody>
                     <?php foreach ($patients as $patient): ?>
                         <tr>
-                            <td><?= h($patient->pen_name) ?></td>
+                            <td><?= h($patient->pen_name) ?> さん</td>
                             <td>
                                 <?php foreach ($patient->diseaseds as $diseased): ?>
                                     <?= h($diseased->sickness->sickness_name) ?></br>
@@ -92,10 +92,10 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                             </td>
                             <td><?= h($patient->patient_sex->patient_sex) ?></td>
                             <td><?= $this->Number->format($patient->age_of_onset) ?></td>
-                            <td><?= h($patient->year_of_onset->format("Y-m-d")) ?></td>
-                            <td><?= h($patient->diagnosis_date->format("Y-m-d")) ?></td>
+                            <td><?= h($patient->year_of_onset->format("Y-m")) ?></td>
+                            <td><?= h($patient->diagnosis_date->format("Y-m")) ?></td>
                             <td><?= $patient->has("cured") ? h($patient->cured->format("Y-m-d")) : "-----" ?></td>
-                            <td><?= $this->Html->link('<button class="uk-button uk-button-default" type="button">詳細</button>', ['action' => 'view', $patient->patients_id], ["escape" => false]) ?></td>
+                            <td><?= $this->Html->link(__('詳細'), ['action' => 'view', $patient->patients_id], ["class" => "uk-button uk-button-default"]) ?></td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
@@ -162,10 +162,28 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
             </ul>
         </div>
     </div>
-    <div class="uk-width-1-3@m uk-width-1-1 uk-margin-auto-right uk-padding-remove">
-        <p class="uk-text-lead uk-text-center">最近の記事</p>
-            <?php foreach($recently_patients as $r_patient): ?>
-                <p class="uk-text-center"><?= $this->Html->link(__($r_patient->pen_name), ['controller' => 'patients', 'action' => 'view', $r_patient->patients_id]) ?></p>
-            <?php endforeach ?>
+    <div class="uk-width-1-4@m uk-width-1-1 uk-margin-auto-right">
+        <div class="medium-padding">
+            <div class="uk-margin-medium-bottom">
+                <p class="uk-text-lead uk-text-center@m uk-text-left">最近のインタビュー</p>
+                <div class="medium-padding">
+                    <ul class="uk-list">
+                        <?php foreach($recently_patients as $r_patient): ?>
+                            <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($r_patient->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $r_patient->patients_id]) ?></li>
+                        <?php endforeach ?>
+                    </ul>
+                </div>
+            </div>
+            <div class="uk-margin-medium-bottom">
+                <p class="uk-text-lead uk-text-center@m uk-text-left">関連する記事</p>
+                <div class="medium-padding">
+                    <p class="uk-text-normal uk-text-center@m uk-text-left">同じ病気、症状の記事</p>
+                    <div class="medium-padding">
+                        <ul class="uk-list">
+                            <li class="uk-text-center@m uk-text-left"></li>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

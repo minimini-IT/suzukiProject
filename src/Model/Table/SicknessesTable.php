@@ -8,31 +8,8 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * Sicknesses Model
- *
- * @method \App\Model\Entity\Sickness newEmptyEntity()
- * @method \App\Model\Entity\Sickness newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\Sickness[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Sickness get($primaryKey, $options = [])
- * @method \App\Model\Entity\Sickness findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\Sickness patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\Sickness[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\Sickness|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Sickness saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Sickness[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Sickness[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\Sickness[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Sickness[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- */
 class SicknessesTable extends Table
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
     public function initialize(array $config): void
     {
         parent::initialize($config);
@@ -51,12 +28,21 @@ class SicknessesTable extends Table
         ]);
     }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
+    public function findSearchSicknessElement(Query $query, array $options)
+    {
+        $values = $options["values"];
+
+        return $query
+            ->where(["sicknesses_id in" => $values])
+            ->select(["alias" => "sickness_name"]);
+    }
+
+    public function findSickCount(Query $query, array $options)
+    {
+        return $query
+            ->select("sicknesses_id");
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator

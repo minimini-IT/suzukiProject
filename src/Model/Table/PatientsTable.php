@@ -36,6 +36,221 @@ class PatientsTable extends Table
         ]);
     }
 
+    public function findSelectSearch(Query $query, array $options)
+    {
+        $pen_name = $options["pen_name"];
+
+        return $query
+            ->where(["pen_name" => $pen_name]);
+    }
+
+    public function findSearchSymptomsLocations(Query $query, array $options)
+    {
+        $symptoms_id = $options["symptoms_id"];
+        $values = $options["values"];
+
+        return $query
+            ->find("JoinSymptomsLocations")
+            ->where([
+                "i.symptoms_id" => $symptoms_id, 
+                "sl.locations_id in" => $values]
+            )
+            ->group(["Patients.patients_id"]);
+    }
+
+
+    public function findSearchSymptomsOnry(Query $query, array $options)
+    {
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->where(["patients_id in" => $sub_query]);
+    }
+
+    public function findSearchSickness(Query $query, array $options)
+    {
+        $values = $options["values"];
+
+        return $query
+            ->find("JoinDiseaseds")
+            ->where(["d.sicknesses_id in" => $values])
+            ->group(["Patients.patients_id"])
+            ->order(["Patients.patients_id"]);
+    }
+
+    public function findAttributeStatus(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+
+        return $query
+            ->select([
+                "Patients.patients_id", 
+                "d.diseaseds_id", 
+                "i.interview_symptoms_id", 
+                "sl.symptoms_locations_id"
+            ])
+            ->find("JoinSymptomsLocations", ["d_type" => "LEFT", "i_type" => "LEFT", "sl_type" => "LEFT"])
+            ->where([
+                "Patients.patients_id" => $patients_id,
+                "OR" => [
+                    ["d.diseaseds_id is" => NULL],
+                    ["i.interview_symptoms_id is" => NULL],
+                    ["sl.symptoms_locations_id is" => NULL]
+                ]
+            ]);
+    }
+
+    public function findSicknessRegistrationStatus(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+
+        return $query
+            ->select(["diseaseds_id"])
+            ->find("JoinDiseaseds")
+            ->where(["Patients.patients_id" => $patients_id]);
+    }
+
+    public function findRelatedSymptomsSub(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+
+        return $query
+            ->select(["i.symptoms_id"])
+            ->find("JoinInterviewSymptoms")
+            ->where(["Patients.patients_id" => $patients_id]);
+    }
+
+    public function findRelatedSymptoms(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->select(["Patients.patients_id", "Patients.pen_name", "i.symptoms_id"])
+            ->find("JoinInterviewSymptoms")
+            ->where([
+                "Patients.patients_id !=" => $patients_id,
+                "i.symptoms_id in" => $sub_query
+            ])
+            ->order(["Patients.patients_id"])
+            ->group(["Patients.patients_id, i.symptoms_id"]);
+        
+    }
+
+    public function findRelatedSicknessSub(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+
+        return $query
+            ->select(["d.sicknesses_id"])
+            ->find("JoinDiseaseds")
+            ->where(["Patients.patients_id" => $patients_id]);
+    }
+
+    public function findRelatedSickness(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->select(["Patients.patients_id", "Patients.pen_name", "d.sicknesses_id"])
+            ->find("JoinDiseaseds")
+            ->where([
+                "Patients.patients_id !=" => $patients_id,
+                "d.sicknesses_id in" => $sub_query
+            ])
+            ->order(["Patients.patients_id"]);
+    }
+
+    public function findContainAll(Query $query, array $options)
+    {
+        return $query
+            ->contain([
+                "PatientSexes", 
+            ])
+            ->find("ContainEdit");
+    }
+
+    public function findContainEdit(Query $query, array $options)
+    {
+        return $query
+            ->contain([
+                "Diseaseds.Sicknesses", 
+                "Diseaseds.InterviewSymptoms.Symptoms", 
+                "Diseaseds.InterviewSymptoms.SymptomsLocations.Locations"
+            ]);
+    }
+
+    public function findPatientsDisplayList(Query $query, array $options)
+    {
+        return $query
+            ->find("JoinDiseaseds")
+            ->group(["Patients.patients_id"])
+            ->contain([
+                'PatientSexes', 
+                "Diseaseds.Sicknesses",
+            ]);
+    }
+
+    public function findRecentInterview(Query $query, array $options)
+    {
+        return $query
+            ->select(["patients_id", "pen_name"])
+            ->group(["Patients.patients_id"])
+            ->order(["modified" => "DESC"])
+            ->limit(5);
+    }
+
+    /*
+     * デフォルトでRIGHT
+     */
+    public function findJoinDiseaseds(Query $query, array $options)
+    {
+        $d_type = empty($options["d_type"]) ? "RIGHT" : "LEFT";
+
+        return $query
+            ->join([
+                "d" => [
+                    "table" => "diseaseds",
+                    "type" => $d_type,
+                    "conditions" => "Patients.patients_id = d.patients_id"
+                ],
+            ]);
+    }
+
+    public function findJoinInterviewSymptoms(Query $query, array $options)
+    {
+        $d_type = empty($options["d_type"]) ? "RIGHT" : "LEFT";
+        $i_type = empty($options["i_type"]) ? "RIGHT" : "LEFT";
+
+        return $query
+            ->find("JoinDiseaseds", ["d_type" => $d_type])
+            ->join([
+                "i" => [
+                    "table" => "interview_symptoms",
+                    "type" => $i_type,
+                    "conditions" => "d.diseaseds_id = i.diseaseds_id"
+                ],
+            ]);
+    }
+
+    public function findJoinSymptomsLocations(Query $query, array $options)
+    {
+        $d_type = empty($options["d_type"]) ? "RIGHT" : "LEFT";
+        $i_type = empty($options["i_type"]) ? "RIGHT" : "LEFT";
+        $sl_type = empty($options["sl_type"]) ? "RIGHT" : "LEFT";
+
+        return $query
+            ->find("JoinInterviewSymptoms", ["d_type" => $d_type, "i_type" => $i_type])
+            ->join([
+                "sl" => [
+                    "table" => "symptoms_locations",
+                    "type" => $sl_type,
+                    "conditions" => "i.interview_symptoms_id = sl.interview_symptoms_id"
+                ],
+            ]);
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator

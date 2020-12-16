@@ -15,4 +15,16 @@ class InterviewSymptom extends Entity
         'diseased' => true,
         'symptom' => true,
     ];
+
+    /*
+     * patients view
+     * 症状に対する部位の数を数える
+     * tableのrow数
+     */
+    protected function _getSymptomsRow()
+    {
+        $table_row = count($this->symptoms_locations);
+        
+        return $table_row;
+    }
 }

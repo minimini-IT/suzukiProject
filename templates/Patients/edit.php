@@ -48,10 +48,10 @@ $symp_count = 0;
                             <tbody>
                                 <?php foreach ($patient->diseaseds as $diseased): ?>
                                     <tr>
-                                        <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $table_sickness_row[$diseased->diseaseds_id] ?>"><?= $this->Form->postLink(h($diseased->sickness->sickness_name), ["controller" => "diseaseds", 'action' => 'delete', $diseased->diseaseds_id], ["block" => true, 'confirm' => __('{0}を削除しますか？', $diseased->sickness->sickness_name)]) ?></td>
+                                        <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $diseased->sickness_row ?>"><?= $this->Form->postLink(h($diseased->sickness->sickness_name), ["controller" => "diseaseds", 'action' => 'delete', $diseased->diseaseds_id], ["block" => true, 'confirm' => __('{0}を削除しますか？', $diseased->sickness->sickness_name)]) ?></td>
                                         <?php foreach($diseased->interview_symptoms as $interview): ?>
                                             <?php $sick_count == 0 ? "" : "<tr>" ?>
-                                            <td class="uk-text-center uk-tile-muted" rowspan="<?= $table_symptoms_row[$interview->interview_symptoms_id] ?>"><?= h($interview->symptom->symptoms) ?></td>
+                                            <td class="uk-text-center uk-tile-muted" rowspan="<?= $interview->symptoms_row ?>"><?= h($interview->symptom->symptoms) ?></td>
                                                 <?php foreach($interview->symptoms_locations as $location): ?>
                                                     <?php $symp_count == 0 ? "" : "<tr>" ?>
                                                     <td class="uk-text-center"><?= h($location->location->location) ?></td></tr>
@@ -62,7 +62,7 @@ $symp_count = 0;
                                 <?php endforeach ?>
                             </tbody>
                         </table>
-                        <?php if(count($patient->diseaseds) < $sickCount): ?>
+                        <?php if($sickAddFlag): ?>
                             <div class="uk-margin-medium-bottom"><?= $this->Html->link(__('病名を追加'), ["controller" => "diseaseds", 'action' => 'add', $patient->patients_id], ["class" => "uk-button uk-button-default"]) ?></div>
                         <?php endif ?>
                     <?php endif ?>

@@ -1,15 +1,7 @@
 /*
- * レスポンシブ
- * @media(max-width: px / min-width: px)
- * {
- *      処理
- * }
- * pc: 1001px以上
- * タブレット: 671px ~ 1000px
- * スマホ: 670px以下
- * 一番下に書く
+ * medium: 960px
+ * small: 639px
  */
-
 main
 {
     background-color: #D7EEFF;
@@ -27,19 +19,13 @@ footer
     height: 90px;
 }
 
-th
+th, td
 {
     padding-right: 0px !important;
     padding-left: 0px !important;
 }
 
-td
-{
-    padding-right: 0px !important;
-    padding-left: 0px !important;
-}
-
-#locations_checkbox
+#locations_checkbox, #search, .small-subbar, .medium-subbar, .small-divider, .medium-divider, .medium-div
 {
     display: none;
 }
@@ -63,11 +49,6 @@ td
 .div-align-left
 {
     padding-left: -40px !important;
-}
-
-#search
-{
-    display: none;
 }
 
 .main-width
@@ -171,11 +152,6 @@ td
     padding-left: 0 !important;
 }
 
-.small-subbar, .medium-subbar, .small-divider, .medium-divider, .medium-div
-{
-    display: none;
-}
-
 .form-width-long
 {
     width: 500px !important;
@@ -186,10 +162,19 @@ td
     background-color: rgba(255, 255, 128, .5);gT
 }
 
-/*@media(max-width: 760px)*/
+.bgc-ffffcc
+{
+    background-color: #FFFFCC;
+}
+
+.bgc-66ff66
+{
+    background-color: #66FF66;
+}
+
 @media(max-width: 639px)
 {
-    .small-link, .medium-table, .medium-div
+    .small-link, .medium-table, .medium-div, .small-remove
     {
         display: none;
     }
@@ -232,11 +217,6 @@ td
     {
         margin-right: 20px;
         margin-left: 20px;
-    }
-
-    .small-remove
-    {
-        display: none;
     }
 
     .small-subbar-height

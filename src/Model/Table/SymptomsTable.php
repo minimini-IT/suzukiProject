@@ -24,12 +24,15 @@ class SymptomsTable extends Table
         ]);
     }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
+    public function findSearchSymptomsElement(Query $query, array $options)
+    {
+        $values = $options["values"];
+
+        return $query
+            ->where(["symptoms_id in" => $values])
+            ->select(["alias" => "symptoms"]);
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator
