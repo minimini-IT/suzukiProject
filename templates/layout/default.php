@@ -35,7 +35,7 @@
                         <?= $this->Html->image("home.jpg", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "top", "action" => "index"]]) ?>
                     </div>
                     <div>
-                        <?= $this->Html->image("buttom.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
+                        <?= $this->Html->image("interview.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
                         <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">インタビュー</div>', 
                             [
                                 'controller' => 'patients', 
@@ -47,7 +47,7 @@
                         )-->
                     </div>
                     <div>
-                        <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
+                        <?= $this->Html->image("articles.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
                         <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">掲示板</div>', 
                             [
                                 'controller' => 'bulletin-boards', 
@@ -60,7 +60,7 @@
                     </div>
                     <?php if($this->Identity->isLoggedIn()): ?>
                         <div>
-                            <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "management_users", "action" => "top"]]) ?>
+                            <?= $this->Html->image("management.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "management_users", "action" => "top"]]) ?>
                         </div>
                     <?php endif ?>
             
