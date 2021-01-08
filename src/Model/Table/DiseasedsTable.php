@@ -31,33 +31,34 @@ class DiseasedsTable extends Table
         ]);
     }
     
-    public function findSearchSymptomsOnrySub(Query $query, array $options)
+    public function findRelatedArticlesLocationsSub(Query $query, array $options)
     {
-        $i_type = empty($options["i_type"]) ? "RIGHT" : "LEFT";
-        $values = $options["values"];
-        $sub_sub_query = $options["sub_sub_query"];
+        $patients_id = $options["patients_id"];
 
         return $query
-            ->select(["patients_id"])
-            ->find("JoinInterviewSymptoms")
-            ->group(["patients_id"])
-            ->having(["count(patients_id) >=" => count($values)])
-            ->where(["Diseaseds.diseaseds_id in" => $sub_sub_query])
-            ->where(["symptoms_id in" => $values]);
+            ->select(["sl.locations_id"])
+            ->find("JoinSymptomsLocations")
+            ->where(["patients_id" => $patients_id]);
     }
 
-    public function findSearchSymptomsOnrySubSub(Query $query, array $options)
+    public function findRelatedArticlesSymptomsSub(Query $query, array $options)
     {
-        $i_type = empty($options["i_type"]) ? "RIGHT" : "LEFT";
-        $values = $options["values"];
+        $patients_id = $options["patients_id"];
 
         return $query
-            ->select(["diseaseds_id"])
-            ->find("JoinInterviewSymptoms", ["i_type" => $i_type])
-            ->group(["Diseaseds.diseaseds_id"])
-            ->having(["count(Diseaseds.diseaseds_id) >=" => count($values)])
-            ->where(["i.symptoms_id in" => $values]);
-    } 
+            ->select(["i.symptoms_id"])
+            ->find("JoinInterviewSymptoms")
+            ->where(["patients_id" => $patients_id]);
+    }
+
+    public function findPatientSicknesses(Query $query, array $options)
+    {
+        $patients_id = $options["patients_id"];
+
+        return $query
+            ->select(["sicknesses_id"])
+            ->where(["patients_id" => $patients_id]);
+    }
 
     public function findPatientsSickCount(Query $query, array $options)
     {

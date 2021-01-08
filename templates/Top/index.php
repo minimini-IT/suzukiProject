@@ -15,26 +15,59 @@ $this->assign("title", "病気の人の交流サイト");
 
     </div>
 
-    <div class="uk-width-1-4@m uk-width-1-1 uk-margin-auto-right">
+    <div class="uk-width-1-4@m uk-width-1-1 uk-margin-auto-right uk-padding-remove uk-text-center">
         <div class="medium-padding">
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">最近のインタビュー</p>
-                <div class="medium-padding">
-                    <ul class="uk-list">
-                        <?php foreach($patients as $patient): ?>
-                            <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($patient->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $patient->patients_id]) ?></li>
-                        <?php endforeach ?>
-                    </ul>
+                <div class="medium-padding uk-margin-large-bottom">
+                    <?php foreach($recently_patients as $recent_patient): ?>
+                        <?php $recent_patient_list = $recent_patient->AttributeList ?>
+                        <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
+                            <p class="uk-text-center"><?= $this->Html->link(__($recent_patient->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $recent_patient->patients_id]) ?></p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_patient_list["sickness"] as $sickness): ?>
+                                <span class="uk-text-meta"><?= $sickness ?></span>
+                            <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_patient_list["symptoms"] as $symptoms): ?>
+                                <span class="uk-text-meta"><?= $symptoms ?></span>
+                            <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_patient_list["locations"] as $locations): ?>
+                                <span class="uk-text-meta"><?= $locations ?></span>
+                            <?php endforeach ?>
+                            </p>
+                            <p><span class="uk-label"><?= $recent_patient->patient_sex->patient_sex ?></span></p>
+                        </div>
+                    <?php endforeach ?>
                 </div>
             </div>
             <div class="uk-margin-medium-bottom">
-                <p class="uk-text-lead uk-text-center@m uk-text-left">関連する記事</p>
-                <div class="medium-padding">
-                    <p class="uk-text-normal uk-text-center@m uk-text-left">同じ病気、症状の記事</p>
-                    <div class="medium-padding">
-                        <ul class="uk-list">
-                            <li class="uk-text-center@m uk-text-left"></li>
-                    </div>
+                <p class="uk-text-lead uk-text-center@m uk-text-left">最近の記事</p>
+                <div class="medium-padding uk-margin-large-bottom">
+                    <?php foreach($recently_articles as $recent_article): ?>
+                        <?php $recent_article_list = $recent_article->AttributeList ?>
+                        <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
+                            <p class="uk-text-center"><?= $this->Html->link(__($recent_article->title), ['controller' => 'articles', 'action' => 'view', $recent_article->articles_id]) ?></p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_article_list["sickness"] as $sickness): ?>
+                                <span class="uk-text-meta"><?= $sickness ?></span>
+                            <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_article_list["symptoms"] as $symptoms): ?>
+                                <span class="uk-text-meta"><?= $symptoms ?></span>
+                            <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                            <?php foreach($recent_article_list["locations"] as $locations): ?>
+                                <span class="uk-text-meta"><?= $locations ?></span>
+                            <?php endforeach ?>
+                            </p>
+                        </div>
+                    <?php endforeach ?>
                 </div>
             </div>
         </div>

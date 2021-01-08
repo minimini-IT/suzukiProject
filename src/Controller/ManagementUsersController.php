@@ -56,20 +56,27 @@ class ManagementUsersController extends AppController
             $managementUser = $this->ManagementUsers->patchEntity($managementUser, $data);
 
             if ($this->ManagementUsers->save($managementUser)) {
-                $this->log("---add ManagementUsers save clear---", LOG_DEBUG);
+                $action = $this->request->getParam("action");
+                $updateTime = date("Y-m-d H:i:s");
+                $saveLog = [
+                    "management_users_id" => $managementUser->management_users_id,
+                    "action" => $action,
+                    "management_users_id" => $user->management_users_id,
+                    "datetime" => $updateTime,
+                ];
+                $this->DbLog->saveClear($saveLog);
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The management user could not be saved. Please, try again.'));
-                $this->log("---add ManagementUsers error---", LOG_DEBUG);
-                $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-                $this->Flash->error(__('管理者へ報告してください。'));
-                return $this->redirect(["controller" => "top", 'action' => 'index']);
+            $this->DbLog->saveClear($saveLog);
+            return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
         $this->set(compact('managementUser'));
     }
 
     public function edit($id = null)
     {
+        $managementUser = $this->ManagementUsers->get($id);
+
         /*
          * 承認用
          */
@@ -93,15 +100,21 @@ class ManagementUsersController extends AppController
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $action = $this->request->getParam("action");
             $data = $this->request->getData();
             $managementUser = $this->ManagementUsers->patchEntity($managementUser, $data);
             if ($this->ManagementUsers->save($managementUser)) {
-                $this->log("---edit ManagementUsers save clear---", LOG_DEBUG);
+                $updateTime = date("Y-m-d H:i:s");
+                $saveLog = [
+                    "Management_users_id" => $managementUser->management_users_id,
+                    "action" => $action,
+                    "management_users_id" => $user->management_users_id,
+                    "datetime" => $updateTime,
+                ];
+                $this->DbLog->saveClear($saveLog);
                 return $this->redirect(['action' => 'index']);
             }
-            $this->log("---edit ManagementUsers error---", LOG_DEBUG);
-            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-            $this->Flash->error(__('管理者へ報告してください。'));
+            $this->DbLog->saveClear($saveLog);
             return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
         $this->set(compact('managementUser'));
@@ -118,17 +131,23 @@ class ManagementUsersController extends AppController
          */
         $this->Authorization->authorize($managementUser);
 
-        if ($this->ManagementUsers->delete($managementUser)) {
-            $this->log("---delete ManagementUsers clear---", LOG_DEBUG);
-            return $this->redirect(['action' => 'index']);
-        } else {
-            $this->log("---delete ManagementUsers error---", LOG_DEBUG);
-            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-            $this->Flash->error(__('管理者へ報告してください。'));
-            return $this->redirect(["controller" => "top", 'action' => 'index']);
-        }
+        $management_users_id = $managementUser->management_users_id;
 
-        return $this->redirect(['action' => 'index']);
+        if ($this->ManagementUsers->delete($managementUser)) {
+            $action = $this->request->getParam("action");
+            $updateTime = date("Y-m-d H:i:s");
+            $saveLog = [
+                "management_users_id" => $management_users_id,
+                "action" => $action,
+                "management_users_id" => $user->management_users_id,
+                "datetime" => $updateTime,
+            ];
+            $this->DbLog->saveClear($saveLog);
+            return $this->redirect(['action' => 'index']);
+        }
+        $this->DbLog->saveClear($saveLog);
+        return $this->redirect(["controller" => "top", 'action' => 'index']);
+
     }
 
     public function top()
@@ -137,6 +156,12 @@ class ManagementUsersController extends AppController
          * 承認用
          */
         $this->Authorization->skipAuthorization();
+
+        $this->loadModels(["Patients", "Articles"]);
+        $patients = $this->Patients->find("RecentInterview")->find("UpdateInfo");
+        $articles = $this->Articles->find("RecentArticles")->find("UpdateInfo");
+
+        $this->set(compact('patients', "articles"));
     }
 
     public function beforeFilter(\Cake\Event\EventInterface $event)

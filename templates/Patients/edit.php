@@ -1,5 +1,5 @@
 <?php
-$this->assign("title", "編集");
+$this->assign("title", "インタビュー編集");
 $this->Html->script("ckeditor/ckeditor.js", ["block" => true]);
 ?>
 <div class="uk-grid grid-margin-remove">
@@ -62,14 +62,14 @@ $symp_count = 0;
                                 <?php endforeach ?>
                             </tbody>
                         </table>
-                        <?php if($sickAddFlag): ?>
+                        <?php if($sick_add_flag): ?>
                             <div class="uk-margin-medium-bottom"><?= $this->Html->link(__('病名を追加'), ["controller" => "diseaseds", 'action' => 'add', $patient->patients_id], ["class" => "uk-button uk-button-default"]) ?></div>
                         <?php endif ?>
                     <?php endif ?>
 
 
                     <?php
-                        echo $this->Form->control('patient_sexes_id', ["label" => "性別 : ", "class" => "uk-select uk-form-width-medium", 'options' => $patientSexes]);
+                        echo $this->Form->control('patient_sexes_id', ["label" => "性別 : ", "class" => "uk-select uk-form-width-medium", 'options' => $patient_sexes]);
                         echo $this->Form->control('age_of_onset', ["label" => "発病時の年齢 : ", "class" => "uk-select uk-form-width-medium", "min" => 0]);
                         echo $this->Form->control('year_of_onset', ["label" => "発病年月 : ", "class" => "uk-input uk-form-width-medium"]);
                         echo $this->Form->control('diagnosis_date', ["label" => "診断日 : ", "class" => "uk-input uk-form-width-medium"]);

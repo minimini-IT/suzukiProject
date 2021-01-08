@@ -14,7 +14,7 @@ $this->Html->script("p_toggle.js", ["block" => true]);
         </nav>
     </div>
     <div class="uk-width-3-4@s medium-margin uk-width-1-1 grid-child">
-        <div class="grid-next-margin uk-card uk-card-default uk-padding">
+        <div class="grid-next-margin uk-card uk-card-default uk-padding uk-margin-bottom">
             <?= $this->Form->create($managementUser) ?>
                 <?php $this->Form->setTemplates([
                     "inputContainer" => "<div class='input {{type}} {{required}} uk-margin-bottom'>{{content}}</div>",
@@ -37,10 +37,12 @@ $this->Html->script("p_toggle.js", ["block" => true]);
     </div>
 
     <div class="uk-width-1-4 uk-padding-remove uk-text-center small-remove">
-        <ul class="uk-list">
-            <li><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
-            <li class=><?= $this->Html->link(__('戻る'), ['action' => 'index'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
-        </ul>
+        <div class="uk-margin-bottom">
+            <ul class="uk-list">
+                <li><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
+                <li class=><?= $this->Html->link(__('戻る'), ['action' => 'index'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
+            </ul>
+        </div>
     </div>
 </div>
 

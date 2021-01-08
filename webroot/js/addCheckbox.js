@@ -1,8 +1,8 @@
 $(function(){
 
-    //initialize();
-
     /*
+     * 病名、症状、部位時のrequired用
+     *
      * 一つでもチェックするとその病名、症状の症状、部位のrequiredは解除
      * チェックがひとつもなくなるとrequiredを登録
      */
@@ -35,34 +35,62 @@ $(function(){
             //console.log("required true");
             $("input[name='"+labelFor+"']").prop("required", true);
         }
+
+        /*
+         * 無しを選んだ場合は他は選べない
+         */
+        //console.log($(this).val());
+        if($(this).val() == 1)
+        {
+            if($(this).prop("checked"))
+            {
+                $("input[name='"+labelFor+"']").prop("disabled", true);
+                $(this).prop("disabled", false);
+            }
+            else
+            {
+                $("input[name='"+labelFor+"']").prop("disabled", false);
+            }
+        }
     });
 
-    
-    //function initialize()
-    //{
-    //    var inputName = "sicknesses_id[]";
-    //    //console.log(inputName);
-    //    initialVal = $(".checkboxInit").find("input[type='checkbox']").filter(":checked").length;
-    //    if(initialVal > 0)
-    //    {
-    //        console.log("required off");
-    //        $("input[name='"+inputName+"']").prop("reuqired", false);
-    //    }
-    //}
+    /*
+     * articles add用
+     */
+    $('[id$=id-1]').click(function(){
+        var first_id_count = $("[id$=id-1]").filter(":checked").length;
+        console.log(first_id_count);
+        /*
+         * 病名、症状、部位
+         * すべてを無しにするのを防ぐ
+         */
+        if($(this).prop("checked") && first_id_count >= 2)
+        {
+            console.log("if");
+            var sickness = $("#sicknesses-id-1").prop("checked");
+            console.log(sickness);
+            var symptoms = $("#symptoms-id-1").prop("checked");
+            console.log(symptoms);
+            var locations = $("#locations-id-1").prop("checked");
+            console.log(locations);
+            if(!(sickness))
+            {
+                $("#sicknesses-id-1").prop("disabled", true);
+            }
+            else if(!(symptoms))
+            {
+                $("#symptoms-id-1").prop("disabled", true);
+            }
+            else if(!(locations))
+            {
+                $("#locations-id-1").prop("disabled", true);
+            }
+            
+        }
+        else if(!($(this).prop("checked")) && first_id_count == 1)
+        {
+            $("[id$=id-1]").prop("disabled", false);
+        }
+    });
 
-    //var labelFor;
-    //$('input').click(function(){
-    //    labelFor = $(this).attr("name");
-    //    console.log($(this).parent().parent().parent().find("input[type='checkbox']").filter(":checked").length);
-    //    if($(this).prop("checked") && $(this).parent().parent().parent().find("input[type='checkbox']").filter(":checked").length == 1)
-    //    {
-    //        $("input[name='"+labelFor+"']").prop("required", false);
-    //        //console.log($(this).parent().parent().parent().children("label").attr("for") + "のrequiredを解除");
-    //    }
-    //    else if(!$(this).prop("checked") && $(this).parent().parent().parent().find("input[type='checkbox']").filter(":checked").length == 0)
-    //    {
-    //        $("input[name='"+labelFor+"']").prop("required", true);
-    //        //console.log($(this).parent().parent().parent().children("label").attr("for") + "のrequiredを登録");
-    //    }
-    //});
 });

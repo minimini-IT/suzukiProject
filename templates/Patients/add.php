@@ -23,47 +23,41 @@ $this->Html->script("addCheckbox.js", ["block" => true]);
 
     <div class="uk-width-3-4@s medium-margin uk-width-1-1 grid-child">
         <div class="uk-card uk-card-default">
-            <div class="grid-next-margin uk-padding uk-padding-remove-bottom">
-                <?= $this->Form->create($patient) ?>
-                    <?php
-                        $this->Form->setTemplates([
-                            "inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom'>{{content}}</div>",
-                        ]);
+            <?= $this->Form->create($patient) ?>
+                <div class="grid-next-margin uk-padding uk-padding-remove-bottom">
+                    <?php $this->Form->setTemplates(["inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom'>{{content}}</div>"]) ?>
 
-                        echo $this->Form->control('pen_name', ["label" => "ペンネーム : ", "class" => "uk-input uk-form-width-medium"]);
+                    <?= $this->Form->control('pen_name', ["label" => "ペンネーム : ", "class" => "uk-input uk-form-width-medium"]) ?>
 
-                        $this->Form->setTemplates([
-                            "inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom checkbox-margin checkboxInit'>{{content}}</div>",
-                            "checkboxWrapper" => "<div class='checkbox uk-margin-bottom'>{{label}}</div>",
-                        ]);
+                    <?php $this->Form->setTemplates(["inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom checkbox-margin checkboxInit'>{{content}}</div>","checkboxWrapper" => "<div class='checkbox uk-margin-bottom'>{{label}}</div>"]) ?>
 
-                        echo "<label for='sicknesses-id'>病名 : </label>";
-                        echo $this->Form->control('sicknesses_id', ["label" => false, "class" => "uk-checkbox checkboxRequire", 'options' => $sicknesses, "multiple" => "checkbox", "required" => true]);
+                    <?= "<p class='uk-margin-remove-bottom'><span class='uk-text-danger'>一つ以上必須</span></p>" ?>
+                    <?= "<label for='sicknesses-id'>病名 : </label>" ?>
+                    <?= $this->Form->control('sicknesses_id', ["label" => false, "class" => "uk-checkbox checkboxRequire", 'options' => $sicknesses, "multiple" => "checkbox", "required" => true]) ?>
 
-                        $this->Form->setTemplates([
-                            "inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom'>{{content}}</div>",
-                        ]);
+                    <?php $this->Form->setTemplates(["inputContainer" => "<div class='input {{type}}{{required}} uk-margin-medium-bottom'>{{content}}</div>"]) ?>
 
-                        echo $this->Form->control('patient_sexes_id', ["label" => "性別 : ", "class" => "uk-select uk-form-width-medium", 'options' => $patientSexes]);
-                        echo $this->Form->control('age_of_onset', ["label" => "発病時の年齢 : ", "class" => "uk-select uk-form-width-medium", "min" => 0]);
-                        echo $this->Form->control('year_of_onset', ["label" => "発病年月 : ", "class" => "uk-input uk-form-width-medium"]);
-                        echo $this->Form->control('diagnosis_date', ["label" => "診断日 : ", "class" => "uk-input uk-form-width-medium"]);
-                        echo $this->Form->control('cured', ["label" => "完治した年月 : ", "class" => "uk-input uk-form-width-medium", 'empty' => true]);
-                        echo "</div><div>";
-                        echo $this->Form->control('interview_first', ["label" => ["text" => "現在の状況", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"],  "class" => "ckeditor", "required" => true]);
-                        echo $this->Form->control('interview_second', ["label" => ["text" => "どんな経緯で病気がわかったか", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]);
-                        echo $this->Form->control('interview_third', ["label" => ["text" => "病気になったから生活が変わったか", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]);
-                        echo $this->Form->control('interview_force', ["label" => ["text" => "同じ病気の方へのアドバイス", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]);
-                        echo $this->Form->control('other', ["label" => ["text" => "その他伝えたいこと", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]);
-                    ?>
+                    <?= $this->Form->control('patient_sexes_id', ["label" => "性別 : ", "class" => "uk-select uk-form-width-medium", 'options' => $patient_sexes]) ?>
+                    <?= $this->Form->control('age_of_onset', ["label" => "発病時の年齢 : ", "class" => "uk-select uk-form-width-medium", "min" => 0]) ?>
+                    <?= $this->Form->control('year_of_onset', ["label" => "発病年月 : ", "class" => "uk-input uk-form-width-medium"]) ?>
+                    <?= $this->Form->control('diagnosis_date', ["label" => "診断日 : ", "class" => "uk-input uk-form-width-medium"]) ?>
+                    <?= $this->Form->control('cured', ["label" => "完治した年月 : ", "class" => "uk-input uk-form-width-medium", 'empty' => true]) ?>
+                </div>
+                <div>
+                    <?= $this->Form->control('interview_first', ["label" => ["text" => "現在の状況", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"],  "class" => "ckeditor", "required" => true]) ?>
+                    <?= $this->Form->control('interview_second', ["label" => ["text" => "どんな経緯で病気がわかったか", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]) ?>
+                    <?= $this->Form->control('interview_third', ["label" => ["text" => "病気になったから生活が変わったか", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]) ?>
+                    <?= $this->Form->control('interview_force', ["label" => ["text" => "同じ病気の方へのアドバイス", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]) ?>
+                    <?= $this->Form->control('other', ["label" => ["text" => "その他伝えたいこと", "class" => "uk-padding uk-padding-remove-top uk-padding-remove-bottom label-background"], "class" => "ckeditor"]) ?>
+
                     <?= $this->Html->scriptStart() ?>
                         var editor = CKEDITOR.replace("ckeditor");
                     <?= $this->Html->scriptEnd() ?>
                     <div class="uk-padding uk-padding-remove-top uk-text-right">
                         <?= $this->Form->button(__('送信'), ["class" => "uk-button uk-button-default"]) ?>
                     </div>
-                <?= $this->Form->end() ?>
-            </div>
+                </div>
+            <?= $this->Form->end() ?>
         </div>
     </div>
 

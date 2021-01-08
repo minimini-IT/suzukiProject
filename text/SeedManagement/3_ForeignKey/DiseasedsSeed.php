@@ -27,7 +27,7 @@ class DiseasedsSeed extends AbstractSeed
         $data = [
             [
                 "patients_id" => 1,
-                "sicknesses_id" => 1,
+                "sicknesses_id" => 2,
             ],
             /*
             [

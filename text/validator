@@ -1,0 +1,30 @@
+$validator
+    ->scalar()  //テキスト型
+    ->integer()  //整数型
+    ->notEmpty()  //空を許可しない
+        ＊より具体的な
+        notEmptyString(), 
+        notEmptyArray(),
+        notEmptyFile(),
+        notEmptyData(),
+        notEmptyTime(),
+        notEmptyDateTime()
+        を使用する
+    ->allowEmpty() //空を許可する
+        ＊オプションで空を許可しない、createのみ空を許可、updateのみ空を許可等できる
+        allowEmptyもnotEmpty同様具体的な指定をする
+        allowEmptyString("title", "空はダメ", false);
+            false : 空を許可しない
+        allowEmptyString("title", "空はダメ", "update");
+            "update" : update時のみ空を許可
+        allowEmptyString("title", "空はダメ", "create");
+            "create" : create時のみ空を許可
+    ->requirePresence()  //必須項目
+        *オプションでON/OFF、create時のみ、update時のみ等できる。上記と同じ
+
+
+
+
+
+
+

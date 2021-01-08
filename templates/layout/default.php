@@ -20,6 +20,8 @@
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
 
+    <?php $this->loadHelper("Authentication.Identity") ?>
+
 </head>
 <body>
     <header>
@@ -45,7 +47,7 @@
                         )-->
                     </div>
                     <div>
-                        <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "bulletin-boards", "action" => "index"]]) ?>
+                        <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
                         <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">掲示板</div>', 
                             [
                                 'controller' => 'bulletin-boards', 
@@ -56,6 +58,12 @@
                             ],
                         )-->
                     </div>
+                    <?php if($this->Identity->isLoggedIn()): ?>
+                        <div>
+                            <?= $this->Html->image("buttom.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "management_users", "action" => "top"]]) ?>
+                        </div>
+                    <?php endif ?>
+            
                 </div>
                 <div class="uk-position-right">
                     <nav class="uk-nabar-container header-small-nav" uk-navbar="mode: click; boundary-align: true; align:right;">
@@ -67,7 +75,12 @@
                                         <ul class="uk-nav uk-navbar-dropdown-nav">
                                             <li><?= $this->Html->link(__("HOME"), ['controller' => 'top', 'action' => 'index']) ?></li>
                                             <li><?= $this->Html->link(__("インタビュー"), ['controller' => 'patients', 'action' => 'index']) ?></li>
-                                            <li><?= $this->Html->link(__("掲示板"), ['controller' => 'bulletin_boards', 'action' => 'index']) ?></li>
+                                            <li><?= $this->Html->link(__("記事"), ['controller' => 'articles', 'action' => 'index']) ?></li>
+                                            <?php if($this->Identity->isLoggedIn()): ?>
+                                                <li>
+                                                    <?= $this->Html->link(__("管理メニュー"), ['controller' => 'management_users', 'action' => 'top']) ?>
+                                                </li>
+                                            <?php endif ?>
                                     </div>
                                 </li>
                             </ul>
@@ -77,7 +90,7 @@
             </div>
         </div>
     </header>
-    <main>
+    <main class="min-height">
         <div class="uk-margin-auto-left uk-margin-auto-right main-width padding-top">
             <div class="container">
                 <?= $this->Flash->render() ?>
@@ -97,7 +110,7 @@
                     <ul class="uk-list">
                         <li><?= $this->Html->link(__('HOME'), ['controller' => 'top', 'action' => 'index',]) ?></li>
                         <li><?= $this->Html->link(__('インタビュー'), ['controller' => 'patients', 'action' => 'index',]) ?></li>
-                        <li><?= $this->Html->link(__('掲示板'), ['controller' => 'bulletin_boards', 'action' => 'index',]) ?></li>
+                        <li><?= $this->Html->link(__('記事'), ['controller' => 'articles', 'action' => 'index',]) ?></li>
                     </ul>
                     <hr class="uk-divider-icon medium-divider">
                 </div>

@@ -12,15 +12,21 @@ class TopController extends AppController
          */
         $this->Authorization->skipAuthorization();
 
-        $this->loadModels(["Patients"]);
+        $this->loadModels(["Patients", "Articles"]);
 
         /*
          * 最近の記事
          */
-        $patients = $this->Patients->find("RecentInterview");
+        //$patients = $this->Patients->find("RecentInterview");
+        $recently_patients = $this->Patients->find("RecentInterview");
+
+        /*
+         * 最近の記事
+         */
+        $recently_articles = $this->Articles->find("RecentArticles");
 
         $login_user = $this->Authentication->getIdentity();
-        $this->set(compact("patients", "login_user"));
+        $this->set(compact("recently_patients", "login_user", "recently_articles"));
     }
 
     public function beforeFilter(\Cake\Event\EventInterface $event)

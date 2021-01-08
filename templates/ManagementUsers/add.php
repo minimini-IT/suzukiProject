@@ -8,7 +8,7 @@ $this->Html->script("p_toggle.js", ["block" => true]);
         <nav class="uk-navbar-container" uk-navbar>
             <div class="uk-navbar-right">
                 <ul class="uk-navbar-nav">
-                   <li class="small-subbar-li"><?= $this->Html->link(__('戻る'), ['action' => 'index'], ['class' => 'uk-button uk-button-primary management-sub-button uk-padding-remove small-subbar-height']) ?></li>
+                   <li class="small-subbar-li"><?= $this->Html->link(__('戻る'), ['action' => 'top'], ['class' => 'uk-button uk-button-primary management-sub-button uk-padding-remove small-subbar-height']) ?></li>
                    <li class="small-subbar-li"><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary management-sub-button uk-padding-remove small-subbar-height']) ?></li>
                 </ul>
             </div>

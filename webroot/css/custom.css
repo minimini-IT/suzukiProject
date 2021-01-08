@@ -7,6 +7,11 @@ main
     background-color: #D7EEFF;
 }
 
+.min-height
+{
+    min-height: 650px;
+}
+
 footer
 {
     background-color: #008080 !important;
@@ -25,7 +30,7 @@ th, td
     padding-left: 0px !important;
 }
 
-#locations_checkbox, #search, .small-subbar, .medium-subbar, .small-divider, .medium-divider, .medium-div
+#locations_checkbox, #search, .small-subbar, .medium-subbar, .small-divider, .medium-divider, .medium-div, .small-sidebar
 {
     display: none;
 }
@@ -59,6 +64,16 @@ th, td
 .padding-top
 {
     padding-top: 30px;
+}
+
+.padding-left
+{
+    padding-left: 40px;
+}
+
+.padding-right
+{
+    padding-right: 40px;
 }
 
 .padding-bottom
@@ -172,62 +187,21 @@ th, td
     background-color: #66FF66;
 }
 
-@media(max-width: 639px)
+.text
 {
-    .small-link, .medium-table, .medium-div, .small-remove
-    {
-        display: none;
-    }
+    width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 
-    .header-small-nav, .small-table
-    {
-        display: inline !important;
-    }
+.liststyle
+{
+    list-style: none;
+}
 
-    .small-divider
-    {
-        display: block;
-    }
-    
-    .small-margin-right
-    {
-        margin-right: 0;
-    }
-
-    .main-link
-    {
-        width: 100%;
-        height: 60px;
-    }
-
-    .login-form-width
-    {
-        width: 300px;
-    }
-
-    .small-subbar
-    {
-        display: block;
-        width: 100%;
-        padding-left: 0 !important;
-        margin-bottom: 30px !important;
-    }
-
-    .small-subbar-li
-    {
-        margin-right: 20px;
-        margin-left: 20px;
-    }
-
-    .small-subbar-height
-    {
-        min-height: 50px !important;
-    }
-
-    .management-sub-button
-    {
-        width: 70px;
-    }
+.liststyle>li
+{
+    margin-top: 10px;
 }
 
 @media(max-width: 960px)
@@ -287,6 +261,74 @@ th, td
     .medium-divider, .medium-div
     {
         display: block;
+    }
+
+    .padding-left
+    {
+        padding-left: 30px !important;
+    }
+}
+
+@media(max-width: 639px)
+{
+    .small-link, .medium-table, .medium-div, .small-remove
+    {
+        display: none;
+    }
+
+    .header-small-nav, .small-table
+    {
+        display: inline !important;
+    }
+
+    .small-divider, .small-sidebar
+    {
+        display: block;
+    }
+    
+    .small-margin-right
+    {
+        margin-right: 0;
+    }
+
+    .main-link
+    {
+        width: 100%;
+        height: 60px;
+    }
+
+    .login-form-width
+    {
+        width: 300px;
+    }
+
+    .small-subbar
+    {
+        display: block;
+        width: 100%;
+        padding-left: 0 !important;
+        margin-bottom: 30px !important;
+    }
+
+    .small-subbar-li
+    {
+        margin-right: 20px;
+        margin-left: 20px;
+    }
+
+    .small-subbar-height
+    {
+        min-height: 50px !important;
+    }
+
+    .management-sub-button
+    {
+        width: 70px;
+    }
+
+    .padding-left
+    {
+        padding-left: 20px !important;
     }
 }
 

@@ -22,13 +22,32 @@ class SicknessesTable extends Table
             'foreignKey' => 'sicknesses_id',
             'joinType' => 'INNER',
         ]);
+        $this->hasMany('RelatedSicknesses', [
+            'foreignKey' => 'sicknesses_id',
+            'joinType' => 'INNER',
+        ]);
         $this->hasMany('Represents', [
             'foreignKey' => 'sicknesses_id',
             'joinType' => 'INNER',
         ]);
     }
 
-    public function findSearchSicknessElement(Query $query, array $options)
+    public function findAddPatientsSicknesses(Query $query, array $options)
+    {
+        return $query
+            ->where(["sicknesses_id !=" => 1]);
+    }
+
+    public function findNotIncluded(Query $query, array $options)
+    {
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->where(["sicknesses_id not in" => $sub_query]);
+    }
+
+    //public function findSearchSicknessesElement(Query $query, array $options)
+    public function findGetSicknessesName(Query $query, array $options)
     {
         $values = $options["values"];
 

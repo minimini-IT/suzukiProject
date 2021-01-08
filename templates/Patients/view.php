@@ -69,90 +69,92 @@ $symp_count = 0;
         <div class="text">
             <h3 class="bgc-h3 uk-margin-remove-bottom">現在の状況</h3>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
-                <blockquote>
+                <section>
                     <?= $patient->interview_first ?>
-                </blockquote>
+                </section>
             </div>
             <h3 class="bgc-h3 uk-margin-remove-bottom">病気がわかった経緯</h3>
             <div class="uk-card uk-card-default uk-card-body">
-                <blockquote>
+                <section>
                     <?= $patient->interview_second ?>
-                </blockquote>
+                </section>
             </div>
             <h3 class="bgc-h3 uk-margin-remove-bottom">生活が変わったか</h3>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
-                <blockquote>
+                <section>
                     <?= $patient->interview_third ?>
-                </blockquote>
+                </section>
             </div>
             <h3 class="bgc-h3 uk-margin-remove-bottom">同じ病気の人へのアドバイス</h3>
             <div class="uk-card uk-card-default uk-card-body">
-                <blockquote>
+                <section>
                     <?= $patient->interview_force ?>
-                </blockquote>
+                </section>
             </div>
             <h3 class="bgc-h3 uk-margin-remove-bottom">そのほか伝えたいこと</h3>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
-                <blockquote>
+                <section>
                     <?= $patient->other ?>
-                </blockquote>
+                </section>
             </div>
         </div>
 
     </div>
     <div class="uk-width-1-4@m uk-width-1-1 uk-padding-remove uk-text-center">
-<?php
-/*
-    foreach($patient->diseaseds as $diseased)
-    {
-        debug($diseased);
-    }
- */
-?>
         <div class="medium-padding">
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">関連するインタビュー</p>
-                <div class="medium-padding">
-                    <div class="uk-margin-large-bottom">
-                        <p class="uk-text-normal uk-text-center@m uk-text-left bgc-66ff66">同じ病気の方</p>
-                        <?php foreach($patient->diseaseds as $diseased): ?>
-                            <p class="uk-text-normal uk-text-center@m uk-text-left bgc-ffffcc uk-margin-remove-bottom uk-margin-right uk-margin-left"><?= h($diseased->sickness->sickness_name) ?></p>
-                            <ul class="uk-list uk-margin-remove-top">
-                            <?php foreach($related_sickness as $related): ?>
-                                <?php if($related->RelatedSickness == $diseased->sicknesses_id): ?>
-                                        <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></li>
-                                <?php endif ?>
-                            <?php endforeach ?>
-                            </ul>
-                        <?php endforeach ?>
-                    </div>
-
-                    <div>
-                        <p class="uk-text-normal uk-text-center@m uk-text-left bgc-66ff66">同じ症状の方</p>
-                        <?php foreach($patient->diseaseds as $diseased): ?>
-                            <?php foreach($diseased->interview_symptoms as $interview_symptoms): ?>
-                                <p class="uk-text-normal uk-text-center@m uk-text-left bgc-ffffcc uk-margin-remove-bottom uk-margin-right uk-margin-left"><?= h($interview_symptoms->symptom->symptoms) ?></p>
-                                <ul class="uk-list uk-margin-remove-top">
-                                <?php foreach($related_symptoms as $related): ?>
-                                    <?php if($related->RelatedSymptoms == $interview_symptoms->symptoms_id): ?>
-                                        <li class="uk-text-center@m uk-text-left"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></li>
-                                    <?php endif ?>
+                <div class="medium-padding uk-margin-large-bottom">
+                    <?php foreach($related_patients as $related): ?>
+                        <?php $relatedList = $related->AttributeList ?>
+                        <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
+                            <p class="uk-text-center"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["sickness"] as $sickness): ?>
+                                    <span class="uk-text-meta"><?= $sickness ?></span>
                                 <?php endforeach ?>
-                                </ul>
-                            <?php endforeach ?>
-                        <?php endforeach ?>
-                    </div>
+                            </p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["symptoms"] as $symptoms): ?>
+                                    <span class="uk-text-meta"><?= $symptoms ?></span>
+                                <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["locations"] as $locations): ?>
+                                    <span class="uk-text-meta"><?= $locations ?></span>
+                                <?php endforeach ?>
+                            </p>
+                            <p><span class="uk-label"><?= $related->patient_sex->patient_sex ?></span></p>
+                        </div>
+                    <?php endforeach ?>
+
                 </div>
             </div>
-
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">関連する記事</p>
                 <div class="medium-padding">
-                    <p class="uk-text-normal uk-text-center@m uk-text-left">同じ病気、症状の記事</p>
-                    <div class="medium-padding">
-                        <ul class="uk-list">
-                            <li class="uk-text-center@m uk-text-left"></li>
-                    </div>
+
+                    <?php foreach($related_articles as $related): ?>
+                        <?php $relatedList = $related->AttributeList ?>
+                        <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
+                            <p class="uk-text-center"><?= $this->Html->link(__($related->title), ['controller' => 'articles', 'action' => 'view', $related->articles_id]) ?></p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["sickness"] as $sickness): ?>
+                                    <span class="uk-text-meta"><?= $sickness ?></span>
+                                <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["symptoms"] as $symptoms): ?>
+                                    <span class="uk-text-meta"><?= $symptoms ?></span>
+                                <?php endforeach ?>
+                            </p>
+                            <p class="uk-margin-small">
+                                <?php foreach($relatedList["locations"] as $locations): ?>
+                                    <span class="uk-text-meta"><?= $locations ?></span>
+                                <?php endforeach ?>
+                            </p>
+                        </div>
+                    <?php endforeach ?>
                 </div>
             </div>
         </div>

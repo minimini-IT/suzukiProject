@@ -17,40 +17,58 @@ $this->assign("title", "編集するインタビュー");
                 <?= $this->Form->button('検索', ["class" => "uk-button uk-button-primary uk-position-small uk-position-center-right"]) ?>
             <?= $this->Form->end() ?>
         </div>
-        <div class="uk-text-center">
+        <div>
 
-            <table class="uk-table uk-table-striped uk-table-middle">
-                <thead>
-                    <tr>
-                        <th class="uk-text-center">ペンネーム</th>
-                        <th class="uk-text-center">病名</th>
-                        <th class="uk-text-center">性別</th>
-                        <th class="uk-text-center">発病時の年齢</th>
-                        <th class="uk-text-center">発病年月</th>
-                        <th class="uk-text-center">診断日</th>
-                        <th class="uk-text-center">完治した年月</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($patients as $patient): ?>
-                        <tr>
-                            <td><?= h($patient->pen_name) ?> さん</td>
-                            <td>
-                                <?php foreach ($patient->diseaseds as $diseased): ?>
-                                    <?= h($diseased->sickness->sickness_name) ?></br>
-                                <?php endforeach ?>
-                            </td>
-                            <td><?= h($patient->patient_sex->patient_sex) ?></td>
-                            <td><?= $this->Number->format($patient->age_of_onset) ?></td>
-                            <td><?= h($patient->year_of_onset->format("Y-m-d")) ?></td>
-                            <td><?= h($patient->diagnosis_date->format("Y-m-d")) ?></td>
-                            <td><?= $patient->has("cured") ? h($patient->cured->format("Y-m-d")) : "-----" ?></td>
-                            <td><?= $this->Html->link(__('編集'), ["controller" => "patients", 'action' => 'edit', $patient->patients_id], ["class" => "uk-button uk-button-default"]) ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
+            <?php foreach ($patients as $patient): ?>
+<?php 
+    $patient_link = "<div class='uk-card-header'><p>{$patient->pen_name} さん</p></div>";
+?>
+                <div class="uk-text-center uk-margin-bottom uk-card uk-card-default">
+                    <td><?= $this->Html->link($patient_link, ['action' => 'edit', $patient->patients_id], ["escape" => false]) ?></td>
+                    <div class="uk-card-body uk-padding-remove">
+                        <table class="uk-table uk-table-small uk-margin-remove uk-table-divider uk-table-middle">
+                            <thead>
+                                <tr>
+                                    <th class="uk-text-center uk-width-1-3">病名</th>
+                                    <th class="uk-text-center uk-width-1-3">性別</th>
+                                    <th class="uk-text-center uk-width-1-3">発病時の年齢</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr>
+                                        <td>
+                                            <?php foreach ($patient->diseaseds as $diseased): ?>
+                                                <?= h($diseased->sickness->sickness_name) ?></br>
+                                            <?php endforeach ?>
+                                        </td>
+                                        <td><?= h($patient->patient_sex->patient_sex) ?></td>
+                                        <td><?= $this->Number->format($patient->age_of_onset) ?></td>
+                                    </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="uk-card-footer uk-padding-remove">
+                        <table class="uk-table uk-table-small uk-margin-remove uk-table-divider uk-table-middle">
+                            <thead>
+                                <tr>
+                                    <th class="uk-text-center uk-width-1-3">発病年月</th>
+                                    <th class="uk-text-center uk-width-1-3">診断日</th>
+                                    <th class="uk-text-center uk-width-1-3">完治した年月</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?= h($patient->year_of_onset->format("Y-m")) ?></td>
+                                    <td><?= h($patient->diagnosis_date->format("Y-m")) ?></td>
+                                    <td><?= $patient->has("cured") ? h($patient->cured->format("Y-m")) : "-----" ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <?php endforeach ?>
         </div>
         <div class="paginator">
             <ul class="uk-pagination" uk-margin>

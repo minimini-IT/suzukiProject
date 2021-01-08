@@ -22,9 +22,21 @@ class SymptomsTable extends Table
             'foreignKey' => 'symptoms_id',
             'joinType' => 'INNER',
         ]);
+        $this->hasMany('RelatedSymptoms', [
+            'foreignKey' => 'symptoms_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
-    public function findSearchSymptomsElement(Query $query, array $options)
+    public function findNotEnteredSymptoms(Query $query, array $options)
+    {
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->where(["symptoms_id not in" => $sub_query]);
+    }
+
+    public function findGetSymptomsName(Query $query, array $options)
     {
         $values = $options["values"];
 

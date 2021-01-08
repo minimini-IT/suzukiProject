@@ -16,24 +16,6 @@ class AppController extends Controller
         /*
          * 認証用　追加
          */
-        /*
-         * AuthじゃなくてAuthenticationとAuthorizationをつかう
-        $this->loadComponent("Auth", [
-            "loginRedirect" => [
-                "controller" => "DashboardManagement",
-                "action" => "index"
-            ],
-            "logoutRedirect" => [
-                "controller" => "Top",
-                "action" => "index"
-            ],
-            "loginAction" => [
-                "controller" => "ManagementUsers",
-                "action" => "login"
-            ],
-            "authError" => "認証不可",
-        ]);
-         */
 
         $this->loadComponent("Authentication.Authentication");
 
@@ -42,6 +24,12 @@ class AppController extends Controller
          */
         $this->loadComponent("Authorization.Authorization");
 
+        /*
+         * DBログ用　追加
+         */
+        $this->loadComponent("DbLog");
+
+        $this->loadComponent("SaveError");
 
         /*
          * Enable the following component for recommended CakePHP form protection settings.

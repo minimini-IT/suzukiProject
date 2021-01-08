@@ -18,9 +18,27 @@ class LocationsTable extends Table
         //$this->setDisplayField('locations_id');
         $this->setDisplayField('location');
         $this->setPrimaryKey('locations_id');
+
+        $this->hasMany('SymptomsLocations', [
+            'foreignKey' => 'symptoms_id',
+            'joinType' => 'INNER',
+        ]);
+        $this->hasMany('RelatedLocations', [
+            'foreignKey' => 'symptoms_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
-    public function findSearchLocationsElement(Query $query, array $options)
+    public function findNotEnteredLocations(Query $query, array $options)
+    {
+        $sub_query = $options["sub_query"];
+
+        return $query
+            ->where(["locations_id not in" => $sub_query]);
+    }
+
+    //public function findSearchLocationsElement(Query $query, array $options)
+    public function findGetLocationsName(Query $query, array $options)
     {
         $values = $options["values"];
 

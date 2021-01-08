@@ -27,41 +27,7 @@ $this->assign("title", "編集するインタビュー");
                 <?= $this->Form->button('検索', ["class" => "uk-button uk-button-primary uk-position-small uk-position-center-right"]) ?>
             <?= $this->Form->end() ?>
         </div>
-        <div class="uk-text-center medium-table">
-            <table class="uk-table uk-table-striped uk-table-middle">
-                <thead>
-                    <tr>
-                        <th class="uk-text-center">ペンネーム</th>
-                        <th class="uk-text-center">病名</th>
-                        <th class="uk-text-center">性別</th>
-                        <th class="uk-text-center">発病時の年齢</th>
-                        <th class="uk-text-center">発病年月</th>
-                        <th class="uk-text-center">診断日</th>
-                        <th class="uk-text-center">完治した年月</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($patients as $patient): ?>
-                        <tr>
-                            <td><?= h($patient->pen_name) ?> さん</td>
-                            <td>
-                                <?php foreach ($patient->diseaseds as $diseased): ?>
-                                    <?= h($diseased->sickness->sickness_name) ?></br>
-                                <?php endforeach ?>
-                            </td>
-                            <td><?= h($patient->patient_sex->patient_sex) ?></td>
-                            <td><?= $this->Number->format($patient->age_of_onset) ?></td>
-                            <td><?= h($patient->year_of_onset->format("Y-m-d")) ?></td>
-                            <td><?= h($patient->diagnosis_date->format("Y-m-d")) ?></td>
-                            <td><?= $patient->has("cured") ? h($patient->cured->format("Y-m-d")) : "-----" ?></td>
-                            <td><?= $this->Html->link(__('編集'), ["controller" => "patients", 'action' => 'edit', $patient->patients_id], ["class" => "uk-button uk-button-default"]) ?></td>
-                        </tr>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
-        </div>
-        <div class="small-table">
+        <div>
 
             <?php foreach ($patients as $patient): ?>
 <?php 
@@ -110,6 +76,9 @@ $this->assign("title", "編集するインタビュー");
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="uk-text-right">
+                        <?= $this->Form->postLink(__('削除'), ['action' => 'delete', $patient->patients_id], ['confirm' => __('{0} を削除しますか？', $patient->pen_name), "class" => "uk-button uk-button-danger"]) ?>
                     </div>
                 </div>
             <?php endforeach ?>

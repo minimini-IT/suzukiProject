@@ -5,75 +5,67 @@ namespace App\Controller;
 
 class PatientsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+        $controller = $this->request->getParam("controller");
+    }
+
     public function index()
     {
-        /*
-         * 承認不要
-         */
         $this->Authorization->skipAuthorization();
 
-        $this->loadModels(["Sicknesses", "Symptoms", "Locations"]);
-
-        /*
-         * 病名、症状、部位が未記入の場合は一覧に出ない
-         */
+        $this->loadModels(["Sicknesses", "Symptoms", "Locations", "Articles"]);
         $patients = $this->Patients->find("PatientsDisplayList");
-
         $this->paginate = [
-            "limit" => 10,
-            "order" => ["patients_id" => "asc"],
+            "limit" => 5,
+            "order" => ["patients_id" => "desc"],
         ];
         $patients = $this->paginate($patients);
-
-        /*
-         * 最近の記事
-         */
         $recently_patients = $this->Patients->find("RecentInterview");
+        $recently_articles = $this->Articles->find("RecentArticles");
 
-        /*
-         * 検索用
-         */
         $sicknesses = $this->Sicknesses->find('list', ['limit' => 200]);
         $symptoms = $this->Symptoms->find('list', ['limit' => 200]);
         $locations = $this->Locations->find('list', ['limit' => 200]);
 
-        $this->set(compact('patients', "recently_patients", "sicknesses", "symptoms", "locations"));
+        $this->set(compact('patients', "recently_patients", "recently_articles", "sicknesses", "symptoms", "locations"));
     }
 
     public function view($id = null)
     {
-        /*
-         * 承認不要
-         */
         $this->Authorization->skipAuthorization();
-
-            
-        /*
-         * patientsの詳細
-         */
+        $this->loadModels(["Diseaseds", "Articles"]);
         $patient = $this->Patients->get($id, [
             "finder" => "ContainAll"
         ]);
 
         /*
-         * 同じ病気の人を取得
+         * 関連するインタビュー、記事は
+         * 病名から検索する
          */
-        $sub_query = $this->Patients->find("RelatedSicknessSub", ["patients_id" => $id]);
-        $related_sickness = $this->Patients->find("RelatedSickness", ["patients_id" => $id, "sub_query" => $sub_query]);
+        $sickness_list = array();
+        foreach($patient->diseaseds as $d)
+        {
+            array_push($sickness_list, $d->sicknesses_id);
+        }
 
-        /*
-         * 同じ症状の人を取得
-         */
-        $sub_query = $this->Patients->find("RelatedSymptomsSub", ["patients_id" => $id]);
-        $related_symptoms = $this->Patients->find("RelatedSymptoms", ["patients_id" => $id, "sub_query" => $sub_query]);
+        $related_patients = $this->Patients
+            ->find("RelatedList", ["patients_id" => $id, "sub_query" => $sickness_list, "type" => "sicknesses"]);
+        $related_articles = $this->Articles
+            ->find("RelatedList", ["articles_id" => 0, "sub_query" => $sickness_list, "type" => "sicknesses"]);
 
-        $this->set(compact('patient', "related_sickness", "related_symptoms"));
+        $this->set(compact('patient', "related_patients", "related_articles"));
     }
 
     public function add()
     {
         $patient = $this->Patients->newEmptyEntity();
         if ($this->request->is('post')) {
+            global $controller;
+            $user = $this->Authentication->getIdentity();
+            $action = $this->request->getParam("action");
+
             $data = $this->request->getData();
             $sicknesses_id = $data["sicknesses_id"];
             unset($data["sicknesses_id"]);
@@ -81,8 +73,15 @@ class PatientsController extends AppController
             $patient = $this->Patients->patchEntity($patient, $data);
             if ($this->Patients->save($patient)) {
 
-                $this->log("---add patinet save clear---", LOG_DEBUG);
                 $patients_id = $patient->patients_id;
+                $updateTime = $patient->modified;
+                $saveLog = [
+                    "patients_id" => $patients_id,
+                    "action" => $action,
+                    "management_users_id" => $user->management_users_id,
+                    "datetime" => $updateTime->format("Y-m-d H:i:s"),
+                ];
+                $this->DbLog->saveClear($saveLog);
 
                 /*
                  * Diseasedsにpatients_idとsicknesses_idをsave
@@ -98,28 +97,27 @@ class PatientsController extends AppController
                 $diseased = $this->Diseaseds->patchEntities($diseased, $diseased_entity);
                 if($this->Diseaseds->saveMany($diseased))
                 {
-                    $this->log("---add save patinet-related diseaseds clear---", LOG_DEBUG);
-                    //$this->Flash->success(__('The diseased has been saved.'));
                     return $this->redirect(["controller" => "interview_symptoms", 'action' => 'add', $patients_id]);
                 }
                 else
                 {
-                    $this->log("---add patinet-related diseaseds error---", LOG_DEBUG);
-                    $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-                    $this->Flash->error(__('管理者へ報告してください。'));
+                    $this->DbLog->saveError("Diseaseds", "add", $user);
+                    $this->SaveError->errorFlash();
                 }
             }
             else
             {
-                $this->log("---add patinet save error---", LOG_DEBUG);
-                $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-                $this->Flash->error(__('管理者へ報告してください。'));
+                $this->DbLog->saveError($controller, $action, $user);
+                $this->SaveError->errorFlash();
             }
             return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
-        $sicknesses = $this->Patients->Diseaseds->Sicknesses->find('list', ['limit' => 200]);
-        $patientSexes = $this->Patients->PatientSexes->find('list', ['limit' => 200]);
-        $this->set(compact('patient', 'sicknesses', 'patientSexes'));
+        $this->loadModels(["Sicknesses", "PatientSexes"]);
+        $sicknesses = $this->Sicknesses
+            ->find("AddPatientsSicknesses")->find('list', ['limit' => 200]);
+        $patient_sexes = $this->PatientSexes
+            ->find('list', ['limit' => 200]);
+        $this->set(compact('patient', 'sicknesses', 'patient_sexes'));
     }
 
     public function edit($id = null)
@@ -129,14 +127,24 @@ class PatientsController extends AppController
         ]);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
+            global $controller;
+            $user = $this->Authentication->getIdentity();
+            $action = $this->request->getParam("action");
+
             $patient = $this->Patients->patchEntity($patient, $this->request->getData());
             if ($this->Patients->save($patient)) {
-                $this->log("---edit save patients clear---", LOG_DEBUG);
-                return $this->redirect(['action' => 'edit', $id]);
+                $updateTime = $patient->modified;
+                $saveLog = [
+                    "patients_id" => $id,
+                    "action" => $action,
+                    "management_users_id" => $user->management_users_id,
+                    "datetime" => $updateTime->format("Y-m-d H:i:s"),
+                ];
+                $this->DbLog->saveClear($saveLog);
+                return $this->redirect(['action' => 'view', $id]);
             }
-            $this->log("---edit patinets error---", LOG_DEBUG);
-            $this->Flash->error(__('エラーが発生したので登録できませんでした。'));
-            $this->Flash->error(__('管理者へ報告してください。'));
+            $this->DbLog->saveError($controller, $action, $user);
+            $this->SaveError->errorFlash();
             return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
 
@@ -167,62 +175,58 @@ class PatientsController extends AppController
         /*
          * 病名の登録数
          */
-        $sickCount = $this->Patients->Diseaseds->Sicknesses->find("SickCount")->count();
-        $patientSickCount = $this->Patients->Diseaseds->find("PatientsSickCount", ["patients_id" => $id])->count();
-        $sickAddFlag = $sickCount > $patientSickCount ? true : false;
+        $this->loadModels(["Sicknesses", "Diseaseds", "PatientSexes"]);
+        $sick_count = $this->Sicknesses
+            ->find("SickCount")->count();
+        $patient_sick_count = $this->Diseaseds
+            ->find("PatientsSickCount", ["patients_id" => $id])->count();
+        $sick_add_flag = $sick_count > $patient_sick_count ? true : false;
 
-        $sicknesses = $this->Patients->Diseaseds->Sicknesses->find('list', ['limit' => 200]);
-        $patientSexes = $this->Patients->PatientSexes->find('list', ['limit' => 200]);
-        $this->set(compact('patient', 'patientSexes', "sicknesses", "sickAddFlag"));
+        $sicknesses = $this->Sicknesses->find('list', ['limit' => 200]);
+        $patient_sexes = $this->PatientSexes->find('list', ['limit' => 200]);
+        $this->set(compact('patient', 'patient_sexes', "sicknesses", "sick_add_flag"));
     }
 
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $patient = $this->Patients->get($id);
-        if ($this->Patients->delete($patient)) {
-            $this->Flash->success(__('The patient has been deleted.'));
-        } else {
-            $this->Flash->error(__('The patient could not be deleted. Please, try again.'));
-        }
 
-        return $this->redirect(['action' => 'index']);
+        global $controller;
+        $user = $this->Authentication->getIdentity();
+        $action = $this->request->getParam("action");
+        $patient = $this->Patients->get($id);
+        $patients_id = $patient->patients_id;
+
+        if ($this->Patients->delete($patient)) {
+            $params = [
+                "patients_id" => $patients_id,
+                "action" => $action,
+                "management_users_id" => $user->management_users_id,
+                "datetime" => date("Y-m-d H:i:s"),
+            ];
+            $this->DbLog->saveClear($params);
+            return $this->redirect(['action' => 'select']);
+        }
+        $this->DbLog->saveError($controller, $action, $user);
+        $this->SaveError->errorFlash();
+        return $this->redirect(["controller" => "top", 'action' => 'index']);
     }
 
     public function search()
     {
-        /*
-         * 承認不要
-         */
         $this->Authorization->skipAuthorization();
 
-        //検索結果用
-        //get取得
         $data = $this->request->getQuery();
         if($this->request->is("get") && $data != null)
         {
-            $sicknesses_flag = false;
-            $symptoms_flag = false;
-
-            /*
-             * location_element
-             *   部位の検索要素
-             *   病名のみ、症状のみの場合はいらないのでここで宣言
-             */
-            $location_element = null;
-
-            /*
-             * 部位が含まれていれば(location)
-             */
-            $locations_id_search = array_key_exists("locations_id", $data);
-            if($locations_id_search)
+            if(array_key_exists("locations_id", $data))
             {
                 $locations_flag = true;
-                $locations_values = null;
             }
             else
             {
                 $locations_flag = false;
+                $location_element = null;
             }
 
             foreach($data as $key => $value)
@@ -234,17 +238,13 @@ class PatientsController extends AppController
                      */
                     $values = array_map("intval", $value);
 
-                    /*
-                     * 検索要素
-                     */
-                    $element = $this->Patients
-                        ->Diseaseds
-                        ->Sicknesses
-                        ->find("SearchSicknessElement", ["values" => $values]);
+                    $this->loadModels(["Sicknesses"]);
+                    $element = $this->Sicknesses
+                        ->find("GetSicknessesName", ["values" => $values]);
 
-                    $patients = $this->Patients->find("SearchSickness", ["values" => $values]);
+                    $patients = $this->Patients->find("SearchedBySicknesses", ["values" => $values]);
 
-                    $sicknesses_flag = true;
+                    break;
                 }
                 else if($key == "symptoms_id")
                 {
@@ -255,14 +255,9 @@ class PatientsController extends AppController
                      */
                     $values = array_map("intval", $value);
 
-                    /*
-                     * 症状の検索要素 表示用
-                     */
-                    $element = $this->Patients
-                        ->Diseaseds
-                        ->InterviewSymptoms
-                        ->Symptoms
-                        ->find("SearchSymptomsElement", ["values" => $values]);
+                    $this->loadModels(["Symptoms"]);
+                    $element = $this->Symptoms
+                        ->find("GetSymptomsName", ["values" => $values]);
 
                     /*
                      * 部位が選択されている場合
@@ -280,20 +275,7 @@ class PatientsController extends AppController
                          * 症状のみの検索
                          * and検索
                          */
-                        $sub_sub_query = $this->Patients
-                            ->Diseaseds
-                            ->find("SearchSymptomsOnrySubSub", ["values" => $values]);
-
-                        $sub_query = $this->Patients
-                            ->Diseaseds
-                            ->find("SearchSymptomsOnrySub", [
-                                "values" => $values, 
-                                "sub_sub_query" => $sub_sub_query
-                            ]);
-                        
-                        $patients = $this->Patients->find("SearchSymptomsOnry", ["sub_query" => $sub_query]);
-
-                        $symptoms_flag = true;
+                        $patients = $this->Patients->find("SearchedBySymptoms", ["values" => $values]);
                     }
 
                 }
@@ -304,77 +286,60 @@ class PatientsController extends AppController
                     /*
                      * 部位検索要素 表示用
                      */
-                    $location_element = $this->Patients
-                        ->Diseaseds
-                        ->InterviewSymptoms
-                        ->SymptomsLocations
-                        ->Locations
-                        ->find("SearchLocationsElement", ["values" => $values]);
+                    $this->loadModels(["Locations"]);
+                    $location_element = $this->Locations
+                        ->find("GetLocationsName", ["values" => $values]);
 
                     $locations_values = $values;
                 }
-
-                if($locations_flag)
-                {
-                    /*
-                     * 症状１、部位複数の時の処理
-                     */
-                    $patients = $this->Patients
-                        ->find("SearchSymptomsLocations", [
-                            "symptoms_id" => $symptoms_values, 
-                            "values" => $locations_values]
-                        );
-                }
+            }
+            if($locations_flag)
+            {
+                /*
+                 * 症状１、部位複数の時の処理
+                 */
+                $patients = $this->Patients
+                    ->find("SearchSymptomsLocations", [
+                        "symptoms_id" => $symptoms_values, 
+                        "values" => $locations_values
+                    ]);
             }
             $this->paginate = [
                 'contain' => [
                     'PatientSexes', 
                     "Diseaseds.Sicknesses",
                 ],
+                "limit" => 5,
+                "order" => ["patients_id" => "desc"],
             ];
             $patients = $this->paginate($patients);
         }
         else
         {
-            return $this->redirect(["controller" => "Top", 'action' => 'index']);
+            return $this->redirect(["controller" => "top", 'action' => 'index']);
         }
 
+        $this->loadModels(["Articles", "Sicknesses", "Symptoms", "Locations"]);
         $recently_patients = $this->Patients->find("RecentInterview");
+        $recently_articles = $this->Articles->find("RecentArticles");
+        $sicknesses = $this->Sicknesses->find('list', ['limit' => 200]);
+        $symptoms = $this->Symptoms->find('list', ['limit' => 200]);
+        $locations = $this->Locations->find('list', ['limit' => 200]);
 
-        /*
-         * 検索用
-         */
-        $sicknesses = $this->Patients
-            ->Diseaseds
-            ->Sicknesses
-            ->find('list', ['limit' => 200]);
-        $symptoms = $this->Patients
-            ->Diseaseds
-            ->InterviewSymptoms
-            ->Symptoms
-            ->find('list', ['limit' => 200]);
-        $locations = $this->Patients
-            ->Diseaseds
-            ->InterviewSymptoms
-            ->SymptomsLocations
-            ->Locations
-            ->find('list', ['limit' => 200]);
-
-        $this->set(compact("patients", "recently_patients", "element", "location_element", "sicknesses", "symptoms", "locations"));
+        $this->set(compact("patients", "recently_patients", "recently_articles", "element", "location_element", "sicknesses", "symptoms", "locations"));
     }
 
-    /*
-     * 編集選択用
-     */
     public function select()
     {
-        $this->loadModels(["Patients"]);
         $this->paginate = [
             'contain' => [
                 'PatientSexes', 
                 "Diseaseds.Sicknesses",
             ],
+            "limit" => 5,
+            "order" => ["patients_id" => "desc"],
         ];
+
         $patients = $this->paginate($this->Patients);
 
         $this->set(compact('patients'));
@@ -393,6 +358,9 @@ class PatientsController extends AppController
                     'PatientSexes', 
                     "Diseaseds.Sicknesses",
                 ],
+                "limit" => 5,
+                "order" => ["patients_id" => "desc"],
+
             ];
             $patients = $this->paginate($patients);
 

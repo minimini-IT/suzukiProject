@@ -36,6 +36,14 @@ class PatientsTable extends Table
         ]);
     }
 
+    public function findUpdate(Query $query, array $options)
+    {
+        return $query
+            ->select(["pen_name", "created", "modified"])
+            ->limit(5)
+            ->order(["modified" => "DESC"]);
+    }
+
     public function findSelectSearch(Query $query, array $options)
     {
         $pen_name = $options["pen_name"];
@@ -53,21 +61,12 @@ class PatientsTable extends Table
             ->find("JoinSymptomsLocations")
             ->where([
                 "i.symptoms_id" => $symptoms_id, 
-                "sl.locations_id in" => $values]
-            )
+                "sl.locations_id in" => $values
+            ])
             ->group(["Patients.patients_id"]);
     }
 
-
-    public function findSearchSymptomsOnry(Query $query, array $options)
-    {
-        $sub_query = $options["sub_query"];
-
-        return $query
-            ->where(["patients_id in" => $sub_query]);
-    }
-
-    public function findSearchSickness(Query $query, array $options)
+    public function findSearchedBySicknesses(Query $query, array $options)
     {
         $values = $options["values"];
 
@@ -76,6 +75,18 @@ class PatientsTable extends Table
             ->where(["d.sicknesses_id in" => $values])
             ->group(["Patients.patients_id"])
             ->order(["Patients.patients_id"]);
+    }
+
+    public function findSearchedBySymptoms(Query $query, array $options)
+    {
+        $values = $options["values"];
+
+        return $query
+            ->find("JoinInterviewSymptoms")
+            ->where(["i.symptoms_id in" => $values])
+            ->group(["Patients.patients_id"])
+            ->having(["count(Patients.patients_id) >=" => count($values)])
+            ->order(["Patients.patients_id" => "DESC"]);
     }
 
     public function findAttributeStatus(Query $query, array $options)
@@ -110,56 +121,34 @@ class PatientsTable extends Table
             ->where(["Patients.patients_id" => $patients_id]);
     }
 
-    public function findRelatedSymptomsSub(Query $query, array $options)
-    {
-        $patients_id = $options["patients_id"];
-
-        return $query
-            ->select(["i.symptoms_id"])
-            ->find("JoinInterviewSymptoms")
-            ->where(["Patients.patients_id" => $patients_id]);
-    }
-
-    public function findRelatedSymptoms(Query $query, array $options)
+    public function findRelatedList(Query $query, array $options)
     {
         $patients_id = $options["patients_id"];
         $sub_query = $options["sub_query"];
+        if($options["type"] == "sicknesses")
+        {
+            $where = "d.sicknesses_id in";
+        }
+        elseif($options["type"] == "symptoms")
+        {
+            $where = "i.symptoms_id in";
+        }
+        elseif($options["type"] == "locations")
+        {
+            $where = "sl.locations_id in";
+        }
 
         return $query
-            ->select(["Patients.patients_id", "Patients.pen_name", "i.symptoms_id"])
-            ->find("JoinInterviewSymptoms")
+            ->select(["Patients.patients_id", "Patients.pen_name", "PatientSexes.patient_sex"])
+            ->find("JoinSymptomsLocations")
+            ->find("ListContain")
             ->where([
                 "Patients.patients_id !=" => $patients_id,
-                "i.symptoms_id in" => $sub_query
+                $where => $sub_query
             ])
-            ->order(["Patients.patients_id"])
-            ->group(["Patients.patients_id, i.symptoms_id"]);
-        
-    }
-
-    public function findRelatedSicknessSub(Query $query, array $options)
-    {
-        $patients_id = $options["patients_id"];
-
-        return $query
-            ->select(["d.sicknesses_id"])
-            ->find("JoinDiseaseds")
-            ->where(["Patients.patients_id" => $patients_id]);
-    }
-
-    public function findRelatedSickness(Query $query, array $options)
-    {
-        $patients_id = $options["patients_id"];
-        $sub_query = $options["sub_query"];
-
-        return $query
-            ->select(["Patients.patients_id", "Patients.pen_name", "d.sicknesses_id"])
-            ->find("JoinDiseaseds")
-            ->where([
-                "Patients.patients_id !=" => $patients_id,
-                "d.sicknesses_id in" => $sub_query
-            ])
-            ->order(["Patients.patients_id"]);
+            ->limit(5)
+            ->group(["Patients.patients_id"])
+            ->order(["rand()"]);
     }
 
     public function findContainAll(Query $query, array $options)
@@ -184,7 +173,7 @@ class PatientsTable extends Table
     public function findPatientsDisplayList(Query $query, array $options)
     {
         return $query
-            ->find("JoinDiseaseds")
+            ->find("JoinSymptomsLocations")
             ->group(["Patients.patients_id"])
             ->contain([
                 'PatientSexes', 
@@ -195,11 +184,40 @@ class PatientsTable extends Table
     public function findRecentInterview(Query $query, array $options)
     {
         return $query
-            ->select(["patients_id", "pen_name"])
+            ->find("JoinSymptomsLocations")
+            ->find("ListContain")
+            ->select(["patients_id", "pen_name", "PatientSexes.patient_sex"])
             ->group(["Patients.patients_id"])
             ->order(["modified" => "DESC"])
             ->limit(5);
     }
+
+    public function findUpdateInfo(Query $query, array $options)
+    {
+        return $query
+            ->select(["created", "modified"]);
+    }
+
+    public function findListContain(Query $query, array $options)
+    {
+        return $query
+            ->contain([
+                "PatientSexes",
+                "Diseaseds.Sicknesses" => function(Query $q)
+                {
+                    return $q->where(["Sicknesses.sicknesses_id !=" => 1]);
+                },
+                "Diseaseds.InterviewSymptoms.Symptoms" => function(Query $q)
+                {
+                    return $q->where(["Symptoms.symptoms_id !=" => 1]);
+                },
+                "Diseaseds.InterviewSymptoms.SymptomsLocations.Locations" => function(Query $q)
+                {
+                    return $q->where(["Locations.locations_id !=" => 1]);
+                },
+            ]);
+    }
+
 
     /*
      * デフォルトでRIGHT
@@ -260,23 +278,23 @@ class PatientsTable extends Table
         $validator
             ->scalar('pen_name')
             ->maxLength('pen_name', 10)
-            ->requirePresence('pen_name', 'create')
-            ->notEmptyString('pen_name');
+            ->requirePresence('pen_name')
+            ->notEmptyString('pen_name', "ペンネームを入力してください");
 
         $validator
             ->integer('age_of_onset')
-            ->requirePresence('age_of_onset', 'create')
-            ->notEmptyString('age_of_onset');
+            ->requirePresence('age_of_onset')
+            ->notEmptyString('age_of_onset', "年齢を入力してください");
 
         $validator
             ->date('year_of_onset')
-            ->requirePresence('year_of_onset', 'create')
-            ->notEmptyDate('year_of_onset');
+            ->requirePresence('year_of_onset')
+            ->notEmptyDate('year_of_onset', "発病年月を入力してください");
 
         $validator
             ->date('diagnosis_date')
-            ->requirePresence('diagnosis_date', 'create')
-            ->notEmptyDate('diagnosis_date');
+            ->requirePresence('diagnosis_date')
+            ->notEmptyDate('diagnosis_date', "診断年月を入力してください");
 
         $validator
             ->date('cured')
@@ -284,18 +302,22 @@ class PatientsTable extends Table
 
         $validator
             ->scalar('interview_first')
+            ->requirePresence('interview_first')
             ->allowEmptyString('interview_first');
 
         $validator
             ->scalar('interview_second')
+            ->requirePresence('interview_second')
             ->allowEmptyString('interview_second');
 
         $validator
             ->scalar('interview_third')
+            ->requirePresence('interview_third')
             ->allowEmptyString('interview_third');
 
         $validator
             ->scalar('interview_force')
+            ->requirePresence('interview_force')
             ->allowEmptyString('interview_force');
 
         $validator

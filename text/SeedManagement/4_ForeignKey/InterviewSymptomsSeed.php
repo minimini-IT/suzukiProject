@@ -28,11 +28,11 @@ class InterviewSymptomsSeed extends AbstractSeed
         $data = [
             [
                 "diseaseds_id" => 1,
-                "symptoms_id" => 1,
+                "symptoms_id" => 2,
             ],
             [
                 "diseaseds_id" => 1,
-                "symptoms_id" => 2,
+                "symptoms_id" => 3,
             ],
             /*
             [
