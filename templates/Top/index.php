@@ -19,9 +19,15 @@ $this->assign("title", "病気の人の交流サイト");
         <div class="medium-padding">
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">最近のインタビュー</p>
+<?php $this->start("sidebar") ?>
+    <p class="uk-text-left">最近のインタビュー</p>
+<?php $this->end(); ?>
                 <div class="medium-padding uk-margin-large-bottom">
                     <?php foreach($recently_patients as $recent_patient): ?>
                         <?php $recent_patient_list = $recent_patient->AttributeList ?>
+<?php $this->append("sidebar") ?>
+    <p class="padding-left"><?= $this->Html->link(__($recent_patient->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $recent_patient->patients_id]) ?></p>
+<?php $this->end(); ?>
                         <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
                             <p class="uk-text-center"><?= $this->Html->link(__($recent_patient->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $recent_patient->patients_id]) ?></p>
                             <p class="uk-margin-small">
@@ -46,9 +52,15 @@ $this->assign("title", "病気の人の交流サイト");
             </div>
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">最近の記事</p>
+<?php $this->append("sidebar") ?>
+    <p class="uk-text-left">最近の記事</p>
+<?php $this->end() ?>
                 <div class="medium-padding uk-margin-large-bottom">
                     <?php foreach($recently_articles as $recent_article): ?>
                         <?php $recent_article_list = $recent_article->AttributeList ?>
+<?php $this->append("sidebar") ?>
+    <p class="padding-left"><?= $this->Html->link(__($recent_article->title), ['controller' => 'articles', 'action' => 'view', $recent_article->articles_id]) ?></p>
+<?php $this->end() ?>
                         <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
                             <p class="uk-text-center"><?= $this->Html->link(__($recent_article->title), ['controller' => 'articles', 'action' => 'view', $recent_article->articles_id]) ?></p>
                             <p class="uk-margin-small">

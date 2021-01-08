@@ -1,6 +1,23 @@
 <?php
 $this->assign("title", "編集するインタビュー");
 ?>
+<?php $this->start("sidebar") ?>
+    <p>ユーザ管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'management_users', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'management_users', 'action' => 'index']) ?></li>
+    </ul>
+    <p>インタビュー管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'patients', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'patients', 'action' => 'select']) ?></li>
+    </ul>
+    <p>記事管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'articles', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
+    </ul>
+<?php $this->end(); ?>
 <div class="uk-grid grid-margin-remove">
     <div class="medium-subbar">
         <nav class="uk-navbar-container" uk-navbar>

@@ -104,9 +104,15 @@ $symp_count = 0;
         <div class="medium-padding">
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">関連するインタビュー</p>
+<?php $this->start("sidebar") ?>
+    <p class="uk-text-left">関連するインタビュー</p>
+<?php $this->end(); ?>
                 <div class="medium-padding uk-margin-large-bottom">
                     <?php foreach($related_patients as $related): ?>
                         <?php $relatedList = $related->AttributeList ?>
+<?php $this->append("sidebar") ?>
+    <p class="padding-left"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></p>
+<?php $this->end(); ?>
                         <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
                             <p class="uk-text-center"><?= $this->Html->link(__($related->pen_name." さん"), ['controller' => 'patients', 'action' => 'view', $related->patients_id]) ?></p>
                             <p class="uk-margin-small">
@@ -132,10 +138,15 @@ $symp_count = 0;
             </div>
             <div class="uk-margin-medium-bottom">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">関連する記事</p>
+<?php $this->append("sidebar") ?>
+    <p class="uk-text-left">関連する記事</p>
+<?php $this->end() ?>
                 <div class="medium-padding">
-
                     <?php foreach($related_articles as $related): ?>
                         <?php $relatedList = $related->AttributeList ?>
+<?php $this->append("sidebar") ?>
+    <p class="padding-left"><?= $this->Html->link(__($related->title), ['controller' => 'articles', 'action' => 'view', $related->articles_id]) ?></p>
+<?php $this->end() ?>
                         <div class="uk-card uk-card-default uk-card-hover uk-margin-right uk-margin-left">
                             <p class="uk-text-center"><?= $this->Html->link(__($related->title), ['controller' => 'articles', 'action' => 'view', $related->articles_id]) ?></p>
                             <p class="uk-margin-small">

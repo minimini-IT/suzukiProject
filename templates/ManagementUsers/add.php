@@ -2,6 +2,23 @@
 $this->assign("title", "ユーザ追加");
 $this->Html->script("p_toggle.js", ["block" => true]);
 ?>
+<?php $this->start("sidebar") ?>
+    <p>ユーザ管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'management_users', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'management_users', 'action' => 'index']) ?></li>
+    </ul>
+    <p>インタビュー管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'patients', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'patients', 'action' => 'select']) ?></li>
+    </ul>
+    <p>記事管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'articles', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
+    </ul>
+<?php $this->end(); ?>
 <div class="uk-grid grid-margin-remove">
 
     <div class="small-subbar">
@@ -40,7 +57,7 @@ $this->Html->script("p_toggle.js", ["block" => true]);
     <div class="uk-width-1-4 uk-padding-remove uk-text-center small-remove">
         <ul class="uk-list">
             <li><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
-            <li class=><?= $this->Html->link(__('戻る'), ['action' => 'index'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
+            <li class=><?= $this->Html->link(__('戻る'), ['action' => 'top'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
         </ul>
     </div>
 </div>

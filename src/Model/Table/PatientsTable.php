@@ -49,7 +49,7 @@ class PatientsTable extends Table
         $pen_name = $options["pen_name"];
 
         return $query
-            ->where(["pen_name" => $pen_name]);
+            ->where(["pen_name like" => "%{$pen_name}%"]);
     }
 
     public function findSearchSymptomsLocations(Query $query, array $options)

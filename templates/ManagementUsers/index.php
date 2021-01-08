@@ -1,6 +1,23 @@
 <?php
 $this->assign("title", "ユーザ管理");
 ?>
+<?php $this->start("sidebar") ?>
+    <p>ユーザ管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'management_users', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'management_users', 'action' => 'index']) ?></li>
+    </ul>
+    <p>インタビュー管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'patients', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'patients', 'action' => 'select']) ?></li>
+    </ul>
+    <p>記事管理</p>
+    <ul class="uk-list">
+        <li><?= $this->Html->link(__('作成'), ['controller' => 'articles', 'action' => 'add']) ?></li>
+        <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
+    </ul>
+<?php $this->end(); ?>
 <div class="uk-grid grid-margin-remove">
 
     <div class="small-subbar">
@@ -45,7 +62,6 @@ $this->assign("title", "ユーザ管理");
         <ul class="uk-list">
             <li><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
             <li><?= $this->Html->link(__('戻る'), ['action' => 'top'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
-            <li><?= $this->Html->link(__('ユーザ登録'), ['action' => 'add'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
         </ul>
     </div>
 </div>

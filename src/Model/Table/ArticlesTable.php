@@ -34,6 +34,15 @@ class ArticlesTable extends Table
         ]);
     }
 
+    public function findTitleSearch(Query $query, array $options)
+    {
+        $title = $options["title"];
+
+        return $query
+            ->where(["title like" => "%{$title}%"])
+            ->find("ListContain");
+    }
+
     public function findSearchAttribute(Query $query, array $options)
     {
         $values = $options["values"];
@@ -54,38 +63,10 @@ class ArticlesTable extends Table
         }
 
         return $query
-            //->find("JoinRelatedSymptoms")
             ->find($find)
             ->where([$where => $values])
             ->group(["Articles.articles_id"]);
-            //->order(["Articles.articles_id"]);
     }
-
-    /*
-    public function findSearchSickness(Query $query, array $options)
-    {
-        $values = $options["values"];
-
-        return $query
-            ->find("JoinRelatedSicknesses")
-            ->where(["si.sicknesses_id in" => $values])
-            ->group(["Articles.articles_id"])
-            ->order(["Articles.articles_id"]);
-    }
-     */
-
-    /*
-    public function findArticleAttribute(Query $query, array $options)
-    {
-        $articles_id = $options["articles_id"];
-
-        return $query
-            ->select(["si.sicknesses_id", "sy.symptoms_id", "lo.locations_id"])
-            ->find("JoinRelatedSicknesses")
-            ->find("JoinRelatedSymptoms")
-            ->find("JoinRelatedLocations");
-    }
-     */
 
     public function findRelatedList(Query $query, array $options)
     {

@@ -289,7 +289,7 @@ class ArticlesController extends AppController
 
     public function select()
     {
-        $articles = $this->Articles->find("DisplayList");
+        $articles = $this->Articles->find("ListContain");
 
         $this->paginate = [
             "limit" => 10,
@@ -298,6 +298,28 @@ class ArticlesController extends AppController
         $articles = $this->paginate($articles);
 
         $this->set(compact('articles'));
+    }
+
+    public function selectSearch()
+    {
+        $data = $this->request->getQuery();
+        if($this->request->is("get") && $data["title"] != null)
+        {
+            $title = $data["title"];
+            $articles = $this->Articles->find("TitleSearch", ["title" => $title]);
+
+            $this->paginate = [
+                "limit" => 5,
+                "order" => ["articles_id" => "desc"],
+            ];
+            $articles = $this->paginate($articles);
+
+            $this->set(compact('articles'));
+        }
+        else
+        {
+            return $this->redirect(['action' => 'select']);
+        }
     }
 
     public function relatedLocationsAdd(int $articles_id, array $locations_id, $user)

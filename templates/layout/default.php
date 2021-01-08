@@ -36,27 +36,9 @@
                     </div>
                     <div>
                         <?= $this->Html->image("interview.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
-                        <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">インタビュー</div>', 
-                            [
-                                'controller' => 'patients', 
-                                'action' => 'index',
-                            ], 
-                            [
-                                "escape" => false
-                            ],
-                        )-->
                     </div>
                     <div>
                         <?= $this->Html->image("articles.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
-                        <!--$this->Html->link('<div class="header-link uk-margin-small-right pro-image">掲示板</div>', 
-                            [
-                                'controller' => 'bulletin-boards', 
-                                'action' => 'index',
-                            ], 
-                            [
-                                "escape" => false
-                            ],
-                        )-->
                     </div>
                     <?php if($this->Identity->isLoggedIn()): ?>
                         <div>
@@ -116,7 +98,7 @@
                 </div>
                 <div class="medium-div"></div>
                 <div>
-                    てすと
+                    <?= $this->fetch('sidebar') ?>
                 </div>
             </div>
         </div>

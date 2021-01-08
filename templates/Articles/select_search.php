@@ -18,18 +18,8 @@ $this->assign("title", "編集する記事");
         <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
     </ul>
 <?php $this->end(); ?>
-<div class="uk-grid grid-margin-remove">
-    <div class="medium-subbar">
-        <nav class="uk-navbar-container" uk-navbar>
-            <div class="uk-navbar-right">
-                <ul class="uk-navbar-nav">
-                   <li class="medium-subbar-li"><?= $this->Html->link(__('戻る'), ["controller" => "management_users", 'action' => 'top'], ['class' => 'uk-button uk-button-primary management-sub-button uk-padding-remove medium-subbar-height']) ?></li>
-                   <li class="medium-subbar-li"><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary management-sub-button uk-padding-remove medium-subbar-height']) ?></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-    <div class="uk-width-3-4@m medium-margin uk-width-1-1 grid-child">
+<div class="uk-grid">
+    <div class="main uk-width-3-4">
 
         <div class="uk-first-column uk-card uk-card-default uk-padding-small uk-margin-bottom">
             <?= $this->Form->create(null, [
@@ -44,8 +34,8 @@ $this->assign("title", "編集する記事");
                 <?= $this->Form->button('検索', ["class" => "uk-button uk-button-primary uk-position-small uk-position-center-right"]) ?>
             <?= $this->Form->end() ?>
         </div>
-
         <div class="uk-text-center">
+
             <?php foreach ($articles as $article): ?>
                 <div class="uk-card uk-card-default uk-margin-bottom">
                     <div class="padding-top">
@@ -83,7 +73,6 @@ $this->assign("title", "編集する記事");
                 </div>
             <?php endforeach ?>
         </div>
-
         <div class="paginator">
             <ul class="uk-pagination" uk-margin>
                 <?= $this->Paginator->first(__('<< ')) ?>
@@ -92,10 +81,12 @@ $this->assign("title", "編集する記事");
             </ul>
         </div>
     </div>
-    <div class="uk-width-1-4 uk-padding-remove uk-text-center medium-remove">
+    <div class="sub uk-width-1-4 uk-padding-remove uk-text-center">
         <ul class="uk-list">
             <li><?= $this->Html->link(__('LOGOUT'), ["controller" => "management_users", 'action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
             <li class=><?= $this->Html->link(__('戻る'), ["controller" => "management_users", 'action' => 'top'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
         </ul>
     </div>
 </div>
+
+
