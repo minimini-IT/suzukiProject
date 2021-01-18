@@ -60,7 +60,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                 </div>
             </div>
         </div>
-        <div class="uk-text-center">
+        <div class="uk-text-center medium-padding">
             <?php foreach ($articles as $article): ?>
                 <div class="uk-card uk-card-default uk-margin-bottom uk-padding">
                     <h3><?= $this->Html->link(h($article->title), ['action' => 'view', $article->articles_id], ['class' => 'button float-right']) ?></h3>

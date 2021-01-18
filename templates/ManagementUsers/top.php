@@ -89,29 +89,29 @@ $this->assign("title", "管理画面");
         <ul class="uk-list">
             <li><?= $this->Html->link(__('LOGOUT'), ['action' => 'logout'], ['class' => 'uk-button uk-button-primary uk-margin-bottom management-sub-button uk-padding-remove']) ?></li>
         </ul>
-       <div class="uk-margin uk-margin-right uk-margin-left uk-padding-small uk-background-muted uk-first-column">
-           <p class="uk-text-center">ユーザ管理</p>
-           <ul class="uk-list uk-list-square">
-                <li><?= $this->Html->link(__('作成'), ['controller' => 'management_users', 'action' => 'add']) ?></li>
-                <li><?= $this->Html->link(__('編集'), ['controller' => 'management_users', 'action' => 'index']) ?></li>
-           </ul>
-       </div>
+        <div class="uk-margin uk-margin-right uk-margin-left uk-padding-small uk-background-default uk-first-column">
+            <p class="uk-text-center">ユーザ管理</p>
+            <ul class="uk-list uk-list-square">
+                 <li><?= $this->Html->link(__('作成'), ['controller' => 'management_users', 'action' => 'add']) ?></li>
+                 <li><?= $this->Html->link(__('編集'), ['controller' => 'management_users', 'action' => 'index']) ?></li>
+            </ul>
+        </div>
 
-       <div class="uk-margin uk-margin-right uk-margin-left uk-padding-small uk-background-default">
-           <p class="uk-text-center">インタビュー</p>
-           <ul class="uk-list uk-list-square">
-               <li><?= $this->Html->link(__('作成'), ['controller' => 'patients', 'action' => 'add']) ?></li>
-               <li><?= $this->Html->link(__('編集'), ['controller' => 'patients', 'action' => 'select']) ?></li>
-           </ul>
-       </div>
+        <div class="uk-margin uk-margin-right uk-margin-left uk-padding-small uk-background-default">
+            <p class="uk-text-center">インタビュー</p>
+            <ul class="uk-list uk-list-square">
+                <li><?= $this->Html->link(__('作成'), ['controller' => 'patients', 'action' => 'add']) ?></li>
+                <li><?= $this->Html->link(__('編集'), ['controller' => 'patients', 'action' => 'select']) ?></li>
+            </ul>
+        </div>
 
-       <div class="uk-margin uk-margin-right uk-margin-left uk-margin-bottom uk-padding-small uk-background-muted">
-           <p class="uk-text-center">記事</p>
-           <ul class="uk-list uk-list-square">
-               <li><?= $this->Html->link(__('作成'), ['controller' => 'articles', 'action' => 'add']) ?></li>
-               <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
-           </ul>
-       </div>
+        <div class="uk-margin uk-margin-right uk-margin-left uk-margin-bottom uk-padding-small uk-background-default">
+            <p class="uk-text-center">記事</p>
+            <ul class="uk-list uk-list-square">
+                <li><?= $this->Html->link(__('作成'), ['controller' => 'articles', 'action' => 'add']) ?></li>
+                <li><?= $this->Html->link(__('編集'), ['controller' => 'articles', 'action' => 'select']) ?></li>
+            </ul>
+        </div>
     </div>
 </div>
 

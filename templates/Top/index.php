@@ -3,7 +3,7 @@ $this->assign("title", "病気の人の交流サイト");
 ?>
 <div class="uk-grid">
     <div class="uk-width-3-4@m uk-width-1-1 uk-container uk-position-relative uk-padding-remove-right uk-margin-medium-bottom">
-        <div class="uk-width-1-1 uk-margin-top medium-padding" id="explanation">
+        <div class="uk-width-1-1 uk-margin-top medium-padding-left" id="explanation">
             <h3>当サイトについて</h3>
             <p>お腹が痛いといっても考えられる病気は多種多様に存在します。</p>
             <p>また、医師に診察を受けたところで腹痛の薬を処方されて終わってしまうことが非常に多いです。</p>
@@ -16,13 +16,13 @@ $this->assign("title", "病気の人の交流サイト");
     </div>
 
     <div class="uk-width-1-4@m uk-width-1-1 uk-margin-auto-right uk-padding-remove uk-text-center">
-        <div class="medium-padding">
-            <div class="uk-margin-medium-bottom">
+        <div class="medium-padding-right">
+            <div class="uk-margin-medium-bottom uk-width-1-1">
                 <p class="uk-text-lead uk-text-center@m uk-text-left">最近のインタビュー</p>
 <?php $this->start("sidebar") ?>
     <p class="uk-text-left">最近のインタビュー</p>
 <?php $this->end(); ?>
-                <div class="medium-padding uk-margin-large-bottom">
+                <div class="uk-margin-large-bottom">
                     <?php foreach($recently_patients as $recent_patient): ?>
                         <?php $recent_patient_list = $recent_patient->AttributeList ?>
 <?php $this->append("sidebar") ?>
@@ -55,7 +55,7 @@ $this->assign("title", "病気の人の交流サイト");
 <?php $this->append("sidebar") ?>
     <p class="uk-text-left">最近の記事</p>
 <?php $this->end() ?>
-                <div class="medium-padding uk-margin-large-bottom">
+                <div class="uk-margin-large-bottom">
                     <?php foreach($recently_articles as $recent_article): ?>
                         <?php $recent_article_list = $recent_article->AttributeList ?>
 <?php $this->append("sidebar") ?>

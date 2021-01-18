@@ -50,7 +50,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                 </div>
             </div>
         </div>
-        <div>
+        <div class="medium-padding">
 
             <?php foreach ($patients as $patient): ?>
 <?php 

@@ -54,7 +54,7 @@ $symp_count = 0;
                         <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $diseased->sickness_row ?>"><?= h($diseased->sickness->sickness_name) ?></td>
                         <?php foreach($diseased->interview_symptoms as $interview): ?>
                             <?php $sick_count == 0 ? "" : "<tr>" ?>
-                            <td class="uk-text-center uk-tile-muted" rowspan="<?= $interview->symptoms_row ?>"><?= h($interview->symptom->symptoms) ?></td>
+                            <td class="uk-text-center uk-card uk-card-default" rowspan="<?= $interview->symptoms_row ?>"><?= h($interview->symptom->symptoms) ?></td>
                                 <?php foreach($interview->symptoms_locations as $location): ?>
                                     <?php $symp_count == 0 ? "" : "<tr>" ?>
                                     <td class="uk-text-center uk-card uk-card-default"><?= h($location->location->location) ?></td></tr>

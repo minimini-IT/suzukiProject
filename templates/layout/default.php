@@ -26,23 +26,24 @@
 <body>
     <header>
         <div class="uk-margin-auto-left uk-margin-auto-right main-width">
-            <div class="pro-image-back">
-                <div class="uk-flex uk-flex-left@s uk-flex-center">
-                    <div>
+            <!--<div class="pro-image-back">-->
+            <div>
+                <div class="uk-flex uk-flex-left@s uk-flex-center header-height uk-flex-middle">
+                    <div class="img-miggle">
                         <img src="/img/title.png" alt="title_buttom" class="header-title small-margin-right">
                     </div>
                     <div>
-                        <?= $this->Html->image("home.jpg", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "top", "action" => "index"]]) ?>
+                        <?= $this->Html->image("home_icon_pc.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "top", "action" => "index"]]) ?>
                     </div>
                     <div>
-                        <?= $this->Html->image("interview.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
+                        <?= $this->Html->image("interview_icon_pc.png", ["class" => "uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "patients", "action" => "index"]]) ?>
                     </div>
                     <div>
-                        <?= $this->Html->image("articles.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
+                        <?= $this->Html->image("article_icon_pc.png", ["class" => "small-link", "alt" => "home_buttom", "url" => ["controller" => "articles", "action" => "index"]]) ?>
                     </div>
                     <?php if($this->Identity->isLoggedIn()): ?>
                         <div>
-                            <?= $this->Html->image("management.png", ["class" => " uk-margin-right small-link", "alt" => "home_buttom", "url" => ["controller" => "management_users", "action" => "top"]]) ?>
+                            <?= $this->Html->image("setting_icon.png", ["class" => "uk-margin-left small-link", "alt" => "home_buttom", "url" => ["controller" => "management_users", "action" => "top"]]) ?>
                         </div>
                     <?php endif ?>
             
@@ -63,6 +64,7 @@
                                                     <?= $this->Html->link(__("管理メニュー"), ['controller' => 'management_users', 'action' => 'top']) ?>
                                                 </li>
                                             <?php endif ?>
+                                        </ul>
                                     </div>
                                 </li>
                             </ul>
