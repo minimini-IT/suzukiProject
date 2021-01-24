@@ -28,4 +28,15 @@ class DbLogComponent extends Component
         Log::error(print_r($params, true), ["scope" => ["dbError"]]);
         return;
     }
+
+    public function bulletinBoardError($controller, $action, $user)
+    {
+        $params = [
+            "controller" => $controller,
+            "action" => $action,
+            "datetime" => date("Y-m-d H:i:s"),
+        ];
+        Log::error(print_r($params, true), ["scope" => ["dbError"]]);
+        return;
+    }
 }

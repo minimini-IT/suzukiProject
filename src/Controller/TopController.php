@@ -7,22 +7,11 @@ class TopController extends AppController
 {
     public function index()
     {
-        /*
-         * 承認不要
-         */
         $this->Authorization->skipAuthorization();
 
         $this->loadModels(["Patients", "Articles"]);
 
-        /*
-         * 最近の記事
-         */
-        //$patients = $this->Patients->find("RecentInterview");
         $recently_patients = $this->Patients->find("RecentInterview");
-
-        /*
-         * 最近の記事
-         */
         $recently_articles = $this->Articles->find("RecentArticles");
 
         $login_user = $this->Authentication->getIdentity();

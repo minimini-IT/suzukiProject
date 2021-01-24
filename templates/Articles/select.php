@@ -49,7 +49,7 @@ $this->assign("title", "編集する記事");
             <?php foreach ($articles as $article): ?>
                 <div class="uk-card uk-card-default uk-margin-bottom">
                     <div class="padding-top">
-                        <h3><?= $this->Html->link(h($article->title), ['action' => 'edit', $article->articles_id], ['class' => 'button float-right']) ?></h3>
+                        <p class="uk-text-lead"><?= $this->Html->link(h($article->title), ['action' => 'edit', $article->articles_id], ['class' => 'button float-right']) ?></p>
                     </div>
                     <?= $this->Text->truncate($article->contents, 50, ["ellipsis" => "...", "exact" => true, "html" => true]) ?>
                     <div class="uk-grid uk-child-width-1-2 grid-margin-remove ">

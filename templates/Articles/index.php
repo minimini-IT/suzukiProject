@@ -1,11 +1,12 @@
 <?php
 $this->assign("title", "記事");
 $this->Html->script("TopCheckbox.js", ["block" => true]);
+$this->Html->script("search_one_attribute.js", ["block" => true]);
 ?>
 <div class="uk-grid">
     <div class="uk-width-3-4@m uk-width-1-1">
-        <div class="uk-padding-remove uk-first-column">
-            <h3 class="pro-image main-link" id="search_toggle"><?= __('検索') ?></h3>
+        <div class="uk-padding-remove uk-first-column uk-text-center uk-margin-small-bottom">
+            <?= $this->Html->image("search.JPG", ["id" => "search_toggle", "class" => "search-icon", "alt" => "search"]) ?>
             <div class="uk-padding-remove uk-width-1-1 uk-margin-medium-top uk-margin-medium-bottom" id="search">
                 <div class="uk-padding-remove">
                     <div class="uk-text-center uk-text-left@m">
@@ -17,7 +18,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
                             ]
                         ]) ?> 
                             <?php $this->Form->setTemplates(["checkboxWrapper" => "<div class='checkbox uk-margin'>{{label}}</div>" ]); ?>
-                            <div class="uk-child-width-1-3" uk-grid>
+                            <div class="uk-child-width-1-3" id="search_one_attribute" uk-grid>
 
                                 <div>
                                     <?= $this->Form->control("sicknesses_id", [
@@ -63,7 +64,7 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
         <div class="uk-text-center medium-padding">
             <?php foreach ($articles as $article): ?>
                 <div class="uk-card uk-card-default uk-margin-bottom uk-padding">
-                    <h3><?= $this->Html->link(h($article->title), ['action' => 'view', $article->articles_id], ['class' => 'button float-right']) ?></h3>
+                    <p class="uk-text-lead"><?= $this->Html->link(h($article->title), ['action' => 'view', $article->articles_id], ['class' => 'button float-right']) ?></p>
                     <p><?= $this->Text->truncate($article->contents, 30, ["ellipsis" => "...", "exact" => true, "html" => true]) ?></p>
                     <div class="uk-grid uk-child-width-1-2">
                         <div class="uk-text-left">

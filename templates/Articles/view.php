@@ -6,7 +6,7 @@ $this->assign("title", "記事");
     <div class="uk-width-3-4@m uk-width-1-1 uk-container uk-position-relative uk-padding-remove-right uk-margin-medium-bottom">
 
         <div class="patient-view-top-color div-align-left">
-            <h3 class="uk-margin-remove-bottom uk-text-center uk-padding-small"><?= h($article->title) ?></h3>
+            <p class="uk-margin-remove-bottom uk-text-center uk-padding-small uk-text-lead"><?= h($article->title) ?></>
         </div>
 
         <div class="uk-margin-medium-bottom div-align-left">

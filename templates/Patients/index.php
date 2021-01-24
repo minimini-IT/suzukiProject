@@ -4,8 +4,8 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
 ?>
 <div class="uk-grid">
     <div class="uk-width-3-4@m uk-width-1-1">
-        <div class="uk-padding-remove uk-first-column">
-            <h3 class="pro-image main-link" id="search_toggle"><?= __('検索') ?></h3>
+        <div class="uk-padding-remove uk-first-column uk-text-center uk-margin-small-bottom">
+            <?= $this->Html->image("search.JPG", ["id" => "search_toggle", "class" => "search-icon", "alt" => "search"]) ?>
             <div class="uk-padding-remove uk-width-1-1 uk-margin-medium-top uk-margin-medium-bottom" id="search">
                 <div class="uk-padding-remove" uk-grid>
                     <div class="uk-width-1-2 uk-text-center uk-text-left@m">

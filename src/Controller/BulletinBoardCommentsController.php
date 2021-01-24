@@ -3,19 +3,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-/**
- * BulletinBoardComments Controller
- *
- * @property \App\Model\Table\BulletinBoardCommentsTable $BulletinBoardComments
- * @method \App\Model\Entity\BulletinBoardComment[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class BulletinBoardCommentsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
+    public function initialize(): void
+    {
+        parent::initialize();
+        $controller = $this->request->getParam("controller");
+    }
+
     public function index()
     {
         $this->paginate = [
@@ -26,13 +21,6 @@ class BulletinBoardCommentsController extends AppController
         $this->set(compact('bulletinBoardComments'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Bulletin Board Comment id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function view($id = null)
     {
         $bulletinBoardComment = $this->BulletinBoardComments->get($id, [
@@ -42,43 +30,27 @@ class BulletinBoardCommentsController extends AppController
         $this->set(compact('bulletinBoardComment'));
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
+        $this->Authorization->skipAuthorization();
         $bulletinBoardComment = $this->BulletinBoardComments->newEmptyEntity();
         if ($this->request->is('post')) {
+
             $data = $this->request->getData();
+            $bulletin_boards_id = $data["bulletin_boards_id"];
             $bulletinBoardComment = $this->BulletinBoardComments->patchEntity($bulletinBoardComment, $data);
-            /*
-            $debugData = print_r($data, true);
-            $this->log($debugData, LOG_DEBUG);
-            $this->log($data["bulletin_boards_id"], LOG_DEBUG);
-            $a = print_r($a, true);
-             */
             $id = $data["bulletin_boards_id"];
             if ($this->BulletinBoardComments->save($bulletinBoardComment)) {
-                $this->Flash->success(__('The bulletin board comment has been saved.'));
-                //return $this->redirect(["controller" => "bulletin_boards", 'action' => "index"]);
                 return $this->redirect(["controller" => "bulletin_boards", 'action' => "view", $id]);
             }
-            $this->Flash->error(__('The bulletin board comment could not be saved. Please, try again.'));
-            return $this->redirect(["controller" => "bulletin_boards", 'action' => "index"]);
+            $this->DbLog->bulletinBoardError("BulletinBoardComments", "add");
+            $this->SaveError->errorFlash();
+            return $this->redirect(["controller" => "top", 'action' => "index"]);
         }
         $bulletinBoards = $this->BulletinBoardComments->BulletinBoards->find('list', ['limit' => 200]);
         $this->set(compact('bulletinBoardComment', 'bulletinBoards'));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Bulletin Board Comment id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function edit($id = null)
     {
         $bulletinBoardComment = $this->BulletinBoardComments->get($id, [
@@ -97,13 +69,6 @@ class BulletinBoardCommentsController extends AppController
         $this->set(compact('bulletinBoardComment', 'bulletinBoards'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Bulletin Board Comment id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
@@ -115,5 +80,14 @@ class BulletinBoardCommentsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        /*
+         * Patientsのindexとviewは認証不要
+         */
+        $this->Authentication->addUnauthenticatedActions(["add"]);
     }
 }

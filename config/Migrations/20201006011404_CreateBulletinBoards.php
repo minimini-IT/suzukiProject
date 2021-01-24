@@ -28,11 +28,11 @@ class CreateBulletinBoards extends AbstractMigration
                 'default' => null,
                 'null' => false,
             ])
-            ->addColumn('created', 'date', [
+            ->addColumn('created', 'datetime', [
                 'default' => null,
                 'null' => false,
             ])
-            ->addColumn('modified', 'date', [
+            ->addColumn('modified', 'datetime', [
                 'default' => null,
                 'null' => false,
             ])

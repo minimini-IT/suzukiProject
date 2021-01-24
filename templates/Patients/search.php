@@ -6,27 +6,25 @@ $this->Html->script("TopCheckbox.js", ["block" => true]);
     <div class="uk-width-3-4@m uk-width-1-1">
         <div class="uk-padding-remove uk-first-column uk-grid uk-margin-bottom">
             <div class="uk-width-auto">
-                <h3>
-                    <?= __('検索：') ?>
-                </h3>
+                <p class="uk-text-lead">検索：</p>
             </div>
             <div class="uk-width-auto">
-                <h3>
+                <p>
                     <?php foreach($element as $e): ?>
-                        <span class="uk-margin-small-right"><?= $e["alias"] ?></span>
+                        <span class="uk-margin-small-right uk-text-lead"><?= $e["alias"] ?></span>
                     <?php endforeach ?>
-                </h3>
-                <h3 class="uk-margin-remove-top">
+                </p>
+                <p class="uk-margin-remove-top">
                     <?php if($location_element != null): ?>
                         <?php foreach($location_element as $le): ?>
-                            <span class="uk-margin-small-right"><?= $le["alias"] ?></span>
+                            <span class="uk-margin-small-right uk-text-lead"><?= $le["alias"] ?></span>
                         <?php endforeach ?>
                     <?php endif ?>
-                </h3>
+                </p>
             </div>
         </div>
-        <div class="uk-padding-remove">
-            <h3 class="pro-image main-link" id="search_toggle"><?= __('検索') ?></h3>
+        <div class="uk-padding-remove uk-text-center uk-margin-small-bottom">
+            <?= $this->Html->image("search.JPG", ["id" => "search_toggle", "class" => "search-icon", "alt" => "search"]) ?>
             <div class="uk-padding-remove uk-width-1-1 uk-margin-medium-top uk-margin-medium-bottom" id="search">
                 <div class="uk-padding-remove" uk-grid>
                     <div class="uk-width-1-2 uk-text-center uk-text-left@m">

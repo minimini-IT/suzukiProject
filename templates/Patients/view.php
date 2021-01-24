@@ -8,11 +8,11 @@ $this->assign("title", "インタビュー");
         <div class="uk-margin-medium-bottom patient-view-top-color div-align-left">
             <div class="uk-grid">
                 <div class="uk-width-2-3">
-                    <h3 class="uk-text-center"><?= h($patient->pen_name) ?>さん</h3>
+                    <p class="uk-text-center uk-text-lead"><?= h($patient->pen_name) ?>さん</p>
                 </div>
 
                 <div class="uk-width-1-3">
-                    <h3><?= h($patient->patient_sex->patient_sex) ?></h3>
+                    <p class="uk-text-lead"><?= h($patient->patient_sex->patient_sex) ?></p>
                 </div>
             </div>
         </div>
@@ -67,31 +67,31 @@ $symp_count = 0;
         </table>
 
         <div class="text">
-            <h3 class="bgc-h3 uk-margin-remove-bottom">現在の状況</h3>
+            <p class="bgc-h3 uk-text-lead uk-margin-remove-bottom">現在の状況</p>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
                 <section>
                     <?= $patient->interview_first ?>
                 </section>
             </div>
-            <h3 class="bgc-h3 uk-margin-remove-bottom">病気がわかった経緯</h3>
+            <p class="bgc-h3 uk-text-lead uk-margin-remove-bottom">病気がわかった経緯</p>
             <div class="uk-card uk-card-default uk-card-body">
                 <section>
                     <?= $patient->interview_second ?>
                 </section>
             </div>
-            <h3 class="bgc-h3 uk-margin-remove-bottom">生活が変わったか</h3>
+            <p class="bgc-h3 uk-text-lead uk-margin-remove-bottom">生活が変わったか</p>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
                 <section>
                     <?= $patient->interview_third ?>
                 </section>
             </div>
-            <h3 class="bgc-h3 uk-margin-remove-bottom">同じ病気の人へのアドバイス</h3>
+            <p class="bgc-h3 uk-text-lead uk-margin-remove-bottom">同じ病気の人へのアドバイス</p>
             <div class="uk-card uk-card-default uk-card-body">
                 <section>
                     <?= $patient->interview_force ?>
                 </section>
             </div>
-            <h3 class="bgc-h3 uk-margin-remove-bottom">そのほか伝えたいこと</h3>
+            <p class="bgc-h3 uk-text-lead uk-margin-remove-bottom">そのほか伝えたいこと</p>
             <div class="uk-card uk-card-default uk-card-body uk-background-muted">
                 <section>
                     <?= $patient->other ?>

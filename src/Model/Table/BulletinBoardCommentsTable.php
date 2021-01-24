@@ -8,36 +8,13 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * BulletinBoardComments Model
- *
- * @property \App\Model\Table\BulletinBoardsTable&\Cake\ORM\Association\BelongsTo $BulletinBoards
- *
- * @method \App\Model\Entity\BulletinBoardComment newEmptyEntity()
- * @method \App\Model\Entity\BulletinBoardComment newEntity(array $data, array $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\BulletinBoardComment get($primaryKey, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment findOrCreate($search, ?callable $callback = null, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\BulletinBoardComment|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\BulletinBoardComment[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- */
 class BulletinBoardCommentsTable extends Table
 {
-    /**
-     * Initialize method
-     *
-     * @param array $config The configuration for the Table.
-     * @return void
-     */
     public function initialize(array $config): void
     {
         parent::initialize($config);
+
+        $this->addBehavior("Timestamp");
 
         $this->setTable('bulletin_board_comments');
         $this->setDisplayField('bulletin_board_comments_id');
@@ -49,12 +26,14 @@ class BulletinBoardCommentsTable extends Table
         ]);
     }
 
-    /**
-     * Default validation rules.
-     *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
-     */
+    public function findBulletinBoardComments(Query $query, array $options)
+    {
+        $id = $options["id"];
+
+        return $query
+            ->where(["BulletinBoardComments.bulletin_boards_id" => $id]);
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator

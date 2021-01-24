@@ -3,72 +3,63 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-/**
- * BulletinBoards Controller
- *
- * @property \App\Model\Table\BulletinBoardsTable $BulletinBoards
- * @method \App\Model\Entity\BulletinBoard[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class BulletinBoardsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
     public function index()
     {
-        $bulletinBoards = $this->paginate($this->BulletinBoards);
+        $this->Authorization->skipAuthorization();
 
-        $this->set(compact('bulletinBoards'));
+        $this->loadModels(["Patients", "Articles", "BulletinBoardComments"]);
+        $bulletinBoards = $this->BulletinBoards->find("ContainCommentModified");
+        $this->paginate = [
+            "limit" => 20,
+        ];
+        $bulletinBoards = $this->paginate($bulletinBoards);
+        $recently_patients = $this->Patients->find("RecentInterview");
+        $recently_articles = $this->Articles->find("RecentArticles");
+
+        $this->set(compact('bulletinBoards', "recently_patients", "recently_articles"));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Bulletin Board id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function view($id = null)
     {
-        $bulletinBoard = $this->BulletinBoards->get($id, [
-            'contain' => ['BulletinBoardComments'],
-        ]);
-
+        $this->Authorization->skipAuthorization();
+        $bulletinBoard = $this->BulletinBoards->get($id);
         $this->loadModels(["BulletinBoardComments"]);
+        $bulletinBoardComments = $this->BulletinBoardComments->find()
+            ->where(["bulletin_boards_id" => $id]);
+        $this->paginate = [
+            "limit" => 20,
+        ];
+        $page_number = $this->request->getQuery("page");
+        $bulletinBoardComments = $this->paginate($bulletinBoardComments);
+        $this->loadModels(["Patients", "Articles", "BulletinBoardComments"]);
         $bulletinBoardComment = $this->BulletinBoardComments->newEmptyEntity();
+        $recently_patients = $this->Patients->find("RecentInterview");
+        $recently_articles = $this->Articles->find("RecentArticles");
 
-        $this->set(compact('bulletinBoard', "bulletinBoardComment"));
+        $this->set(compact('bulletinBoard', "bulletinBoardComment", "bulletinBoardComments", "recently_patients", "recently_articles", "page_number"));
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {
+        $this->Authorization->skipAuthorization();
         $bulletinBoard = $this->BulletinBoards->newEmptyEntity();
         if ($this->request->is('post')) {
             $bulletinBoard = $this->BulletinBoards->patchEntity($bulletinBoard, $this->request->getData());
             if ($this->BulletinBoards->save($bulletinBoard)) {
-                $this->Flash->success(__('The bulletin board has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The bulletin board could not be saved. Please, try again.'));
+            $this->DbLog->bulletinBoardError("BulletinBoards", "add");
+            $this->SaveError->errorFlash();
+            return $this->redirect(["controller" => "top", 'action' => "index"]);
         }
-        $this->set(compact('bulletinBoard'));
+        $this->loadModels(["Patients", "Articles"]);
+        $recently_patients = $this->Patients->find("RecentInterview");
+        $recently_articles = $this->Articles->find("RecentArticles");
+        $this->set(compact('bulletinBoard', "recently_patients", "recently_articles"));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Bulletin Board id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function edit($id = null)
     {
         $bulletinBoard = $this->BulletinBoards->get($id, [
@@ -86,13 +77,6 @@ class BulletinBoardsController extends AppController
         $this->set(compact('bulletinBoard'));
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Bulletin Board id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
@@ -104,5 +88,14 @@ class BulletinBoardsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        /*
+         * Patientsのindexとviewは認証不要
+         */
+        $this->Authentication->addUnauthenticatedActions(["index", "view", "add"]);
     }
 }

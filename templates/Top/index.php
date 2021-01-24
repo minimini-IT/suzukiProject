@@ -4,7 +4,7 @@ $this->assign("title", "病気の人の交流サイト");
 <div class="uk-grid">
     <div class="uk-width-3-4@m uk-width-1-1 uk-container uk-position-relative uk-padding-remove-right uk-margin-medium-bottom">
         <div class="uk-width-1-1 uk-margin-top medium-padding-left" id="explanation">
-            <h3>当サイトについて</h3>
+            <p class="uk-text-lead">当サイトについて</p>
             <p>お腹が痛いといっても考えられる病気は多種多様に存在します。</p>
             <p>また、医師に診察を受けたところで腹痛の薬を処方されて終わってしまうことが非常に多いです。</p>
             <p>薬が効かず、いったんは自然に治ったり、またはずっとその症状が続いたり、、、。</p>

@@ -52,9 +52,9 @@ $this->assign("title", "管理画面");
     <div class="uk-width-3-4@s uk-width-1-1 grid-child">
         <div class="uk-card uk-card-default uk-padding">
             <div class="padding-left">
-                <h3>新着情報</h3>
+                <p class="uk-text-lead">新着情報</p>
                 <div class="padding-left">
-                    <h4>インタビュー</h4>
+                    <p class="uk-text-lead">インタビュー</p>
                     <div class="padding-left">
                         <?php foreach($patients as $patient): ?>
                             <div>
@@ -68,7 +68,7 @@ $this->assign("title", "管理画面");
                     </div>
                 </div>
                 <div class="padding-left">
-                    <h4>記事</h4>
+                    <p class="uk-text-lead">記事</p>
                     <div class="padding-left">
                         <?php foreach($articles as $article): ?>
                             <div>

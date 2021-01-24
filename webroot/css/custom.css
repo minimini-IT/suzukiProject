@@ -8,6 +8,7 @@ body
     font-family: "游ゴシック体", "YuGothic", "游ゴシック", "Yu Gothic", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
     font-size: 18px;
 }
+
 main
 {
     background-color: #F5F5F5;
@@ -16,6 +17,11 @@ main
 header
 {
     background-color: #D7EEFF;
+}
+
+.auto-paragraph
+{
+    word-wrap: break-word;
 }
 
 .header-height
@@ -106,6 +112,12 @@ th, td
 {
     width: 110px;
     height: 110px;
+}
+
+.search-icon
+{
+    width: 100px;
+    height: 80px;
 }
 
 .main-link
@@ -218,6 +230,13 @@ th, td
 .liststyle>li
 {
     margin-top: 10px;
+}
+
+.input-textarea
+{
+    width: 100%;
+    max-width: 100%;
+    height: 100px;
 }
 
 @media(max-width: 959px)
